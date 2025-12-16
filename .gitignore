@@ -1,0 +1,36 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+.vs/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Angular
+dist/
+.angular/
+.cache/
+
+# Environment
+.env
+appsettings.Development.json
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Database
+*.db
+*.db-shm
+*.db-wal
