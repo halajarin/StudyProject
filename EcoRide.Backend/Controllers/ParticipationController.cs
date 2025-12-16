@@ -32,15 +32,6 @@ public class ParticipationController : BaseController
 
         return Ok(new { message });
     }
-
-    [Authorize(Roles = "Employee,Administrator")]
-    [HttpGet("problems")]
-    public async Task<IActionResult> GetProblematicTrips()
-    {
-        // This functionality would require a method in the repository
-        // For now, return an empty list
-        return Ok(new List<object>());
-    }
 }
 
 public class ValidateTripDTO
