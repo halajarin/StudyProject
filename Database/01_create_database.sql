@@ -1,7 +1,7 @@
--- Script de création de la base de données EcoRide
+-- EcoRide database creation script
 -- PostgreSQL
 
--- Création de la base de données
+-- Create database
 CREATE DATABASE ecoride
     WITH
     OWNER = postgres
@@ -11,4 +11,4 @@ CREATE DATABASE ecoride
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 
-COMMENT ON DATABASE ecoride IS 'Base de données pour l''application de covoiturage EcoRide';
+COMMENT ON DATABASE ecoride IS 'Database for the EcoRide carpooling application';
