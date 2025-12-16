@@ -72,19 +72,19 @@ describe('Auth Guards', () => {
   describe('roleGuard', () => {
     it('should allow access when user has required role', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
-        roles: ['Passager', 'Chauffeur'],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['Passenger', 'Driver'],
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       Object.defineProperty(mockAuthService, 'isLoggedIn', { value: true });
       Object.defineProperty(mockAuthService, 'currentUserValue', { value: mockUser });
 
-      const guard = roleGuard(['Chauffeur']);
+      const guard = roleGuard(['Driver']);
       const result = TestBed.runInInjectionContext(() =>
         guard(mockRoute, mockState)
       );
@@ -95,19 +95,19 @@ describe('Auth Guards', () => {
 
     it('should allow access when user has one of multiple required roles', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
-        roles: ['Employe'],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['Employee'],
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       Object.defineProperty(mockAuthService, 'isLoggedIn', { value: true });
       Object.defineProperty(mockAuthService, 'currentUserValue', { value: mockUser });
 
-      const guard = roleGuard(['Employe', 'Administrateur']);
+      const guard = roleGuard(['Employee', 'Administrator']);
       const result = TestBed.runInInjectionContext(() =>
         guard(mockRoute, mockState)
       );
@@ -117,19 +117,19 @@ describe('Auth Guards', () => {
 
     it('should redirect to home when user does not have required role', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
-        roles: ['Passager'],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['Passenger'],
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       Object.defineProperty(mockAuthService, 'isLoggedIn', { value: true });
       Object.defineProperty(mockAuthService, 'currentUserValue', { value: mockUser });
 
-      const guard = roleGuard(['Administrateur']);
+      const guard = roleGuard(['Administrator']);
       const result = TestBed.runInInjectionContext(() =>
         guard(mockRoute, mockState)
       );
@@ -142,7 +142,7 @@ describe('Auth Guards', () => {
       Object.defineProperty(mockAuthService, 'isLoggedIn', { value: false });
       Object.defineProperty(mockAuthService, 'currentUserValue', { value: null });
 
-      const guard = roleGuard(['Chauffeur']);
+      const guard = roleGuard(['Driver']);
       const result = TestBed.runInInjectionContext(() =>
         guard(mockRoute, mockState)
       );
@@ -153,19 +153,19 @@ describe('Auth Guards', () => {
 
     it('should handle empty user roles array', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
         roles: [],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       Object.defineProperty(mockAuthService, 'isLoggedIn', { value: true });
       Object.defineProperty(mockAuthService, 'currentUserValue', { value: mockUser });
 
-      const guard = roleGuard(['Chauffeur']);
+      const guard = roleGuard(['Driver']);
       const result = TestBed.runInInjectionContext(() =>
         guard(mockRoute, mockState)
       );
@@ -176,19 +176,19 @@ describe('Auth Guards', () => {
 
     it('should work with multiple role requirements', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'AdminUser',
+        userId: 1,
+        username: 'AdminUser',
         email: 'admin@example.com',
-        roles: ['Administrateur', 'Employe'],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['Administrator', 'Employee'],
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       Object.defineProperty(mockAuthService, 'isLoggedIn', { value: true });
       Object.defineProperty(mockAuthService, 'currentUserValue', { value: mockUser });
 
-      const guard = roleGuard(['Employe', 'Administrateur']);
+      const guard = roleGuard(['Employee', 'Administrator']);
       const result = TestBed.runInInjectionContext(() =>
         guard(mockRoute, mockState)
       );
@@ -198,19 +198,19 @@ describe('Auth Guards', () => {
 
     it('should be case-sensitive with role names', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
-        roles: ['chauffeur'], // lowercase
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['driver'], // lowercase
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       Object.defineProperty(mockAuthService, 'isLoggedIn', { value: true });
       Object.defineProperty(mockAuthService, 'currentUserValue', { value: mockUser });
 
-      const guard = roleGuard(['Chauffeur']); // uppercase C
+      const guard = roleGuard(['Driver']); // uppercase D
       const result = TestBed.runInInjectionContext(() =>
         guard(mockRoute, mockState)
       );

@@ -10,34 +10,34 @@ import { environment } from '../../../../environments/environment';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="container">
-      <h1>Administration EcoRide</h1>
+      <h1>EcoRide Administration</h1>
 
       <div class="grid grid-2">
         <div class="card">
-          <h2>Créer un employé</h2>
+          <h2>Create an employee</h2>
           <form (ngSubmit)="createEmployee()">
             <div class="form-group">
-              <label>Pseudo</label>
-              <input type="text" [(ngModel)]="newEmployee.pseudo" name="pseudo" required>
+              <label>Username</label>
+              <input type="text" [(ngModel)]="newEmployee.username" name="username" required>
             </div>
             <div class="form-group">
               <label>Email</label>
               <input type="email" [(ngModel)]="newEmployee.email" name="email" required>
             </div>
             <div class="form-group">
-              <label>Mot de passe</label>
+              <label>Password</label>
               <input type="password" [(ngModel)]="newEmployee.password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Créer</button>
+            <button type="submit" class="btn btn-primary">Create</button>
           </form>
         </div>
 
         <div class="card">
-          <h2>Statistiques</h2>
+          <h2>Statistics</h2>
           @if (stats) {
             <div class="stats-grid">
               <div class="stat-card">
-                <h3>Total Crédits Gagnés</h3>
+                <h3>Total Credits Earned</h3>
                 <p class="stat-value">{{ stats.totalCreditsGagnes }}</p>
               </div>
             </div>
@@ -46,41 +46,41 @@ import { environment } from '../../../../environments/environment';
       </div>
 
       <div class="card mt-3">
-        <h2>Utilisateurs</h2>
+        <h2>Users</h2>
         @if (users.length > 0) {
           <table class="users-table">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Pseudo</th>
+                <th>Username</th>
                 <th>Email</th>
-                <th>Rôles</th>
-                <th>Crédits</th>
-                <th>Statut</th>
+                <th>Roles</th>
+                <th>Credits</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              @for (user of users; track user.utilisateurId) {
+              @for (user of users; track user.userId) {
                 <tr>
-                  <td>{{ user.utilisateurId }}</td>
-                  <td>{{ user.pseudo }}</td>
+                  <td>{{ user.userId }}</td>
+                  <td>{{ user.username }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.roles.join(', ') }}</td>
-                  <td>{{ user.credit }}</td>
+                  <td>{{ user.credits }}</td>
                   <td>
-                    <span [class]="user.estActif ? 'badge-success' : 'badge-danger'">
-                      {{ user.estActif ? 'Actif' : 'Suspendu' }}
+                    <span [class]="user.isActive ? 'badge-success' : 'badge-danger'">
+                      {{ user.isActive ? 'Active' : 'Suspended' }}
                     </span>
                   </td>
                   <td>
-                    @if (user.estActif) {
-                      <button (click)="suspendUser(user.utilisateurId)" class="btn-sm btn-danger">
-                        Suspendre
+                    @if (user.isActive) {
+                      <button (click)="suspendUser(user.userId)" class="btn-sm btn-danger">
+                        Suspend
                       </button>
                     } @else {
-                      <button (click)="activateUser(user.utilisateurId)" class="btn-sm btn-primary">
-                        Activer
+                      <button (click)="activateUser(user.userId)" class="btn-sm btn-primary">
+                        Activate
                       </button>
                     }
                   </td>
@@ -138,7 +138,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class DashboardComponent implements OnInit {
   newEmployee = {
-    pseudo: '',
+    username: '',
     email: '',
     password: ''
   };
@@ -156,10 +156,10 @@ export class DashboardComponent implements OnInit {
   createEmployee() {
     this.http.post(`${environment.apiUrl}/admin/create-employee`, this.newEmployee).subscribe({
       next: () => {
-        alert('Employé créé avec succès');
-        this.newEmployee = { pseudo: '', email: '', password: '' };
+        alert('Employee created successfully');
+        this.newEmployee = { username: '', email: '', password: '' };
       },
-      error: (err) => alert('Erreur: ' + (err.error?.message || 'Erreur inconnue'))
+      error: (err) => alert('Error: ' + (err.error?.message || 'Unknown error'))
     });
   }
 
@@ -178,10 +178,10 @@ export class DashboardComponent implements OnInit {
   }
 
   suspendUser(id: number) {
-    if (confirm('Êtes-vous sûr de vouloir suspendre cet utilisateur ?')) {
+    if (confirm('Are you sure you want to suspend this user?')) {
       this.http.put(`${environment.apiUrl}/admin/suspend-user/${id}`, {}).subscribe({
         next: () => {
-          alert('Utilisateur suspendu');
+          alert('User suspended');
           this.loadUsers();
         },
         error: (err) => console.error(err)
@@ -192,7 +192,7 @@ export class DashboardComponent implements OnInit {
   activateUser(id: number) {
     this.http.put(`${environment.apiUrl}/admin/activate-user/${id}`, {}).subscribe({
       next: () => {
-        alert('Utilisateur activé');
+        alert('User activated');
         this.loadUsers();
       },
       error: (err) => console.error(err)

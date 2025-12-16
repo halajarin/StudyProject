@@ -12,7 +12,7 @@ import { AuthService } from '../../../services/auth.service';
     <div class="container">
       <div class="login-container">
         <div class="card">
-          <h2 class="text-center">Connexion à EcoRide</h2>
+          <h2 class="text-center">Login to EcoRide</h2>
 
           @if (error) {
             <div class="alert alert-danger">{{ error }}</div>
@@ -26,18 +26,18 @@ import { AuthService } from '../../../services/auth.service';
                 id="email"
                 [(ngModel)]="credentials.email"
                 name="email"
-                placeholder="votre@email.com"
+                placeholder="your@email.com"
                 required>
             </div>
 
             <div class="form-group">
-              <label for="password">Mot de passe</label>
+              <label for="password">Password</label>
               <input
                 type="password"
                 id="password"
                 [(ngModel)]="credentials.password"
                 name="password"
-                placeholder="Votre mot de passe"
+                placeholder="Your password"
                 required>
             </div>
 
@@ -46,19 +46,19 @@ import { AuthService } from '../../../services/auth.service';
               class="btn btn-primary"
               style="width: 100%;"
               [disabled]="loading">
-              {{ loading ? 'Connexion...' : 'Se connecter' }}
+              {{ loading ? 'Logging in...' : 'Login' }}
             </button>
           </form>
 
           <p class="text-center mt-3">
-            Pas encore de compte ?
-            <a routerLink="/register">S'inscrire</a>
+            Don't have an account?
+            <a routerLink="/register">Sign up</a>
           </p>
 
           <div class="test-credentials">
-            <p><strong>Comptes de test:</strong></p>
-            <p><small>Email: jean.dupont@email.com | Mot de passe: Password123!</small></p>
-            <p><small>Email: admin@ecoride.fr | Mot de passe: Password123!</small></p>
+            <p><strong>Test accounts:</strong></p>
+            <p><small>Email: jean.dupont@email.com | Password: Password123!</small></p>
+            <p><small>Email: admin@ecoride.fr | Password: Password123!</small></p>
           </div>
         </div>
       </div>
@@ -114,7 +114,7 @@ export class LoginComponent {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erreur de connexion';
+        this.error = err.error?.message || 'Login error';
         this.loading = false;
       }
     });

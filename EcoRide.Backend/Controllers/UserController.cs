@@ -10,19 +10,19 @@ namespace EcoRide.Backend.Controllers;
 [Authorize]
 public class UserController : BaseController
 {
-    private readonly IUtilisateurRepository _utilisateurRepository;
-    private readonly IVoitureRepository _voitureRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IVehicleRepository _vehicleRepository;
     private readonly IPreferenceService _preferenceService;
     private readonly ILogger<UserController> _logger;
 
     public UserController(
-        IUtilisateurRepository utilisateurRepository,
-        IVoitureRepository voitureRepository,
+        IUserRepository userRepository,
+        IVehicleRepository vehicleRepository,
         IPreferenceService preferenceService,
         ILogger<UserController> logger)
     {
-        _utilisateurRepository = utilisateurRepository;
-        _voitureRepository = voitureRepository;
+        _userRepository = userRepository;
+        _vehicleRepository = vehicleRepository;
         _preferenceService = preferenceService;
         _logger = logger;
     }
@@ -31,32 +31,32 @@ public class UserController : BaseController
     public async Task<IActionResult> GetProfile()
     {
         var userId = GetCurrentUserId();
-        var utilisateur = await _utilisateurRepository.GetByIdAsync(userId);
+        var user = await _userRepository.GetByIdAsync(userId);
 
-        if (utilisateur == null)
+        if (user == null)
         {
-            return NotFound(new { message = "Utilisateur non trouvé" });
+            return NotFound(new { message = "User not found" });
         }
 
-        var roles = await _utilisateurRepository.GetUserRolesAsync(userId);
-        var noteMoyenne = await _utilisateurRepository.GetAverageRatingAsync(userId);
-        var nombreAvis = await _utilisateurRepository.GetRatingCountAsync(userId);
+        var roles = await _userRepository.GetUserRolesAsync(userId);
+        var averageRating = await _userRepository.GetAverageRatingAsync(userId);
+        var reviewCount = await _userRepository.GetRatingCountAsync(userId);
 
         var profile = new UserProfileDTO
         {
-            UtilisateurId = utilisateur.UtilisateurId,
-            Pseudo = utilisateur.Pseudo,
-            Email = utilisateur.Email,
-            Nom = utilisateur.Nom,
-            Prenom = utilisateur.Prenom,
-            Telephone = utilisateur.Telephone,
-            Adresse = utilisateur.Adresse,
-            DateNaissance = utilisateur.DateNaissance,
-            Photo = utilisateur.Photo,
-            Credit = utilisateur.Credit,
+            UserId = user.UserId,
+            Pseudo = user.Pseudo,
+            Email = user.Email,
+            LastName = user.LastName,
+            FirstName = user.FirstName,
+            Phone = user.Phone,
+            Address = user.Address,
+            BirthDate = user.BirthDate,
+            Photo = user.Photo,
+            Credit = user.Credit,
             Roles = roles,
-            NoteMoyenne = noteMoyenne,
-            NombreAvis = nombreAvis
+            AverageRating = averageRating,
+            ReviewCount = reviewCount
         };
 
         return Ok(profile);
@@ -66,67 +66,67 @@ public class UserController : BaseController
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO updateDto)
     {
         var userId = GetCurrentUserId();
-        var utilisateur = await _utilisateurRepository.GetByIdAsync(userId);
+        var user = await _userRepository.GetByIdAsync(userId);
 
-        if (utilisateur == null)
+        if (user == null)
         {
-            return NotFound(new { message = "Utilisateur non trouvé" });
+            return NotFound(new { message = "User not found" });
         }
 
-        utilisateur.Nom = updateDto.Nom ?? utilisateur.Nom;
-        utilisateur.Prenom = updateDto.Prenom ?? utilisateur.Prenom;
-        utilisateur.Telephone = updateDto.Telephone ?? utilisateur.Telephone;
-        utilisateur.Adresse = updateDto.Adresse ?? utilisateur.Adresse;
-        utilisateur.DateNaissance = updateDto.DateNaissance ?? utilisateur.DateNaissance;
-        utilisateur.Photo = updateDto.Photo ?? utilisateur.Photo;
+        user.LastName = updateDto.LastName ?? user.LastName;
+        user.FirstName = updateDto.FirstName ?? user.FirstName;
+        user.Phone = updateDto.Phone ?? user.Phone;
+        user.Address = updateDto.Address ?? user.Address;
+        user.BirthDate = updateDto.BirthDate ?? user.BirthDate;
+        user.Photo = updateDto.Photo ?? user.Photo;
 
-        await _utilisateurRepository.UpdateAsync(utilisateur);
+        await _userRepository.UpdateAsync(user);
 
-        return Ok(new { message = "Profil mis à jour avec succès" });
+        return Ok(new { message = "Profile updated successfully" });
     }
 
     [HttpPost("add-role/{roleId}")]
     public async Task<IActionResult> AddRole(int roleId)
     {
         var userId = GetCurrentUserId();
-        var roles = await _utilisateurRepository.GetUserRolesAsync(userId);
+        var roles = await _userRepository.GetUserRolesAsync(userId);
 
-        // Empêcher l'ajout de rôles Employé ou Administrateur
+        // Prevent adding Employee or Administrator roles
         if (roleId == 3 || roleId == 4)
         {
             return Forbid();
         }
 
-        await _utilisateurRepository.AddUserRoleAsync(userId, roleId);
-        _logger.LogInformation($"Rôle {roleId} ajouté à l'utilisateur {userId}");
+        await _userRepository.AddUserRoleAsync(userId, roleId);
+        _logger.LogInformation($"Role {roleId} added to user {userId}");
 
-        return Ok(new { message = "Rôle ajouté avec succès" });
+        return Ok(new { message = "Role added successfully" });
     }
 
     [HttpGet("vehicles")]
     public async Task<IActionResult> GetVehicles()
     {
         var userId = GetCurrentUserId();
-        var voitures = await _voitureRepository.GetByUtilisateurAsync(userId);
+        var vehicles = await _vehicleRepository.GetByUserAsync(userId);
 
-        var result = voitures.Select(v => new VoitureDTO
+        var result = vehicles.Select(v => new VehicleDTO
         {
-            VoitureId = v.VoitureId,
-            Modele = v.Modele,
-            Immatriculation = v.Immatriculation,
-            Energie = v.Energie,
-            Couleur = v.Couleur,
-            DatePremiereImmatriculation = v.DatePremiereImmatriculation,
-            MarqueId = v.MarqueId,
-            MarqueLibelle = v.Marque.Libelle,
-            NombrePlaces = v.NombrePlaces
+            VehicleId = v.VehicleId,
+            Model = v.Model,
+            RegistrationNumber = v.RegistrationNumber,
+            EnergyType = v.EnergyType,
+            Color = v.Color,
+            FirstRegistrationDate = v.FirstRegistrationDate,
+            BrandId = v.BrandId,
+            BrandLabel = v.Brand.Label,
+            SeatCount = v.SeatCount
         }).ToList();
 
         return Ok(result);
     }
 
     [HttpPost("vehicles")]
-    public async Task<IActionResult> AddVehicle([FromBody] CreateVoitureDTO createDto)
+    public async Task<IActionResult> AddVehicle([FromBody] CreateVehicleDTO createDto)
     {
         if (!ModelState.IsValid)
         {
@@ -135,22 +135,22 @@ public class UserController : BaseController
 
         var userId = GetCurrentUserId();
 
-        var voiture = new Models.Voiture
+        var vehicle = new Models.Vehicle
         {
-            Modele = createDto.Modele,
-            Immatriculation = createDto.Immatriculation,
-            Energie = createDto.Energie,
-            Couleur = createDto.Couleur,
-            DatePremiereImmatriculation = createDto.DatePremiereImmatriculation,
-            MarqueId = createDto.MarqueId,
-            UtilisateurId = userId,
-            NombrePlaces = createDto.NombrePlaces
+            Model = createDto.Model,
+            RegistrationNumber = createDto.RegistrationNumber,
+            EnergyType = createDto.EnergyType,
+            Color = createDto.Color,
+            FirstRegistrationDate = createDto.FirstRegistrationDate,
+            BrandId = createDto.BrandId,
+            UserId = userId,
+            SeatCount = createDto.SeatCount
         };
 
-        var created = await _voitureRepository.CreateAsync(voiture);
-        _logger.LogInformation($"Nouvelle voiture ajoutée: {created.VoitureId}");
+        var created = await _vehicleRepository.CreateAsync(vehicle);
+        _logger.LogInformation($"New vehicle added: {created.VehicleId}");
 
-        return CreatedAtAction(nameof(GetVehicles), new { id = created.VoitureId }, created);
+        return CreatedAtAction(nameof(GetVehicles), new { id = created.VehicleId }, created);
     }
 
     [HttpGet("preferences")]
@@ -168,6 +168,6 @@ public class UserController : BaseController
         var userId = GetCurrentUserId();
         await _preferenceService.CreateOrUpdatePreferencesAsync(userId, preferences);
 
-        return Ok(new { message = "Préférences enregistrées avec succès" });
+        return Ok(new { message = "Preferences saved successfully" });
     }
 }

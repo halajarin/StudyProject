@@ -11,46 +11,46 @@ import { Router } from '@angular/router';
   template: `
     <div class="hero">
       <div class="container">
-        <h1>Bienvenue sur EcoRide</h1>
-        <p class="subtitle">La plateforme de covoiturage écologique pour vos déplacements</p>
+        <h1>Welcome to EcoRide</h1>
+        <p class="subtitle">The eco-friendly carpooling platform for your travels</p>
 
         <div class="search-box card">
-          <h2>Trouvez votre trajet</h2>
+          <h2>Find your ride</h2>
           <form (ngSubmit)="searchTrip()">
             <div class="search-fields">
               <div class="form-group">
-                <label for="villeDepart">Ville de départ</label>
+                <label for="departureCity">Departure city</label>
                 <input
                   type="text"
-                  id="villeDepart"
-                  [(ngModel)]="searchForm.villeDepart"
-                  name="villeDepart"
+                  id="departureCity"
+                  [(ngModel)]="searchForm.departureCity"
+                  name="departureCity"
                   placeholder="Ex: Paris"
                   required>
               </div>
 
               <div class="form-group">
-                <label for="villeArrivee">Ville d'arrivée</label>
+                <label for="arrivalCity">Arrival city</label>
                 <input
                   type="text"
-                  id="villeArrivee"
-                  [(ngModel)]="searchForm.villeArrivee"
-                  name="villeArrivee"
+                  id="arrivalCity"
+                  [(ngModel)]="searchForm.arrivalCity"
+                  name="arrivalCity"
                   placeholder="Ex: Lyon"
                   required>
               </div>
 
               <div class="form-group">
-                <label for="dateDepart">Date</label>
+                <label for="departureDate">Date</label>
                 <input
                   type="date"
-                  id="dateDepart"
-                  [(ngModel)]="searchForm.dateDepart"
-                  name="dateDepart"
+                  id="departureDate"
+                  [(ngModel)]="searchForm.departureDate"
+                  name="departureDate"
                   required>
               </div>
 
-              <button type="submit" class="btn btn-primary">Rechercher</button>
+              <button type="submit" class="btn btn-primary">Search</button>
             </div>
           </form>
         </div>
@@ -59,45 +59,45 @@ import { Router } from '@angular/router';
 
     <div class="container">
       <section class="features">
-        <h2 class="text-center">Pourquoi choisir EcoRide ?</h2>
+        <h2 class="text-center">Why choose EcoRide?</h2>
         <div class="grid grid-3">
           <div class="feature-card card">
             <div class="icon">🌱</div>
-            <h3>Écologique</h3>
-            <p>Réduisez votre empreinte carbone en partageant vos trajets</p>
+            <h3>Eco-friendly</h3>
+            <p>Reduce your carbon footprint by sharing your trips</p>
           </div>
 
           <div class="feature-card card">
             <div class="icon">💰</div>
-            <h3>Économique</h3>
-            <p>Partagez les frais de trajet et économisez sur vos déplacements</p>
+            <h3>Economical</h3>
+            <p>Share travel costs and save on your trips</p>
           </div>
 
           <div class="feature-card card">
             <div class="icon">👥</div>
-            <h3>Convivial</h3>
-            <p>Rencontrez de nouvelles personnes et voyagez ensemble</p>
+            <h3>Social</h3>
+            <p>Meet new people and travel together</p>
           </div>
         </div>
       </section>
 
       <section class="about">
-        <h2 class="text-center">À propos d'EcoRide</h2>
+        <h2 class="text-center">About EcoRide</h2>
         <p class="text-center">
-          EcoRide est une plateforme de covoiturage qui encourage les déplacements écologiques.
-          Notre mission est de réduire l'impact environnemental des transports en facilitant
-          le partage de véhicules entre particuliers.
+          EcoRide is a carpooling platform that encourages eco-friendly travel.
+          Our mission is to reduce the environmental impact of transportation by facilitating
+          vehicle sharing between individuals.
         </p>
         <div class="grid grid-2 mt-3">
           <div class="about-image">
             <div class="placeholder-image">🚗💚</div>
           </div>
           <div class="about-text">
-            <h3>Notre engagement écologique</h3>
+            <h3>Our ecological commitment</h3>
             <p>
-              Nous mettons en avant les trajets effectués avec des véhicules électriques
-              et encourageons une mobilité plus responsable. Chaque trajet partagé est
-              un pas vers un avenir plus vert.
+              We highlight trips made with electric vehicles
+              and encourage more responsible mobility. Every shared trip is
+              a step towards a greener future.
             </p>
           </div>
         </div>
@@ -197,15 +197,15 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
   searchForm = {
-    villeDepart: '',
-    villeArrivee: '',
-    dateDepart: ''
+    departureCity: '',
+    arrivalCity: '',
+    departureDate: ''
   };
 
   constructor(private router: Router) {}
 
   searchTrip() {
-    this.router.navigate(['/covoiturages'], {
+    this.router.navigate(['/carpools'], {
       queryParams: this.searchForm
     });
   }

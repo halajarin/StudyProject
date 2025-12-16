@@ -1,25 +1,25 @@
 export interface User {
-  utilisateurId: number;
-  pseudo: string;
+  userId: number;
+  username: string;
   email: string;
-  nom?: string;
-  prenom?: string;
-  telephone?: string;
-  adresse?: string;
-  dateNaissance?: Date;
+  lastName?: string;
+  firstName?: string;
+  phone?: string;
+  address?: string;
+  birthDate?: Date;
   photo?: Uint8Array;
-  credit: number;
+  credits: number;
   roles: string[];
-  noteMoyenne: number;
-  nombreAvis: number;
+  averageRating: number;
+  reviewCount: number;
 }
 
 export interface RegisterRequest {
-  pseudo: string;
+  username: string;
   email: string;
   password: string;
-  nom?: string;
-  prenom?: string;
+  lastName?: string;
+  firstName?: string;
 }
 
 export interface LoginRequest {
@@ -30,10 +30,10 @@ export interface LoginRequest {
 export interface AuthResponse {
   message: string;
   user: {
-    utilisateurId: number;
-    pseudo: string;
+    userId: number;
+    username: string;
     email: string;
-    credit: number;
+    credits: number;
   };
   token: string;
 }

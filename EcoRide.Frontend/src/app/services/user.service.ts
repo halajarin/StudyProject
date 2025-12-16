@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
-import { Voiture, CreateVoiture, Marque } from '../models/voiture.model';
+import { Vehicle, CreateVehicle, Brand } from '../models/vehicle.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -25,11 +25,11 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/add-role/${roleId}`, {});
   }
 
-  getVehicles(): Observable<Voiture[]> {
-    return this.http.get<Voiture[]>(`${this.apiUrl}/vehicles`);
+  getVehicles(): Observable<Vehicle[]> {
+    return this.http.get<Vehicle[]>(`${this.apiUrl}/vehicles`);
   }
 
-  addVehicle(vehicle: CreateVoiture): Observable<any> {
+  addVehicle(vehicle: CreateVehicle): Observable<any> {
     return this.http.post(`${this.apiUrl}/vehicles`, vehicle);
   }
 

@@ -12,7 +12,7 @@ import { AuthService } from '../../../services/auth.service';
     <div class="container">
       <div class="register-container">
         <div class="card">
-          <h2 class="text-center">Créer un compte EcoRide</h2>
+          <h2 class="text-center">Create an EcoRide account</h2>
 
           @if (error) {
             <div class="alert alert-danger">{{ error }}</div>
@@ -24,17 +24,17 @@ import { AuthService } from '../../../services/auth.service';
 
           <form (ngSubmit)="register()">
             <div class="form-group">
-              <label for="pseudo">Pseudo *</label>
+              <label for="username">Username *</label>
               <input
                 type="text"
-                id="pseudo"
-                [(ngModel)]="userData.pseudo"
-                name="pseudo"
-                placeholder="Votre pseudo"
+                id="username"
+                [(ngModel)]="userData.username"
+                name="username"
+                placeholder="Your username"
                 required
                 minlength="3">
-              @if (errors.pseudo) {
-                <span class="error">{{ errors.pseudo }}</span>
+              @if (errors.username) {
+                <span class="error">{{ errors.username }}</span>
               }
             </div>
 
@@ -45,49 +45,49 @@ import { AuthService } from '../../../services/auth.service';
                 id="email"
                 [(ngModel)]="userData.email"
                 name="email"
-                placeholder="votre@email.com"
+                placeholder="your@email.com"
                 required>
             </div>
 
             <div class="form-group">
-              <label for="password">Mot de passe *</label>
+              <label for="password">Password *</label>
               <input
                 type="password"
                 id="password"
                 [(ngModel)]="userData.password"
                 name="password"
-                placeholder="Minimum 8 caractères"
+                placeholder="Minimum 8 characters"
                 required
                 minlength="8">
-              <small>Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial</small>
+              <small>Password must contain at least one uppercase, one lowercase, one number and one special character</small>
               @if (errors.password) {
                 <span class="error">{{ errors.password }}</span>
               }
             </div>
 
             <div class="form-group">
-              <label for="nom">Nom</label>
+              <label for="lastName">Last name</label>
               <input
                 type="text"
-                id="nom"
-                [(ngModel)]="userData.nom"
-                name="nom"
-                placeholder="Votre nom">
+                id="lastName"
+                [(ngModel)]="userData.lastName"
+                name="lastName"
+                placeholder="Your last name">
             </div>
 
             <div class="form-group">
-              <label for="prenom">Prénom</label>
+              <label for="firstName">First name</label>
               <input
                 type="text"
-                id="prenom"
-                [(ngModel)]="userData.prenom"
-                name="prenom"
-                placeholder="Votre prénom">
+                id="firstName"
+                [(ngModel)]="userData.firstName"
+                name="firstName"
+                placeholder="Your first name">
             </div>
 
             <div class="info-box">
-              <p>✓ Vous recevrez 20 crédits à l'inscription</p>
-              <p>✓ Vous pourrez devenir chauffeur depuis votre espace</p>
+              <p>✓ You will receive 20 credits upon registration</p>
+              <p>✓ You can become a driver from your profile</p>
             </div>
 
             <button
@@ -95,13 +95,13 @@ import { AuthService } from '../../../services/auth.service';
               class="btn btn-primary"
               style="width: 100%;"
               [disabled]="loading">
-              {{ loading ? 'Inscription...' : 'S\'inscrire' }}
+              {{ loading ? 'Registering...' : 'Sign up' }}
             </button>
           </form>
 
           <p class="text-center mt-3">
-            Déjà un compte ?
-            <a routerLink="/login">Se connecter</a>
+            Already have an account?
+            <a routerLink="/login">Login</a>
           </p>
         </div>
       </div>
@@ -143,11 +143,11 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class RegisterComponent {
   userData = {
-    pseudo: '',
+    username: '',
     email: '',
     password: '',
-    nom: '',
-    prenom: ''
+    lastName: '',
+    firstName: ''
   };
 
   errors: any = {};
@@ -167,28 +167,28 @@ export class RegisterComponent {
     this.loading = true;
 
     // Validation
-    if (this.userData.pseudo.length < 3) {
-      this.errors.pseudo = 'Le pseudo doit contenir au moins 3 caractères';
+    if (this.userData.username.length < 3) {
+      this.errors.username = 'Username must contain at least 3 characters';
       this.loading = false;
       return;
     }
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(this.userData.password)) {
-      this.errors.password = 'Le mot de passe ne respecte pas les critères de sécurité';
+      this.errors.password = 'Password does not meet security requirements';
       this.loading = false;
       return;
     }
 
     this.authService.register(this.userData).subscribe({
       next: () => {
-        this.success = 'Inscription réussie ! Redirection...';
+        this.success = 'Registration successful! Redirecting...';
         setTimeout(() => {
           this.router.navigate(['/']);
         }, 1500);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erreur lors de l\'inscription';
+        this.error = err.error?.message || 'Registration error';
         this.loading = false;
       }
     });

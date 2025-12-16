@@ -11,89 +11,89 @@ namespace EcoRide.Backend.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IUtilisateurRepository _utilisateurRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
 
-    public AuthService(IUtilisateurRepository utilisateurRepository, IConfiguration configuration)
+    public AuthService(IUserRepository userRepository, IConfiguration configuration)
     {
-        _utilisateurRepository = utilisateurRepository;
+        _userRepository = userRepository;
         _configuration = configuration;
     }
 
-    public async Task<(Utilisateur? user, string? token)> RegisterAsync(RegisterDTO registerDto)
+    public async Task<(User? user, string? token)> RegisterAsync(RegisterDTO registerDto)
     {
-        // Vérifier si l'email existe déjà
-        if (await _utilisateurRepository.EmailExistsAsync(registerDto.Email))
+        // Check if email already exists
+        if (await _userRepository.EmailExistsAsync(registerDto.Email))
         {
             return (null, null);
         }
 
-        // Vérifier si le pseudo existe déjà
-        if (await _utilisateurRepository.PseudoExistsAsync(registerDto.Pseudo))
+        // Check if pseudo already exists
+        if (await _userRepository.PseudoExistsAsync(registerDto.Pseudo))
         {
             return (null, null);
         }
 
-        // Créer l'utilisateur
-        var utilisateur = new Utilisateur
+        // Create user
+        var user = new User
         {
             Pseudo = registerDto.Pseudo,
             Email = registerDto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-            Nom = registerDto.Nom ?? string.Empty,
-            Prenom = registerDto.Prenom ?? string.Empty,
-            Credit = 20, // 20 crédits à la création
-            DateCreation = DateTime.UtcNow,
-            EstActif = true
+            LastName = registerDto.LastName ?? string.Empty,
+            FirstName = registerDto.FirstName ?? string.Empty,
+            Credit = 20, // 20 credits on creation
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true
         };
 
-        var createdUser = await _utilisateurRepository.CreateAsync(utilisateur);
+        var createdUser = await _userRepository.CreateAsync(user);
 
-        // Ajouter le rôle Passager par défaut (RoleId = 1)
-        await _utilisateurRepository.AddUserRoleAsync(createdUser.UtilisateurId, 1);
+        // Add Passenger role by default (RoleId = 1)
+        await _userRepository.AddUserRoleAsync(createdUser.UserId, 1);
 
-        // Récupérer les rôles pour le token
-        var roles = await _utilisateurRepository.GetUserRolesAsync(createdUser.UtilisateurId);
+        // Get roles for token
+        var roles = await _userRepository.GetUserRolesAsync(createdUser.UserId);
 
-        // Générer le token JWT
+        // Generate JWT token
         var token = GenerateJwtToken(createdUser, roles);
 
         return (createdUser, token);
     }
 
-    public async Task<(Utilisateur? user, string? token)> LoginAsync(LoginDTO loginDto)
+    public async Task<(User? user, string? token)> LoginAsync(LoginDTO loginDto)
     {
-        var utilisateur = await _utilisateurRepository.GetByEmailAsync(loginDto.Email);
+        var user = await _userRepository.GetByEmailAsync(loginDto.Email);
 
-        if (utilisateur == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, utilisateur.Password))
+        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
         {
             return (null, null);
         }
 
-        if (!utilisateur.EstActif)
+        if (!user.IsActive)
         {
             return (null, null);
         }
 
-        var roles = await _utilisateurRepository.GetUserRolesAsync(utilisateur.UtilisateurId);
-        var token = GenerateJwtToken(utilisateur, roles);
+        var roles = await _userRepository.GetUserRolesAsync(user.UserId);
+        var token = GenerateJwtToken(user, roles);
 
-        return (utilisateur, token);
+        return (user, token);
     }
 
-    public string GenerateJwtToken(Utilisateur utilisateur, List<string> roles)
+    public string GenerateJwtToken(User user, List<string> roles)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
         var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, utilisateur.UtilisateurId.ToString()),
-            new Claim(ClaimTypes.Email, utilisateur.Email),
-            new Claim(ClaimTypes.Name, utilisateur.Pseudo)
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Pseudo)
         };
 
-        // Ajouter les rôles comme claims
+        // Add roles as claims
         foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));

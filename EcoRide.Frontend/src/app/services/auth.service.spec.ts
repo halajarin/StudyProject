@@ -44,13 +44,13 @@ describe('AuthService', () => {
 
   it('should initialize with user from localStorage', () => {
     const mockUser = {
-      utilisateurId: 1,
-      pseudo: 'TestUser',
+      userId: 1,
+      username: 'TestUser',
       email: 'test@example.com',
-      roles: ['Passager'],
-      credit: 100,
-      noteMoyenne: 0,
-      nombreAvis: 0
+      roles: ['Passenger'],
+      credits: 100,
+      averageRating: 0,
+      reviewCount: 0
     };
 
     localStorage.setItem('currentUser', JSON.stringify(mockUser));
@@ -62,17 +62,17 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should authenticate user and store token', (done) => {
-      const credentials = { email: 'test@example.com', motDePasse: 'password123' };
+      const credentials = { email: 'test@example.com', password: 'password123' };
       const mockResponse = {
         token: 'test-jwt-token',
         user: {
-          utilisateurId: 1,
-          pseudo: 'TestUser',
+          userId: 1,
+          username: 'TestUser',
           email: 'test@example.com',
-          roles: ['Passager'],
-          credit: 100,
-          noteMoyenne: 0,
-          nombreAvis: 0
+          roles: ['Passenger'],
+          credits: 100,
+          averageRating: 0,
+          reviewCount: 0
         }
       };
 
@@ -92,7 +92,7 @@ describe('AuthService', () => {
     });
 
     it('should handle login error', (done) => {
-      const credentials = { email: 'test@example.com', motDePasse: 'wrong' };
+      const credentials = { email: 'test@example.com', password: 'wrong' };
 
       service.login(credentials).subscribe({
         next: () => fail('should have failed with 401 error'),
@@ -112,21 +112,21 @@ describe('AuthService', () => {
   describe('register', () => {
     it('should register user and store token', (done) => {
       const userData = {
-        pseudo: 'NewUser',
+        username: 'NewUser',
         email: 'new@example.com',
-        motDePasse: 'password123'
+        password: 'password123'
       };
 
       const mockResponse = {
         token: 'new-jwt-token',
         user: {
-          utilisateurId: 2,
-          pseudo: 'NewUser',
+          userId: 2,
+          username: 'NewUser',
           email: 'new@example.com',
-          roles: ['Passager'],
-          credit: 100,
-          noteMoyenne: 0,
-          nombreAvis: 0
+          roles: ['Passenger'],
+          credits: 100,
+          averageRating: 0,
+          reviewCount: 0
         }
       };
 
@@ -146,9 +146,9 @@ describe('AuthService', () => {
 
     it('should handle registration error', (done) => {
       const userData = {
-        pseudo: 'NewUser',
+        username: 'NewUser',
         email: 'existing@example.com',
-        motDePasse: 'password123'
+        password: 'password123'
       };
 
       service.register(userData).subscribe({
@@ -184,41 +184,41 @@ describe('AuthService', () => {
   describe('hasRole', () => {
     it('should return true when user has the role', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
-        roles: ['Passager', 'Chauffeur'],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['Passenger', 'Driver'],
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       localStorage.setItem('currentUser', JSON.stringify(mockUser));
       const newService = TestBed.inject(AuthService);
 
-      expect(newService.hasRole('Chauffeur')).toBe(true);
-      expect(newService.hasRole('Passager')).toBe(true);
+      expect(newService.hasRole('Driver')).toBe(true);
+      expect(newService.hasRole('Passenger')).toBe(true);
     });
 
     it('should return false when user does not have the role', () => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
-        roles: ['Passager'],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['Passenger'],
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       localStorage.setItem('currentUser', JSON.stringify(mockUser));
       const newService = TestBed.inject(AuthService);
 
-      expect(newService.hasRole('Administrateur')).toBe(false);
+      expect(newService.hasRole('Administrator')).toBe(false);
     });
 
     it('should return false when user is not logged in', () => {
-      expect(service.hasRole('Passager')).toBe(false);
+      expect(service.hasRole('Passenger')).toBe(false);
     });
   });
 
@@ -236,13 +236,13 @@ describe('AuthService', () => {
   describe('currentUser observable', () => {
     it('should emit current user', (done) => {
       const mockUser = {
-        utilisateurId: 1,
-        pseudo: 'TestUser',
+        userId: 1,
+        username: 'TestUser',
         email: 'test@example.com',
-        roles: ['Passager'],
-        credit: 100,
-        noteMoyenne: 0,
-        nombreAvis: 0
+        roles: ['Passenger'],
+        credits: 100,
+        averageRating: 0,
+        reviewCount: 0
       };
 
       service.currentUser.subscribe(user => {
@@ -253,7 +253,7 @@ describe('AuthService', () => {
       });
 
       // Trigger login
-      const credentials = { email: 'test@example.com', motDePasse: 'password123' };
+      const credentials = { email: 'test@example.com', password: 'password123' };
       service.login(credentials).subscribe();
 
       const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);

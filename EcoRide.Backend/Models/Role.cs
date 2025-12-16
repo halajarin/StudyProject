@@ -10,19 +10,19 @@ public class Role
     [Column("role_id")]
     public int RoleId { get; set; }
 
-    [Column("libelle")]
+    [Column("label")]
     [MaxLength(50)]
-    public string Libelle { get; set; } = string.Empty;
+    public string Label { get; set; } = string.Empty;
 
-    // Relations
-    public virtual ICollection<UtilisateurRole> UtilisateurRoles { get; set; } = new List<UtilisateurRole>();
+    // Relationships
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }
 
-// Constantes pour les rôles
+// Role constants
 public static class RoleConstants
 {
-    public const string Passager = "Passager";
-    public const string Chauffeur = "Chauffeur";
-    public const string Employe = "Employe";
-    public const string Administrateur = "Administrateur";
+    public const string Passenger = "Passenger";
+    public const string Driver = "Driver";
+    public const string Employee = "Employee";
+    public const string Administrator = "Administrator";
 }

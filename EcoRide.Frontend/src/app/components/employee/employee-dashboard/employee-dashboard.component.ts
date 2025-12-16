@@ -9,43 +9,43 @@ import { environment } from '../../../../environments/environment';
   imports: [CommonModule],
   template: `
     <div class="container">
-      <h1>Espace Employé</h1>
+      <h1>Employee Dashboard</h1>
 
       <div class="card">
-        <h2>Avis en attente de validation</h2>
-        @if (pendingAvis.length > 0) {
-          @for (avis of pendingAvis; track avis.avisId) {
-            <div class="avis-card">
-              <div class="avis-header">
-                <h4>{{ avis.pseudoAuteur }} → {{ avis.pseudoCible }}</h4>
-                <span class="rating">Note: {{ avis.note }}/5</span>
+        <h2>Reviews pending validation</h2>
+        @if (pendingReviews.length > 0) {
+          @for (review of pendingReviews; track review.reviewId) {
+            <div class="review-card">
+              <div class="review-header">
+                <h4>{{ review.authorUsername }} → {{ review.targetUsername }}</h4>
+                <span class="rating">Rating: {{ review.rating }}/5</span>
               </div>
-              <p>{{ avis.commentaire }}</p>
-              <div class="avis-actions">
-                <button (click)="validateAvis(avis.avisId)" class="btn btn-primary">
-                  Valider
+              <p>{{ review.comment }}</p>
+              <div class="review-actions">
+                <button (click)="validateReview(review.reviewId)" class="btn btn-primary">
+                  Validate
                 </button>
-                <button (click)="rejectAvis(avis.avisId)" class="btn btn-danger">
-                  Refuser
+                <button (click)="rejectReview(review.reviewId)" class="btn btn-danger">
+                  Reject
                 </button>
               </div>
             </div>
           }
         } @else {
-          <p>Aucun avis en attente</p>
+          <p>No pending reviews</p>
         }
       </div>
     </div>
   `,
   styles: [`
-    .avis-card {
+    .review-card {
       background-color: var(--very-light-green);
       padding: 1.5rem;
       margin: 1rem 0;
       border-radius: 10px;
     }
 
-    .avis-header {
+    .review-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -57,7 +57,7 @@ import { environment } from '../../../../environments/environment';
       font-weight: bold;
     }
 
-    .avis-actions {
+    .review-actions {
       margin-top: 1rem;
       display: flex;
       gap: 1rem;
@@ -65,36 +65,36 @@ import { environment } from '../../../../environments/environment';
   `]
 })
 export class EmployeeDashboardComponent implements OnInit {
-  pendingAvis: any[] = [];
+  pendingReviews: any[] = [];
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.loadPendingAvis();
+    this.loadPendingReviews();
   }
 
-  loadPendingAvis() {
-    this.http.get<any[]>(`${environment.apiUrl}/avis/pending`).subscribe({
-      next: (data) => this.pendingAvis = data,
+  loadPendingReviews() {
+    this.http.get<any[]>(`${environment.apiUrl}/review/pending`).subscribe({
+      next: (data) => this.pendingReviews = data,
       error: (err) => console.error(err)
     });
   }
 
-  validateAvis(id: number) {
-    this.http.put(`${environment.apiUrl}/avis/${id}/validate`, {}).subscribe({
+  validateReview(id: number) {
+    this.http.put(`${environment.apiUrl}/review/${id}/validate`, {}).subscribe({
       next: () => {
-        alert('Avis validé');
-        this.loadPendingAvis();
+        alert('Review validated');
+        this.loadPendingReviews();
       },
       error: (err) => console.error(err)
     });
   }
 
-  rejectAvis(id: number) {
-    this.http.put(`${environment.apiUrl}/avis/${id}/reject`, {}).subscribe({
+  rejectReview(id: number) {
+    this.http.put(`${environment.apiUrl}/review/${id}/reject`, {}).subscribe({
       next: () => {
-        alert('Avis refusé');
-        this.loadPendingAvis();
+        alert('Review rejected');
+        this.loadPendingReviews();
       },
       error: (err) => console.error(err)
     });

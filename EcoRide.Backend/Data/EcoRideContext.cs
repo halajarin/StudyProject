@@ -9,72 +9,72 @@ public class EcoRideContext : DbContext
     {
     }
 
-    public DbSet<Utilisateur> Utilisateurs { get; set; }
+    public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
-    public DbSet<UtilisateurRole> UtilisateurRoles { get; set; }
-    public DbSet<Voiture> Voitures { get; set; }
-    public DbSet<Marque> Marques { get; set; }
-    public DbSet<Covoiturage> Covoiturages { get; set; }
-    public DbSet<CovoiturageParticipation> CovoiturageParticipations { get; set; }
-    public DbSet<Avis> Avis { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<Vehicle> Vehicles { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<Carpool> Carpools { get; set; }
+    public DbSet<CarpoolParticipation> CarpoolParticipations { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configuration des relations
-        modelBuilder.Entity<Utilisateur>()
-            .HasMany(u => u.AvisDonnés)
-            .WithOne(a => a.UtilisateurAuteur)
-            .HasForeignKey(a => a.UtilisateurAuteurId)
+        // Relationship configuration
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.ReviewsGiven)
+            .WithOne(a => a.Author)
+            .HasForeignKey(a => a.AuthorUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Utilisateur>()
-            .HasMany(u => u.AvisReçus)
-            .WithOne(a => a.UtilisateurCible)
-            .HasForeignKey(a => a.UtilisateurCibleId)
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.ReviewsReceived)
+            .WithOne(a => a.Target)
+            .HasForeignKey(a => a.TargetUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Covoiturage>()
-            .HasOne(c => c.Chauffeur)
-            .WithMany(u => u.CovoituragesCreés)
-            .HasForeignKey(c => c.UtilisateurId)
+        modelBuilder.Entity<Carpool>()
+            .HasOne(c => c.Driver)
+            .WithMany(u => u.CarpoolsCreated)
+            .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Index pour améliorer les performances
-        modelBuilder.Entity<Utilisateur>()
+        // Indexes to improve performance
+        modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
             .IsUnique();
 
-        modelBuilder.Entity<Utilisateur>()
+        modelBuilder.Entity<User>()
             .HasIndex(u => u.Pseudo)
             .IsUnique();
 
-        modelBuilder.Entity<Covoiturage>()
-            .HasIndex(c => new { c.VilleDepart, c.VilleArrivee, c.DateDepart });
+        modelBuilder.Entity<Carpool>()
+            .HasIndex(c => new { c.DepartureCity, c.ArrivalCity, c.DepartureDate });
 
-        modelBuilder.Entity<Voiture>()
-            .HasIndex(v => v.Immatriculation)
+        modelBuilder.Entity<Vehicle>()
+            .HasIndex(v => v.RegistrationNumber)
             .IsUnique();
 
-        // Seed des rôles par défaut
+        // Seed default roles
         modelBuilder.Entity<Role>().HasData(
-            new Role { RoleId = 1, Libelle = RoleConstants.Passager },
-            new Role { RoleId = 2, Libelle = RoleConstants.Chauffeur },
-            new Role { RoleId = 3, Libelle = RoleConstants.Employe },
-            new Role { RoleId = 4, Libelle = RoleConstants.Administrateur }
+            new Role { RoleId = 1, Label = RoleConstants.Passenger },
+            new Role { RoleId = 2, Label = RoleConstants.Driver },
+            new Role { RoleId = 3, Label = RoleConstants.Employee },
+            new Role { RoleId = 4, Label = RoleConstants.Administrator }
         );
 
-        // Seed des marques populaires
-        modelBuilder.Entity<Marque>().HasData(
-            new Marque { MarqueId = 1, Libelle = "Renault" },
-            new Marque { MarqueId = 2, Libelle = "Peugeot" },
-            new Marque { MarqueId = 3, Libelle = "Citroën" },
-            new Marque { MarqueId = 4, Libelle = "Tesla" },
-            new Marque { MarqueId = 5, Libelle = "Volkswagen" },
-            new Marque { MarqueId = 6, Libelle = "Toyota" },
-            new Marque { MarqueId = 7, Libelle = "BMW" },
-            new Marque { MarqueId = 8, Libelle = "Mercedes" }
+        // Seed popular brands
+        modelBuilder.Entity<Brand>().HasData(
+            new Brand { BrandId = 1, Label = "Renault" },
+            new Brand { BrandId = 2, Label = "Peugeot" },
+            new Brand { BrandId = 3, Label = "Citroën" },
+            new Brand { BrandId = 4, Label = "Tesla" },
+            new Brand { BrandId = 5, Label = "Volkswagen" },
+            new Brand { BrandId = 6, Label = "Toyota" },
+            new Brand { BrandId = 7, Label = "BMW" },
+            new Brand { BrandId = 8, Label = "Mercedes" }
         );
     }
 }

@@ -142,11 +142,11 @@ public class BaseControllerTests
     public void UserHasRole_UserHasRole_ReturnsTrue()
     {
         // Arrange
-        var roles = new List<string> { "Chauffeur", "Passager" };
+        var roles = new List<string> { "Driver", "Passenger" };
         var controller = CreateControllerWithUser(1, roles: roles);
 
         // Act
-        bool hasRole = controller.TestUserHasRole("Chauffeur");
+        bool hasRole = controller.TestUserHasRole("Driver");
 
         // Assert
         Assert.True(hasRole);
@@ -156,11 +156,11 @@ public class BaseControllerTests
     public void UserHasRole_UserDoesNotHaveRole_ReturnsFalse()
     {
         // Arrange
-        var roles = new List<string> { "Passager" };
+        var roles = new List<string> { "Passenger" };
         var controller = CreateControllerWithUser(1, roles: roles);
 
         // Act
-        bool hasRole = controller.TestUserHasRole("Administrateur");
+        bool hasRole = controller.TestUserHasRole("Administrator");
 
         // Assert
         Assert.False(hasRole);
@@ -173,7 +173,7 @@ public class BaseControllerTests
         var controller = CreateControllerWithUser(1);
 
         // Act
-        bool hasRole = controller.TestUserHasRole("Chauffeur");
+        bool hasRole = controller.TestUserHasRole("Driver");
 
         // Assert
         Assert.False(hasRole);

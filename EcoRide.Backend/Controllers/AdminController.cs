@@ -7,20 +7,20 @@ namespace EcoRide.Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Administrateur")]
+[Authorize(Roles = "Administrator")]
 public class AdminController : ControllerBase
 {
-    private readonly IUtilisateurRepository _utilisateurRepository;
-    private readonly ICovoiturageRepository _covoiturageRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly ICarpoolRepository _carpoolRepository;
     private readonly ILogger<AdminController> _logger;
 
     public AdminController(
-        IUtilisateurRepository utilisateurRepository,
-        ICovoiturageRepository covoiturageRepository,
+        IUserRepository userRepository,
+        ICarpoolRepository carpoolRepository,
         ILogger<AdminController> logger)
     {
-        _utilisateurRepository = utilisateurRepository;
-        _covoiturageRepository = covoiturageRepository;
+        _userRepository = userRepository;
+        _carpoolRepository = carpoolRepository;
         _logger = logger;
     }
 
@@ -32,66 +32,66 @@ public class AdminController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        // Vérifier si l'email existe déjà
-        if (await _utilisateurRepository.EmailExistsAsync(employeeDto.Email))
+        // Check if email already exists
+        if (await _userRepository.EmailExistsAsync(employeeDto.Email))
         {
-            return BadRequest(new { message = "L'email existe déjà" });
+            return BadRequest(new { message = "Email already exists" });
         }
 
-        var employee = new Utilisateur
+        var employee = new User
         {
             Pseudo = employeeDto.Pseudo,
             Email = employeeDto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(employeeDto.Password),
-            Nom = employeeDto.Nom ?? string.Empty,
-            Prenom = employeeDto.Prenom ?? string.Empty,
+            LastName = employeeDto.LastName ?? string.Empty,
+            FirstName = employeeDto.FirstName ?? string.Empty,
             Credit = 0,
-            DateCreation = DateTime.UtcNow,
-            EstActif = true
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true
         };
 
-        var created = await _utilisateurRepository.CreateAsync(employee);
+        var created = await _userRepository.CreateAsync(employee);
 
-        // Ajouter le rôle Employé (RoleId = 3)
-        await _utilisateurRepository.AddUserRoleAsync(created.UtilisateurId, 3);
+        // Add Employee role (RoleId = 3)
+        await _userRepository.AddUserRoleAsync(created.UserId, 3);
 
-        _logger.LogInformation($"Nouvel employé créé: {created.Email}");
+        _logger.LogInformation($"New employee created: {created.Email}");
 
-        return Ok(new { message = "Employé créé avec succès", utilisateurId = created.UtilisateurId });
+        return Ok(new { message = "Employee created successfully", userId = created.UserId });
     }
 
     [HttpPut("suspend-user/{userId}")]
     public async Task<IActionResult> SuspendUser(int userId)
     {
-        var utilisateur = await _utilisateurRepository.GetByIdAsync(userId);
-        if (utilisateur == null)
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
         {
-            return NotFound(new { message = "Utilisateur non trouvé" });
+            return NotFound(new { message = "User not found" });
         }
 
-        utilisateur.EstActif = false;
-        await _utilisateurRepository.UpdateAsync(utilisateur);
+        user.IsActive = false;
+        await _userRepository.UpdateAsync(user);
 
-        _logger.LogInformation($"Utilisateur {userId} suspendu");
+        _logger.LogInformation($"User {userId} suspended");
 
-        return Ok(new { message = "Utilisateur suspendu" });
+        return Ok(new { message = "User suspended" });
     }
 
     [HttpPut("activate-user/{userId}")]
     public async Task<IActionResult> ActivateUser(int userId)
     {
-        var utilisateur = await _utilisateurRepository.GetByIdAsync(userId);
-        if (utilisateur == null)
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
         {
-            return NotFound(new { message = "Utilisateur non trouvé" });
+            return NotFound(new { message = "User not found" });
         }
 
-        utilisateur.EstActif = true;
-        await _utilisateurRepository.UpdateAsync(utilisateur);
+        user.IsActive = true;
+        await _userRepository.UpdateAsync(user);
 
-        _logger.LogInformation($"Utilisateur {userId} activé");
+        _logger.LogInformation($"User {userId} activated");
 
-        return Ok(new { message = "Utilisateur activé" });
+        return Ok(new { message = "User activated" });
     }
 
     [HttpGet("statistics")]
@@ -100,35 +100,35 @@ public class AdminController : ControllerBase
         var start = startDate ?? DateTime.UtcNow.AddMonths(-1);
         var end = endDate ?? DateTime.UtcNow;
 
-        var covoituragesCount = await _covoiturageRepository.GetCovoituragesCountByDateAsync(start, end);
-        var platformCredits = await _covoiturageRepository.GetPlatformCreditsEarnedByDateAsync(start, end);
+        var carpoolsCount = await _carpoolRepository.GetCarpoolsCountByDateAsync(start, end);
+        var platformCredits = await _carpoolRepository.GetPlatformCreditsEarnedByDateAsync(start, end);
 
         var totalCredits = platformCredits.Values.Sum();
 
         return Ok(new
         {
-            covoituragesParJour = covoituragesCount,
-            creditsParJour = platformCredits,
-            totalCreditsGagnes = totalCredits
+            carpoolsPerDay = carpoolsCount,
+            creditsPerDay = platformCredits,
+            totalCreditsEarned = totalCredits
         });
     }
 
     [HttpGet("users")]
     public async Task<IActionResult> GetAllUsers()
     {
-        var utilisateurs = await _utilisateurRepository.GetAllAsync();
+        var users = await _userRepository.GetAllAsync();
 
-        var result = utilisateurs.Select(u => new
+        var result = users.Select(u => new
         {
-            u.UtilisateurId,
+            u.UserId,
             u.Pseudo,
             u.Email,
-            u.Nom,
-            u.Prenom,
-            u.EstActif,
+            u.LastName,
+            u.FirstName,
+            u.IsActive,
             u.Credit,
-            u.DateCreation,
-            Roles = u.UtilisateurRoles.Select(ur => ur.Role.Libelle).ToList()
+            u.CreatedAt,
+            Roles = u.UserRoles.Select(ur => ur.Role.Label).ToList()
         }).ToList();
 
         return Ok(result);
@@ -140,6 +140,6 @@ public class CreateEmployeeDTO
     public string Pseudo { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public string? Nom { get; set; }
-    public string? Prenom { get; set; }
+    public string? LastName { get; set; }
+    public string? FirstName { get; set; }
 }

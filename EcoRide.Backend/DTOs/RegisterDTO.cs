@@ -4,20 +4,20 @@ namespace EcoRide.Backend.DTOs;
 
 public class RegisterDTO
 {
-    [Required(ErrorMessage = "Le pseudo est requis")]
-    [MinLength(3, ErrorMessage = "Le pseudo doit contenir au moins 3 caractères")]
+    [Required(ErrorMessage = "Pseudo is required")]
+    [MinLength(3, ErrorMessage = "Pseudo must contain at least 3 characters")]
     public string Pseudo { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "L'email est requis")]
-    [EmailAddress(ErrorMessage = "Format d'email invalide")]
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email format")]
     public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Le mot de passe est requis")]
-    [MinLength(8, ErrorMessage = "Le mot de passe doit contenir au moins 8 caractères")]
+    [Required(ErrorMessage = "Password is required")]
+    [MinLength(8, ErrorMessage = "Password must contain at least 8 characters")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-        ErrorMessage = "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial")]
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one digit and one special character")]
     public string Password { get; set; } = string.Empty;
 
-    public string? Nom { get; set; }
-    public string? Prenom { get; set; }
+    public string? LastName { get; set; }
+    public string? FirstName { get; set; }
 }

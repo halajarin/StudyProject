@@ -43,28 +43,28 @@ public class EmailService : IEmailService
             mailMessage.To.Add(toEmail);
 
             await smtpClient.SendMailAsync(mailMessage);
-            _logger.LogInformation($"Email envoyé à {toEmail} avec le sujet: {subject}");
+            _logger.LogInformation($"Email sent to {toEmail} with subject: {subject}");
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Erreur lors de l'envoi de l'email: {ex.Message}");
-            // En production, vous pourriez vouloir relancer l'exception ou la gérer différemment
+            _logger.LogError($"Error sending email: {ex.Message}");
+            // In production, you might want to re-throw the exception or handle it differently
         }
     }
 
-    public async Task SendCovoiturageAnnulationAsync(string toEmail, string pseudo, string trajetInfo)
+    public async Task SendCarpoolCancellationAsync(string toEmail, string pseudo, string tripInfo)
     {
-        var subject = "Annulation de covoiturage - EcoRide";
+        var subject = "Carpool Cancellation - EcoRide";
         var body = $@"
             <html>
             <body>
-                <h2>Bonjour {pseudo},</h2>
-                <p>Nous vous informons que le covoiturage suivant a été annulé :</p>
-                <p><strong>{trajetInfo}</strong></p>
-                <p>Vos crédits ont été remboursés.</p>
-                <p>Nous nous excusons pour ce désagrément.</p>
+                <h2>Hello {pseudo},</h2>
+                <p>We inform you that the following carpool has been cancelled:</p>
+                <p><strong>{tripInfo}</strong></p>
+                <p>Your credits have been refunded.</p>
+                <p>We apologize for the inconvenience.</p>
                 <br>
-                <p>L'équipe EcoRide</p>
+                <p>The EcoRide Team</p>
             </body>
             </html>
         ";
@@ -72,22 +72,22 @@ public class EmailService : IEmailService
         await SendEmailAsync(toEmail, subject, body);
     }
 
-    public async Task SendCovoiturageTermineAsync(string toEmail, string pseudo, int covoiturageId)
+    public async Task SendCarpoolCompletedAsync(string toEmail, string pseudo, int carpoolId)
     {
-        var subject = "Covoiturage terminé - Veuillez donner votre avis - EcoRide";
+        var subject = "Carpool Completed - Please Leave a Review - EcoRide";
         var body = $@"
             <html>
             <body>
-                <h2>Bonjour {pseudo},</h2>
-                <p>Le covoiturage #{covoiturageId} auquel vous avez participé est terminé.</p>
-                <p>Veuillez vous rendre sur votre espace personnel pour :</p>
+                <h2>Hello {pseudo},</h2>
+                <p>Carpool #{carpoolId} that you participated in has been completed.</p>
+                <p>Please visit your personal space to:</p>
                 <ul>
-                    <li>Confirmer que tout s'est bien passé</li>
-                    <li>Laisser un avis sur le chauffeur</li>
+                    <li>Confirm that everything went well</li>
+                    <li>Leave a review for the driver</li>
                 </ul>
-                <p>Votre retour est important pour maintenir la qualité de notre service.</p>
+                <p>Your feedback is important to maintain the quality of our service.</p>
                 <br>
-                <p>L'équipe EcoRide</p>
+                <p>The EcoRide Team</p>
             </body>
             </html>
         ";

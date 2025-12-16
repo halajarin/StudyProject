@@ -2,27 +2,27 @@ namespace EcoRide.Backend.DTOs;
 
 public class UserProfileDTO
 {
-    public int UtilisateurId { get; set; }
+    public int UserId { get; set; }
     public string Pseudo { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-    public string? Nom { get; set; }
-    public string? Prenom { get; set; }
-    public string? Telephone { get; set; }
-    public string? Adresse { get; set; }
-    public DateTime? DateNaissance { get; set; }
+    public string? LastName { get; set; }
+    public string? FirstName { get; set; }
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+    public DateTime? BirthDate { get; set; }
     public byte[]? Photo { get; set; }
     public int Credit { get; set; }
     public List<string> Roles { get; set; } = new List<string>();
-    public double NoteMoyenne { get; set; }
-    public int NombreAvis { get; set; }
+    public double AverageRating { get; set; }
+    public int ReviewCount { get; set; }
 }
 
 public class UpdateProfileDTO
 {
-    public string? Nom { get; set; }
-    public string? Prenom { get; set; }
-    public string? Telephone { get; set; }
-    public string? Adresse { get; set; }
-    public DateTime? DateNaissance { get; set; }
+    public string? LastName { get; set; }
+    public string? FirstName { get; set; }
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+    public DateTime? BirthDate { get; set; }
     public byte[]? Photo { get; set; }
 }

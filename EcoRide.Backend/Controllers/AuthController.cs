@@ -29,17 +29,17 @@ public class AuthController : ControllerBase
 
         if (user == null || token == null)
         {
-            return BadRequest(new { message = "L'email ou le pseudo existe déjà" });
+            return BadRequest(new { message = "Email or username already exists" });
         }
 
-        _logger.LogInformation($"Nouvel utilisateur créé: {user.Email}");
+        _logger.LogInformation($"New user created: {user.Email}");
 
         return Ok(new
         {
-            message = "Inscription réussie",
+            message = "Registration successful",
             user = new
             {
-                user.UtilisateurId,
+                user.UserId,
                 user.Pseudo,
                 user.Email,
                 user.Credit
@@ -60,17 +60,17 @@ public class AuthController : ControllerBase
 
         if (user == null || token == null)
         {
-            return Unauthorized(new { message = "Email ou mot de passe incorrect" });
+            return Unauthorized(new { message = "Invalid email or password" });
         }
 
-        _logger.LogInformation($"Connexion réussie pour: {user.Email}");
+        _logger.LogInformation($"Successful login for: {user.Email}");
 
         return Ok(new
         {
-            message = "Connexion réussie",
+            message = "Login successful",
             user = new
             {
-                user.UtilisateurId,
+                user.UserId,
                 user.Pseudo,
                 user.Email,
                 user.Credit

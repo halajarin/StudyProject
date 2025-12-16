@@ -16,14 +16,14 @@ import { AuthService } from './services/auth.service';
           </a>
         </div>
         <ul class="nav-menu">
-          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Accueil</a></li>
-          <li><a routerLink="/covoiturages" routerLinkActive="active">Covoiturages</a></li>
+          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+          <li><a routerLink="/carpools" routerLinkActive="active">Carpools</a></li>
 
           @if (authService.isLoggedIn) {
-            <li><a routerLink="/profile" routerLinkActive="active">Mon espace</a></li>
+            <li><a routerLink="/profile" routerLinkActive="active">My Profile</a></li>
 
             @if (authService.hasRole('Employe') || authService.hasRole('Administrateur')) {
-              <li><a routerLink="/employee" routerLinkActive="active">Espace Employé</a></li>
+              <li><a routerLink="/employee" routerLinkActive="active">Employee Dashboard</a></li>
             }
 
             @if (authService.hasRole('Administrateur')) {
@@ -32,13 +32,13 @@ import { AuthService } from './services/auth.service';
 
             <li>
               <span class="credit-badge">
-                {{ authService.currentUserValue?.credit }} crédits
+                {{ authService.currentUserValue?.credits }} credits
               </span>
             </li>
-            <li><button class="btn-logout" (click)="authService.logout()">Déconnexion</button></li>
+            <li><button class="btn-logout" (click)="authService.logout()">Logout</button></li>
           } @else {
-            <li><a routerLink="/login" routerLinkActive="active">Connexion</a></li>
-            <li><a routerLink="/register" class="btn-register">S'inscrire</a></li>
+            <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+            <li><a routerLink="/register" class="btn-register">Sign up</a></li>
           }
         </ul>
       </div>
@@ -50,8 +50,8 @@ import { AuthService } from './services/auth.service';
 
     <footer class="footer">
       <div class="container">
-        <p>&copy; 2025 EcoRide - Covoiturage Écologique</p>
-        <p>Contact: <a href="mailto:contact@ecoride.fr">contact@ecoride.fr</a> | <a routerLink="/mentions-legales">Mentions légales</a></p>
+        <p>&copy; 2025 EcoRide - Eco-friendly Carpooling</p>
+        <p>Contact: <a href="mailto:contact@ecoride.fr">contact@ecoride.fr</a> | <a routerLink="/legal-notice">Legal notice</a></p>
       </div>
     </footer>
   `,

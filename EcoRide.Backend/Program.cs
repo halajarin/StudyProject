@@ -11,11 +11,11 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuration PostgreSQL
+// PostgreSQL Configuration
 builder.Services.AddDbContext<EcoRideContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
 
-// Configuration MongoDB
+// MongoDB Configuration
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
     var connectionString = builder.Configuration.GetConnectionString("MongoDB");
@@ -29,7 +29,7 @@ builder.Services.AddScoped(sp =>
     return client.GetDatabase(databaseName);
 });
 
-// Configuration JWT
+// JWT Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 
@@ -54,17 +54,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Enregistrement des services métier
+// Business service registration
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICovoiturageService, CovoiturageService>();
+builder.Services.AddScoped<ICarpoolService, CarpoolService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPreferenceService, PreferenceService>();
 
-// Enregistrement des repositories
-builder.Services.AddScoped<IUtilisateurRepository, UtilisateurRepository>();
-builder.Services.AddScoped<ICovoiturageRepository, CovoiturageRepository>();
-builder.Services.AddScoped<IVoitureRepository, VoitureRepository>();
-builder.Services.AddScoped<IAvisRepository, AvisRepository>();
+// Repository registration
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICarpoolRepository, CarpoolRepository>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -95,7 +95,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Configuration CORS
+// CORS Configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
@@ -109,7 +109,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configuration du pipeline HTTP
+// HTTP pipeline configuration
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -118,7 +118,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Middleware de gestion d'erreur globale
+// Global error handling middleware
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseCors("AllowAngular");

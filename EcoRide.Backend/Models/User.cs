@@ -41,9 +41,9 @@ public class User
     [Column("photo")]
     public byte[]? Photo { get; set; }
 
-    [Column("username")]
+    [Column("pseudo")]
     [MaxLength(80)]
-    public string Username { get; set; } = string.Empty;
+    public string Pseudo { get; set; } = string.Empty;
 
     [Column("credit")]
     public int Credit { get; set; } = 20; // 20 credits on creation

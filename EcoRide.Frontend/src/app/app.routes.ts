@@ -15,16 +15,16 @@ export const routes: Routes = [
     loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent)
   },
   {
-    path: 'covoiturages',
-    loadComponent: () => import('./components/covoiturage/covoiturage-list/covoiturage-list.component').then(m => m.CovoiturageListComponent)
+    path: 'carpools',
+    loadComponent: () => import('./components/carpool/carpool-list/carpool-list.component').then(m => m.CarpoolListComponent)
   },
   {
-    path: 'covoiturage/:id',
-    loadComponent: () => import('./components/covoiturage/covoiturage-detail/covoiturage-detail.component').then(m => m.CovoiturageDetailComponent)
+    path: 'carpool/:id',
+    loadComponent: () => import('./components/carpool/carpool-detail/carpool-detail.component').then(m => m.CarpoolDetailComponent)
   },
   {
-    path: 'create-covoiturage',
-    loadComponent: () => import('./components/covoiturage/create-covoiturage/create-covoiturage.component').then(m => m.CreateCovoiturageComponent),
+    path: 'create-carpool',
+    loadComponent: () => import('./components/carpool/create-carpool/create-carpool.component').then(m => m.CreateCarpoolComponent),
     canActivate: [roleGuard(['Chauffeur'])]
   },
   {
