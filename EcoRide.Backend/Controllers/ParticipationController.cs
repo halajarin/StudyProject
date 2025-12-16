@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using EcoRide.Backend.Repositories;
+using EcoRide.Backend.Services;
 
 namespace EcoRide.Backend.Controllers;
 
@@ -8,17 +8,14 @@ namespace EcoRide.Backend.Controllers;
 [Authorize]
 public class ParticipationController : BaseController
 {
-    private readonly ICarpoolRepository _carpoolRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly ICarpoolService _carpoolService;
     private readonly ILogger<ParticipationController> _logger;
 
     public ParticipationController(
-        ICarpoolRepository carpoolRepository,
-        IUserRepository userRepository,
+        ICarpoolService carpoolService,
         ILogger<ParticipationController> logger)
     {
-        _carpoolRepository = carpoolRepository;
-        _userRepository = userRepository;
+        _carpoolService = carpoolService;
         _logger = logger;
     }
 
@@ -26,42 +23,14 @@ public class ParticipationController : BaseController
     public async Task<IActionResult> ValidateTrip(int carpoolId, [FromBody] ValidateTripDTO validateDto)
     {
         var userId = GetCurrentUserId();
-        var participation = await _carpoolRepository.GetParticipationAsync(carpoolId, userId);
+        var (success, message) = await _carpoolService.ValidateTripAsync(carpoolId, userId, validateDto.TripOk, validateDto.Comment);
 
-        if (participation == null)
+        if (!success)
         {
-            return NotFound(new { message = "Participation not found" });
+            return NotFound(new { message });
         }
 
-        if (validateDto.TripOk)
-        {
-            participation.TripValidated = true;
-            participation.Status = "Validated";
-
-            // Credit the driver
-            var carpool = await _carpoolRepository.GetByIdAsync(carpoolId);
-            if (carpool != null)
-            {
-                var driver = await _userRepository.GetByIdAsync(carpool.UserId);
-                if (driver != null)
-                {
-                    // Driver receives the price - 2 credits (platform commission)
-                    var driverCredit = (int)carpool.PricePerPerson - 2;
-                    driver.Credits += driverCredit;
-                    await _userRepository.UpdateAsync(driver);
-                }
-            }
-        }
-        else
-        {
-            participation.TripValidated = false;
-            participation.ProblemComment = validateDto.Comment;
-        }
-
-        await _carpoolRepository.UpdateParticipationAsync(participation);
-        _logger.LogInformation($"Trip {(validateDto.TripOk ? "validated" : "problem reported")} for participation {participation.ParticipationId}");
-
-        return Ok(new { message = validateDto.TripOk ? "Trip validated" : "Problem reported" });
+        return Ok(new { message });
     }
 
     [Authorize(Roles = "Employee,Administrator")]

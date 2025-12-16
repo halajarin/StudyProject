@@ -180,4 +180,43 @@ public class CarpoolService : ICarpoolService
 
         return (true, "Carpool completed. Participants have been notified.");
     }
+
+    public async Task<(bool Success, string Message)> ValidateTripAsync(int carpoolId, int userId, bool tripOk, string? problemComment)
+    {
+        var participation = await _carpoolRepository.GetParticipationAsync(carpoolId, userId);
+        if (participation == null)
+            return (false, "Participation not found");
+
+        if (tripOk)
+        {
+            participation.TripValidated = true;
+            participation.Status = "Validated";
+
+            // Credit the driver
+            var carpool = await _carpoolRepository.GetByIdAsync(carpoolId);
+            if (carpool != null)
+            {
+                var driver = await _userRepository.GetByIdAsync(carpool.UserId);
+                if (driver != null)
+                {
+                    // Driver receives the price - 2 credits (platform commission)
+                    var driverCredit = (int)carpool.PricePerPerson - 2;
+                    driver.Credits += driverCredit;
+                    await _userRepository.UpdateAsync(driver);
+                }
+            }
+        }
+        else
+        {
+            participation.TripValidated = false;
+            participation.ProblemComment = problemComment;
+        }
+
+        await _carpoolRepository.UpdateParticipationAsync(participation);
+
+        _logger.LogInformation("Trip {Status} for participation {ParticipationId}",
+            tripOk ? "validated" : "problem reported", participation.ParticipationId);
+
+        return (true, tripOk ? "Trip validated" : "Problem reported");
+    }
 }

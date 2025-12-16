@@ -9,4 +9,5 @@ public interface ICarpoolService
     Task<(bool Success, string Message)> CancelCarpoolAsync(int carpoolId, int userId);
     Task<(bool Success, string Message)> StartCarpoolAsync(int carpoolId, int userId);
     Task<(bool Success, string Message)> CompleteCarpoolAsync(int carpoolId, int userId);
+    Task<(bool Success, string Message)> ValidateTripAsync(int carpoolId, int userId, bool tripOk, string? problemComment);
 }
