@@ -52,13 +52,13 @@ public class EmailService : IEmailService
         }
     }
 
-    public async Task SendCarpoolCancellationAsync(string toEmail, string pseudo, string tripInfo)
+    public async Task SendCarpoolCancellationAsync(string toEmail, string username, string tripInfo)
     {
         var subject = "Carpool Cancellation - EcoRide";
         var body = $@"
             <html>
             <body>
-                <h2>Hello {pseudo},</h2>
+                <h2>Hello {username},</h2>
                 <p>We inform you that the following carpool has been cancelled:</p>
                 <p><strong>{tripInfo}</strong></p>
                 <p>Your credits have been refunded.</p>
@@ -72,13 +72,13 @@ public class EmailService : IEmailService
         await SendEmailAsync(toEmail, subject, body);
     }
 
-    public async Task SendCarpoolCompletedAsync(string toEmail, string pseudo, int carpoolId)
+    public async Task SendCarpoolCompletedAsync(string toEmail, string username, int carpoolId)
     {
         var subject = "Carpool Completed - Please Leave a Review - EcoRide";
         var body = $@"
             <html>
             <body>
-                <h2>Hello {pseudo},</h2>
+                <h2>Hello {username},</h2>
                 <p>Carpool #{carpoolId} that you participated in has been completed.</p>
                 <p>Please visit your personal space to:</p>
                 <ul>

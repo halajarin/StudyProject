@@ -27,21 +27,25 @@ public class ReviewController : BaseController
         _logger = logger;
     }
 
+    private ReviewDTO MapToReviewDTO(Review review)
+    {
+        return new ReviewDTO
+        {
+            ReviewId = review.ReviewId,
+            Comment = review.Comment,
+            Note = review.Note,
+            Status = review.Status,
+            CreatedAt = review.CreatedAt,
+            AuthorUsername = review.Author.Username,
+            TargetUsername = review.Target.Username
+        };
+    }
+
     [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetByUser(int userId)
     {
         var reviews = await _reviewRepository.GetByTargetUserAsync(userId, "Validated");
-
-        var result = reviews.Select(r => new ReviewDTO
-        {
-            ReviewId = r.ReviewId,
-            Comment = r.Comment,
-            Note = r.Note,
-            Status = r.Status,
-            CreatedAt = r.CreatedAt,
-            AuthorUsername = r.Author.Username,
-            TargetUsername = r.Target.Username
-        }).ToList();
+        var result = reviews.Select(MapToReviewDTO).ToList();
 
         return Ok(result);
     }
@@ -97,17 +101,7 @@ public class ReviewController : BaseController
     public async Task<IActionResult> GetPending()
     {
         var reviews = await _reviewRepository.GetPendingReviewsAsync();
-
-        var result = reviews.Select(r => new ReviewDTO
-        {
-            ReviewId = r.ReviewId,
-            Comment = r.Comment,
-            Note = r.Note,
-            Status = r.Status,
-            CreatedAt = r.CreatedAt,
-            AuthorUsername = r.Author.Username,
-            TargetUsername = r.Target.Username
-        }).ToList();
+        var result = reviews.Select(MapToReviewDTO).ToList();
 
         return Ok(result);
     }

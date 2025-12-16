@@ -22,7 +22,7 @@ public class CarpoolService : ICarpoolService
         _logger = logger;
     }
 
-    public async Task<(bool Success, string Message, int? RemainingCredit)> JoinCarpoolAsync(int carpoolId, int userId)
+    public async Task<(bool Success, string Message, int? RemainingCredit)> ParticipateAsync(int carpoolId, int userId)
     {
         var carpool = await _carpoolRepository.GetByIdAsync(carpoolId);
         if (carpool == null)

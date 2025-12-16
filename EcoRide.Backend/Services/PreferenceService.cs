@@ -13,25 +13,25 @@ public class PreferenceService : IPreferenceService
         _preferencesCollection = mongoDatabase.GetCollection<BsonDocument>(collectionName!);
     }
 
-    public async Task<BsonDocument?> GetPreferencesAsync(int utilisateurId)
+    public async Task<BsonDocument?> GetPreferencesAsync(int userId)
     {
-        var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", utilisateurId);
+        var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", userId);
         return await _preferencesCollection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task CreateOrUpdatePreferencesAsync(int utilisateurId, Dictionary<string, object> preferences)
+    public async Task CreateOrUpdatePreferencesAsync(int userId, Dictionary<string, object> preferences)
     {
-        var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", utilisateurId);
+        var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", userId);
         var existing = await _preferencesCollection.Find(filter).FirstOrDefaultAsync();
 
         var document = new BsonDocument
         {
-            { "utilisateur_id", utilisateurId },
+            { "utilisateur_id", userId },
             { "fumeur", preferences.ContainsKey("fumeur") ? preferences["fumeur"] : false },
             { "animaux", preferences.ContainsKey("animaux") ? preferences["animaux"] : false }
         };
 
-        // Ajouter les préférences personnalisées
+        // Add custom preferences
         if (preferences.ContainsKey("preferences_personnalisees"))
         {
             var customPrefs = preferences["preferences_personnalisees"] as List<string> ?? new List<string>();
@@ -50,9 +50,9 @@ public class PreferenceService : IPreferenceService
         }
     }
 
-    public async Task DeletePreferencesAsync(int utilisateurId)
+    public async Task DeletePreferencesAsync(int userId)
     {
-        var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", utilisateurId);
+        var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", userId);
         await _preferencesCollection.DeleteOneAsync(filter);
     }
 }

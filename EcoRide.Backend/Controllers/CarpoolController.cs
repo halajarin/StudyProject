@@ -30,64 +30,9 @@ public class CarpoolController : BaseController
         _logger = logger;
     }
 
-    [HttpPost("search")]
-    public async Task<IActionResult> Search([FromBody] SearchCarpoolDTO searchDto)
+    private CarpoolDTO MapToCarpoolDTO(Carpool carpool, double averageRating)
     {
-        var carpools = await _carpoolRepository.SearchAsync(searchDto);
-
-        var result = new List<CarpoolDTO>();
-        foreach (var carpool in carpools)
-        {
-            var averageRating = await _userRepository.GetAverageRatingAsync(carpool.UserId);
-
-            // Filter by rating if requested
-            if (searchDto.MinimumRating.HasValue && averageRating < searchDto.MinimumRating.Value)
-            {
-                continue;
-            }
-
-            result.Add(new CarpoolDTO
-            {
-                CarpoolId = carpool.CarpoolId,
-                DepartureDate = carpool.DepartureDate,
-                DepartureTime = carpool.DepartureTime,
-                DepartureLocation = carpool.DepartureLocation,
-                DepartureCity = carpool.DepartureCity,
-                ArrivalDate = carpool.ArrivalDate,
-                ArrivalTime = carpool.ArrivalTime,
-                ArrivalLocation = carpool.ArrivalLocation,
-                ArrivalCity = carpool.ArrivalCity,
-                Status = carpool.Status,
-                TotalSeats = carpool.TotalSeats,
-                AvailableSeats = carpool.AvailableSeats,
-                PricePerPerson = carpool.PricePerPerson,
-                EstimatedDurationMinutes = carpool.EstimatedDurationMinutes,
-                IsEcological = carpool.Vehicle.EnergyType.ToLower() == "electric",
-                DriverUsername = carpool.Driver.Username,
-                DriverPhoto = carpool.Driver.Photo,
-                DriverAverageRating = averageRating,
-                VehicleModel = carpool.Vehicle.Model,
-                VehicleBrand = carpool.Vehicle.Brand.Label,
-                VehicleEnergyType = carpool.Vehicle.EnergyType,
-                VehicleColor = carpool.Vehicle.Color
-            });
-        }
-
-        return Ok(result);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var carpool = await _carpoolRepository.GetByIdAsync(id);
-        if (carpool == null)
-        {
-            return NotFound(new { message = "Carpool not found" });
-        }
-
-        var averageRating = await _userRepository.GetAverageRatingAsync(carpool.UserId);
-
-        var result = new CarpoolDTO
+        return new CarpoolDTO
         {
             CarpoolId = carpool.CarpoolId,
             DepartureDate = carpool.DepartureDate,
@@ -112,6 +57,41 @@ public class CarpoolController : BaseController
             VehicleEnergyType = carpool.Vehicle.EnergyType,
             VehicleColor = carpool.Vehicle.Color
         };
+    }
+
+    [HttpPost("search")]
+    public async Task<IActionResult> Search([FromBody] SearchCarpoolDTO searchDto)
+    {
+        var carpools = await _carpoolRepository.SearchAsync(searchDto);
+
+        var result = new List<CarpoolDTO>();
+        foreach (var carpool in carpools)
+        {
+            var averageRating = await _userRepository.GetAverageRatingAsync(carpool.UserId);
+
+            // Filter by rating if requested
+            if (searchDto.MinimumRating.HasValue && averageRating < searchDto.MinimumRating.Value)
+            {
+                continue;
+            }
+
+            result.Add(MapToCarpoolDTO(carpool, averageRating));
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var carpool = await _carpoolRepository.GetByIdAsync(id);
+        if (carpool == null)
+        {
+            return NotFound(new { message = "Carpool not found" });
+        }
+
+        var averageRating = await _userRepository.GetAverageRatingAsync(carpool.UserId);
+        var result = MapToCarpoolDTO(carpool, averageRating);
 
         return Ok(result);
     }
