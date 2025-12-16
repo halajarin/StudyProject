@@ -6,6 +6,7 @@ using System.Text;
 using EcoRide.Backend.Data;
 using EcoRide.Backend.Services;
 using EcoRide.Backend.Repositories;
+using EcoRide.Backend.Middleware;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,14 +54,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Enregistrement des services
+// Enregistrement des services métier
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICovoiturageService, CovoiturageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IPreferenceService, PreferenceService>();
+
+// Enregistrement des repositories
 builder.Services.AddScoped<IUtilisateurRepository, UtilisateurRepository>();
 builder.Services.AddScoped<ICovoiturageRepository, CovoiturageRepository>();
 builder.Services.AddScoped<IVoitureRepository, VoitureRepository>();
 builder.Services.AddScoped<IAvisRepository, AvisRepository>();
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IPreferenceService, PreferenceService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -113,6 +117,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Middleware de gestion d'erreur globale
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();

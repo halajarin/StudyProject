@@ -1,16 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using EcoRide.Backend.DTOs;
 using EcoRide.Backend.Models;
 using EcoRide.Backend.Repositories;
 
 namespace EcoRide.Backend.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class AvisController : ControllerBase
+public class AvisController : BaseController
 {
     private readonly IAvisRepository _avisRepository;
     private readonly IUtilisateurRepository _utilisateurRepository;
@@ -27,12 +25,6 @@ public class AvisController : ControllerBase
         _utilisateurRepository = utilisateurRepository;
         _covoiturageRepository = covoiturageRepository;
         _logger = logger;
-    }
-
-    private int GetCurrentUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.Parse(userIdClaim!);
     }
 
     [HttpGet("user/{utilisateurId}")]

@@ -23,6 +23,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/covoiturage/covoiturage-detail/covoiturage-detail.component').then(m => m.CovoiturageDetailComponent)
   },
   {
+    path: 'create-covoiturage',
+    loadComponent: () => import('./components/covoiturage/create-covoiturage/create-covoiturage.component').then(m => m.CreateCovoiturageComponent),
+    canActivate: [roleGuard(['Chauffeur'])]
+  },
+  {
     path: 'profile',
     loadComponent: () => import('./components/user/profile/profile.component').then(m => m.ProfileComponent),
     canActivate: [authGuard]

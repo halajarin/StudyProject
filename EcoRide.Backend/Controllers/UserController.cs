@@ -1,16 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using EcoRide.Backend.DTOs;
 using EcoRide.Backend.Repositories;
 using EcoRide.Backend.Services;
 
 namespace EcoRide.Backend.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class UserController : ControllerBase
+public class UserController : BaseController
 {
     private readonly IUtilisateurRepository _utilisateurRepository;
     private readonly IVoitureRepository _voitureRepository;
@@ -27,12 +25,6 @@ public class UserController : ControllerBase
         _voitureRepository = voitureRepository;
         _preferenceService = preferenceService;
         _logger = logger;
-    }
-
-    private int GetCurrentUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.Parse(userIdClaim!);
     }
 
     [HttpGet("profile")]

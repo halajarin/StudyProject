@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using EcoRide.Backend.DTOs;
 using EcoRide.Backend.Models;
 using EcoRide.Backend.Repositories;
@@ -8,34 +7,27 @@ using EcoRide.Backend.Services;
 
 namespace EcoRide.Backend.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-public class CovoiturageController : ControllerBase
+public class CovoiturageController : BaseController
 {
     private readonly ICovoiturageRepository _covoiturageRepository;
     private readonly IUtilisateurRepository _utilisateurRepository;
     private readonly IVoitureRepository _voitureRepository;
-    private readonly IEmailService _emailService;
+    private readonly ICovoiturageService _covoiturageService;
     private readonly ILogger<CovoiturageController> _logger;
 
     public CovoiturageController(
         ICovoiturageRepository covoiturageRepository,
         IUtilisateurRepository utilisateurRepository,
         IVoitureRepository voitureRepository,
-        IEmailService emailService,
+        ICovoiturageService covoiturageService,
         ILogger<CovoiturageController> logger)
     {
         _covoiturageRepository = covoiturageRepository;
         _utilisateurRepository = utilisateurRepository;
         _voitureRepository = voitureRepository;
-        _emailService = emailService;
+        _covoiturageService = covoiturageService;
         _logger = logger;
-    }
-
-    private int GetCurrentUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.Parse(userIdClaim!);
     }
 
     [HttpPost("search")]
@@ -173,58 +165,14 @@ public class CovoiturageController : ControllerBase
     public async Task<IActionResult> Participate(int id)
     {
         var userId = GetCurrentUserId();
-        var covoiturage = await _covoiturageRepository.GetByIdAsync(id);
+        var (success, message, creditRestant) = await _covoiturageService.ParticiperAsync(id, userId);
 
-        if (covoiturage == null)
+        if (!success)
         {
-            return NotFound(new { message = "Covoiturage non trouvé" });
+            return BadRequest(new { message });
         }
 
-        if (covoiturage.NbPlaceRestante <= 0)
-        {
-            return BadRequest(new { message = "Plus de place disponible" });
-        }
-
-        if (covoiturage.UtilisateurId == userId)
-        {
-            return BadRequest(new { message = "Vous ne pouvez pas participer à votre propre covoiturage" });
-        }
-
-        var utilisateur = await _utilisateurRepository.GetByIdAsync(userId);
-        if (utilisateur == null || utilisateur.Credit < covoiturage.PrixPersonne)
-        {
-            return BadRequest(new { message = "Crédit insuffisant" });
-        }
-
-        // Vérifier si déjà participant
-        var existingParticipation = await _covoiturageRepository.GetParticipationAsync(id, userId);
-        if (existingParticipation != null)
-        {
-            return BadRequest(new { message = "Vous participez déjà à ce covoiturage" });
-        }
-
-        // Créer la participation
-        var participation = new CovoiturageParticipation
-        {
-            CovoiturageId = id,
-            UtilisateurId = userId,
-            DateParticipation = DateTime.UtcNow,
-            Statut = "Confirmé",
-            CreditUtilise = (int)covoiturage.PrixPersonne
-        };
-
-        await _covoiturageRepository.AddParticipationAsync(participation);
-
-        // Mettre à jour le crédit et le nombre de places
-        utilisateur.Credit -= (int)covoiturage.PrixPersonne;
-        await _utilisateurRepository.UpdateAsync(utilisateur);
-
-        covoiturage.NbPlaceRestante--;
-        await _covoiturageRepository.UpdateAsync(covoiturage);
-
-        _logger.LogInformation($"Participation ajoutée: Utilisateur {userId} pour covoiturage {id}");
-
-        return Ok(new { message = "Participation confirmée", creditRestant = utilisateur.Credit });
+        return Ok(new { message, creditRestant });
     }
 
     [Authorize]
@@ -242,54 +190,14 @@ public class CovoiturageController : ControllerBase
         // Si c'est le chauffeur qui annule
         if (covoiturage.UtilisateurId == userId)
         {
-            covoiturage.Statut = "Annulé";
-            await _covoiturageRepository.UpdateAsync(covoiturage);
-
-            // Rembourser tous les participants et envoyer des emails
-            var participations = await _covoiturageRepository.GetParticipationsAsync(id);
-            foreach (var participation in participations)
-            {
-                if (participation.Statut == "Confirmé")
-                {
-                    var passager = await _utilisateurRepository.GetByIdAsync(participation.UtilisateurId);
-                    if (passager != null)
-                    {
-                        passager.Credit += participation.CreditUtilise;
-                        await _utilisateurRepository.UpdateAsync(passager);
-
-                        // Envoyer email
-                        var trajetInfo = $"{covoiturage.VilleDepart} → {covoiturage.VilleArrivee} le {covoiturage.DateDepart:dd/MM/yyyy}";
-                        await _emailService.SendCovoiturageAnnulationAsync(passager.Email, passager.Pseudo, trajetInfo);
-                    }
-                }
-            }
-
-            return Ok(new { message = "Covoiturage annulé et participants remboursés" });
+            var (success, message) = await _covoiturageService.AnnulerCovoiturageAsync(id, userId);
+            return success ? Ok(new { message }) : BadRequest(new { message });
         }
         else
         {
             // Si c'est un passager qui annule
-            var participation = await _covoiturageRepository.GetParticipationAsync(id, userId);
-            if (participation == null)
-            {
-                return BadRequest(new { message = "Participation non trouvée" });
-            }
-
-            participation.Statut = "Annulé";
-            await _covoiturageRepository.UpdateParticipationAsync(participation);
-
-            // Rembourser et libérer la place
-            var utilisateur = await _utilisateurRepository.GetByIdAsync(userId);
-            if (utilisateur != null)
-            {
-                utilisateur.Credit += participation.CreditUtilise;
-                await _utilisateurRepository.UpdateAsync(utilisateur);
-            }
-
-            covoiturage.NbPlaceRestante++;
-            await _covoiturageRepository.UpdateAsync(covoiturage);
-
-            return Ok(new { message = "Participation annulée et crédits remboursés" });
+            var (success, message) = await _covoiturageService.AnnulerParticipationAsync(id, userId);
+            return success ? Ok(new { message }) : BadRequest(new { message });
         }
     }
 
@@ -298,22 +206,8 @@ public class CovoiturageController : ControllerBase
     public async Task<IActionResult> Start(int id)
     {
         var userId = GetCurrentUserId();
-        var covoiturage = await _covoiturageRepository.GetByIdAsync(id);
-
-        if (covoiturage == null)
-        {
-            return NotFound(new { message = "Covoiturage non trouvé" });
-        }
-
-        if (covoiturage.UtilisateurId != userId)
-        {
-            return Forbid();
-        }
-
-        covoiturage.Statut = "En cours";
-        await _covoiturageRepository.UpdateAsync(covoiturage);
-
-        return Ok(new { message = "Covoiturage démarré" });
+        var (success, message) = await _covoiturageService.DemarrerCovoiturageAsync(id, userId);
+        return success ? Ok(new { message }) : BadRequest(new { message });
     }
 
     [Authorize(Roles = "Chauffeur")]
@@ -321,36 +215,8 @@ public class CovoiturageController : ControllerBase
     public async Task<IActionResult> Complete(int id)
     {
         var userId = GetCurrentUserId();
-        var covoiturage = await _covoiturageRepository.GetByIdAsync(id);
-
-        if (covoiturage == null)
-        {
-            return NotFound(new { message = "Covoiturage non trouvé" });
-        }
-
-        if (covoiturage.UtilisateurId != userId)
-        {
-            return Forbid();
-        }
-
-        covoiturage.Statut = "Terminé";
-        await _covoiturageRepository.UpdateAsync(covoiturage);
-
-        // Envoyer des emails aux participants
-        var participations = await _covoiturageRepository.GetParticipationsAsync(id);
-        foreach (var participation in participations)
-        {
-            if (participation.Statut == "Confirmé")
-            {
-                var passager = await _utilisateurRepository.GetByIdAsync(participation.UtilisateurId);
-                if (passager != null)
-                {
-                    await _emailService.SendCovoiturageTermineAsync(passager.Email, passager.Pseudo, id);
-                }
-            }
-        }
-
-        return Ok(new { message = "Covoiturage terminé. Les participants ont été notifiés." });
+        var (success, message) = await _covoiturageService.TerminerCovoiturageAsync(id, userId);
+        return success ? Ok(new { message }) : BadRequest(new { message });
     }
 
     [Authorize]

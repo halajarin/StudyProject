@@ -17,8 +17,6 @@ public class EcoRideContext : DbContext
     public DbSet<Covoiturage> Covoiturages { get; set; }
     public DbSet<CovoiturageParticipation> CovoiturageParticipations { get; set; }
     public DbSet<Avis> Avis { get; set; }
-    public DbSet<Configuration> Configurations { get; set; }
-    public DbSet<Parametre> Parametres { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

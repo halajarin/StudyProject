@@ -34,20 +34,11 @@ INSERT INTO utilisateur (utilisateur_id, nom, prenom, email, password, telephone
 
 -- Insertion des rôles utilisateurs
 INSERT INTO utilisateur_role (utilisateur_id, role_id) VALUES
--- Jean Dupont: Passager et Chauffeur
-(1, 1),
-(1, 2),
--- Marie Martin: Passager et Chauffeur
-(2, 1),
-(2, 2),
--- Pierre Durand: Passager et Chauffeur
-(3, 1),
-(3, 2),
--- Sophie Bernard: Passager seulement
+(1, 1), (1, 2),
+(2, 1), (2, 2),
+(3, 1), (3, 2),
 (4, 1),
--- Admin: Administrateur
 (5, 4),
--- Support: Employé
 (6, 3);
 
 -- Insertion des voitures
@@ -81,17 +72,7 @@ INSERT INTO avis (avis_id, commentaire, note, statut, utilisateur_auteur_id, uti
 (3, 'Conducteur sympa mais un peu en retard au départ.', 4, 'Validé', 4, 1, 5),
 (4, 'Super expérience, je recommande!', 5, 'En attente', 1, 2, NULL);
 
--- Insertion de configurations
-INSERT INTO configuration (id_configuration, libelle, valeur) VALUES
-(1, 'Commission plateforme', '2'),
-(2, 'Crédit initial', '20'),
-(3, 'Email contact', 'contact@ecoride.fr');
-
-INSERT INTO parametre (parametre_id, propriete, valeur, id_configuration) VALUES
-(1, 'unite', 'credits', 1),
-(2, 'type', 'fixe', 1);
-
--- Reset des séquences pour éviter les conflits
+-- Reset des séquences
 SELECT setval('role_role_id_seq', (SELECT MAX(role_id) FROM role));
 SELECT setval('marque_marque_id_seq', (SELECT MAX(marque_id) FROM marque));
 SELECT setval('utilisateur_utilisateur_id_seq', (SELECT MAX(utilisateur_id) FROM utilisateur));
@@ -99,16 +80,3 @@ SELECT setval('voiture_voiture_id_seq', (SELECT MAX(voiture_id) FROM voiture));
 SELECT setval('covoiturage_covoiturage_id_seq', (SELECT MAX(covoiturage_id) FROM covoiturage));
 SELECT setval('covoiturage_participation_participation_id_seq', (SELECT MAX(participation_id) FROM covoiturage_participation));
 SELECT setval('avis_avis_id_seq', (SELECT MAX(avis_id) FROM avis));
-SELECT setval('configuration_id_configuration_seq', (SELECT MAX(id_configuration) FROM configuration));
-SELECT setval('parametre_parametre_id_seq', (SELECT MAX(parametre_id) FROM parametre));
-
--- Affichage des statistiques
-SELECT 'Rôles: ' || COUNT(*) FROM role;
-SELECT 'Utilisateurs: ' || COUNT(*) FROM utilisateur;
-SELECT 'Marques: ' || COUNT(*) FROM marque;
-SELECT 'Voitures: ' || COUNT(*) FROM voiture;
-SELECT 'Covoiturages: ' || COUNT(*) FROM covoiturage;
-SELECT 'Participations: ' || COUNT(*) FROM covoiturage_participation;
-SELECT 'Avis: ' || COUNT(*) FROM avis;
-
-COMMENT ON COLUMN utilisateur.password IS 'Mot de passe hashé avec BCrypt. Mot de passe de test: Password123!';

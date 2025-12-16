@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using EcoRide.Backend.Repositories;
 
 namespace EcoRide.Backend.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class ParticipationController : ControllerBase
+public class ParticipationController : BaseController
 {
     private readonly ICovoiturageRepository _covoiturageRepository;
     private readonly IUtilisateurRepository _utilisateurRepository;
@@ -22,12 +20,6 @@ public class ParticipationController : ControllerBase
         _covoiturageRepository = covoiturageRepository;
         _utilisateurRepository = utilisateurRepository;
         _logger = logger;
-    }
-
-    private int GetCurrentUserId()
-    {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.Parse(userIdClaim!);
     }
 
     [HttpPost("{covoiturageId}/validate")]

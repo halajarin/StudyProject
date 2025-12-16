@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CovoiturageService } from '../../../services/covoiturage.service';
 import { User } from '../../../models/user.model';
@@ -8,7 +9,7 @@ import { User } from '../../../models/user.model';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="container">
       <h1>Mon Espace</h1>
@@ -99,6 +100,15 @@ import { User } from '../../../models/user.model';
             }
           </div>
         </div>
+
+        @if (user.roles.includes('Chauffeur')) {
+          <div class="card mt-3">
+            <h2>Actions Chauffeur</h2>
+            <a routerLink="/create-covoiturage" class="btn btn-primary">
+              ➕ Créer un nouveau covoiturage
+            </a>
+          </div>
+        }
 
         <div class="card mt-3">
           <h2>Mes Covoiturages</h2>
