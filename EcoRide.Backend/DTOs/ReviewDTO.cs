@@ -9,8 +9,8 @@ public class ReviewDTO
     public int Note { get; set; }
     public string Status { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public string AuthorPseudo { get; set; } = string.Empty;
-    public string TargetPseudo { get; set; } = string.Empty;
+    public string AuthorUsername { get; set; } = string.Empty;
+    public string TargetUsername { get; set; } = string.Empty;
 }
 
 public class CreateReviewDTO

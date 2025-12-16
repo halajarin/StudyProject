@@ -47,7 +47,7 @@ public class ParticipationController : BaseController
                 {
                     // Driver receives the price - 2 credits (platform commission)
                     var driverCredit = (int)carpool.PricePerPerson - 2;
-                    driver.Credit += driverCredit;
+                    driver.Credits += driverCredit;
                     await _userRepository.UpdateAsync(driver);
                 }
             }

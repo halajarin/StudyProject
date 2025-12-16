@@ -19,7 +19,7 @@ public class CarpoolDTO
     public bool IsEcological { get; set; }
 
     // Driver information
-    public string DriverPseudo { get; set; } = string.Empty;
+    public string DriverUsername { get; set; } = string.Empty;
     public byte[]? DriverPhoto { get; set; }
     public double DriverAverageRating { get; set; }
 

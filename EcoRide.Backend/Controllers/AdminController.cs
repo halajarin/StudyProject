@@ -40,12 +40,12 @@ public class AdminController : ControllerBase
 
         var employee = new User
         {
-            Pseudo = employeeDto.Pseudo,
+            Username = employeeDto.Pseudo,
             Email = employeeDto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(employeeDto.Password),
             LastName = employeeDto.LastName ?? string.Empty,
             FirstName = employeeDto.FirstName ?? string.Empty,
-            Credit = 0,
+            Credits = 0,
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
@@ -121,12 +121,12 @@ public class AdminController : ControllerBase
         var result = users.Select(u => new
         {
             u.UserId,
-            u.Pseudo,
+            u.Username,
             u.Email,
             u.LastName,
             u.FirstName,
             u.IsActive,
-            u.Credit,
+            u.Credits,
             u.CreatedAt,
             Roles = u.UserRoles.Select(ur => ur.Role.Label).ToList()
         }).ToList();

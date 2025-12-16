@@ -4,9 +4,9 @@ namespace EcoRide.Backend.DTOs;
 
 public class RegisterDTO
 {
-    [Required(ErrorMessage = "Pseudo is required")]
-    [MinLength(3, ErrorMessage = "Pseudo must contain at least 3 characters")]
-    public string Pseudo { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Username is required")]
+    [MinLength(3, ErrorMessage = "Username must contain at least 3 characters")]
+    public string Username { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email format")]

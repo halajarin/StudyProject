@@ -43,10 +43,10 @@ public class User
 
     [Column("pseudo")]
     [MaxLength(80)]
-    public string Pseudo { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
 
     [Column("credit")]
-    public int Credit { get; set; } = 20; // 20 credits on creation
+    public int Credits { get; set; } = 20; // 20 credits on creation
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

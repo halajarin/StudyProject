@@ -40,9 +40,9 @@ public class AuthController : ControllerBase
             user = new
             {
                 user.UserId,
-                user.Pseudo,
+                user.Username,
                 user.Email,
-                user.Credit
+                user.Credits
             },
             token
         });
@@ -71,9 +71,9 @@ public class AuthController : ControllerBase
             user = new
             {
                 user.UserId,
-                user.Pseudo,
+                user.Username,
                 user.Email,
-                user.Credit
+                user.Credits
             },
             token
         });

@@ -35,7 +35,7 @@ public class CarpoolService : ICarpoolService
             return (false, "You cannot join your own carpool", null);
 
         var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null || user.Credit < carpool.PricePerPerson)
+        if (user == null || user.Credits < carpool.PricePerPerson)
             return (false, "Insufficient credits", null);
 
         var existingParticipation = await _carpoolRepository.GetParticipationAsync(carpoolId, userId);
@@ -55,7 +55,7 @@ public class CarpoolService : ICarpoolService
         await _carpoolRepository.AddParticipationAsync(participation);
 
         // Update credits and seats
-        user.Credit -= (int)carpool.PricePerPerson;
+        user.Credits -= (int)carpool.PricePerPerson;
         await _userRepository.UpdateAsync(user);
 
         carpool.AvailableSeats--;
@@ -64,7 +64,7 @@ public class CarpoolService : ICarpoolService
         _logger.LogInformation("Participation added: User {UserId} for carpool {CarpoolId}",
             userId, carpoolId);
 
-        return (true, "Participation confirmed", user.Credit);
+        return (true, "Participation confirmed", user.Credits);
     }
 
     public async Task<(bool Success, string Message)> CancelParticipationAsync(int carpoolId, int userId)
@@ -80,7 +80,7 @@ public class CarpoolService : ICarpoolService
         var user = await _userRepository.GetByIdAsync(userId);
         if (user != null)
         {
-            user.Credit += participation.CreditsUsed;
+            user.Credits += participation.CreditsUsed;
             await _userRepository.UpdateAsync(user);
         }
 
@@ -117,11 +117,11 @@ public class CarpoolService : ICarpoolService
             var passenger = await _userRepository.GetByIdAsync(participation.UserId);
             if (passenger != null)
             {
-                passenger.Credit += participation.CreditsUsed;
+                passenger.Credits += participation.CreditsUsed;
                 await _userRepository.UpdateAsync(passenger);
 
                 var tripInfo = $"{carpool.DepartureCity} → {carpool.ArrivalCity} on {carpool.DepartureDate:MM/dd/yyyy}";
-                await _emailService.SendCarpoolCancellationAsync(passenger.Email, passenger.Pseudo, tripInfo);
+                await _emailService.SendCarpoolCancellationAsync(passenger.Email, passenger.Username, tripInfo);
             }
         }
 
@@ -172,7 +172,7 @@ public class CarpoolService : ICarpoolService
             var passenger = await _userRepository.GetByIdAsync(participation.UserId);
             if (passenger != null)
             {
-                await _emailService.SendCarpoolCompletedAsync(passenger.Email, passenger.Pseudo, carpoolId);
+                await _emailService.SendCarpoolCompletedAsync(passenger.Email, passenger.Username, carpoolId);
             }
         }
 

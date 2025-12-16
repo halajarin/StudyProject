@@ -28,8 +28,8 @@ public class AuthService : IAuthService
             return (null, null);
         }
 
-        // Check if pseudo already exists
-        if (await _userRepository.PseudoExistsAsync(registerDto.Pseudo))
+        // Check if username already exists
+        if (await _userRepository.UsernameExistsAsync(registerDto.Username))
         {
             return (null, null);
         }
@@ -37,12 +37,12 @@ public class AuthService : IAuthService
         // Create user
         var user = new User
         {
-            Pseudo = registerDto.Pseudo,
+            Username = registerDto.Username,
             Email = registerDto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
             LastName = registerDto.LastName ?? string.Empty,
             FirstName = registerDto.FirstName ?? string.Empty,
-            Credit = 20, // 20 credits on creation
+            Credits = 20, // 20 credits on creation
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
@@ -90,7 +90,7 @@ public class AuthService : IAuthService
         {
             new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Pseudo)
+            new Claim(ClaimTypes.Name, user.Username)
         };
 
         // Add roles as claims

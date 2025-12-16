@@ -39,8 +39,8 @@ public class ReviewController : BaseController
             Note = r.Note,
             Status = r.Status,
             CreatedAt = r.CreatedAt,
-            AuthorPseudo = r.Author.Pseudo,
-            TargetPseudo = r.Target.Pseudo
+            AuthorUsername = r.Author.Username,
+            TargetUsername = r.Target.Username
         }).ToList();
 
         return Ok(result);
@@ -105,8 +105,8 @@ public class ReviewController : BaseController
             Note = r.Note,
             Status = r.Status,
             CreatedAt = r.CreatedAt,
-            AuthorPseudo = r.Author.Pseudo,
-            TargetPseudo = r.Target.Pseudo
+            AuthorUsername = r.Author.Username,
+            TargetUsername = r.Target.Username
         }).ToList();
 
         return Ok(result);

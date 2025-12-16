@@ -31,12 +31,12 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Email == email);
     }
 
-    public async Task<User?> GetByPseudoAsync(string pseudo)
+    public async Task<User?> GetByUsernameAsync(string username)
     {
         return await _context.Users
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-            .FirstOrDefaultAsync(u => u.Pseudo == pseudo);
+            .FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<List<User>> GetAllAsync()
@@ -76,9 +76,9 @@ public class UserRepository : IUserRepository
         return await _context.Users.AnyAsync(u => u.Email == email);
     }
 
-    public async Task<bool> PseudoExistsAsync(string pseudo)
+    public async Task<bool> UsernameExistsAsync(string username)
     {
-        return await _context.Users.AnyAsync(u => u.Pseudo == pseudo);
+        return await _context.Users.AnyAsync(u => u.Username == username);
     }
 
     public async Task<List<string>> GetUserRolesAsync(int userId)

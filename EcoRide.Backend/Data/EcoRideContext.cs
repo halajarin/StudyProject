@@ -47,7 +47,7 @@ public class EcoRideContext : DbContext
             .IsUnique();
 
         modelBuilder.Entity<User>()
-            .HasIndex(u => u.Pseudo)
+            .HasIndex(u => u.Username)
             .IsUnique();
 
         modelBuilder.Entity<Carpool>()

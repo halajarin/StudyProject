@@ -45,7 +45,7 @@ public class UserController : BaseController
         var profile = new UserProfileDTO
         {
             UserId = user.UserId,
-            Pseudo = user.Pseudo,
+            Username = user.Username,
             Email = user.Email,
             LastName = user.LastName,
             FirstName = user.FirstName,
@@ -53,7 +53,7 @@ public class UserController : BaseController
             Address = user.Address,
             BirthDate = user.BirthDate,
             Photo = user.Photo,
-            Credit = user.Credit,
+            Credits = user.Credits,
             Roles = roles,
             AverageRating = averageRating,
             ReviewCount = reviewCount
