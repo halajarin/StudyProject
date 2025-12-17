@@ -54,6 +54,10 @@ public class User
     [Column("is_active")]
     public bool IsActive { get; set; } = true;
 
+    [Column("preferred_language")]
+    [MaxLength(5)]
+    public string PreferredLanguage { get; set; } = "en";
+
     // Relationships
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();

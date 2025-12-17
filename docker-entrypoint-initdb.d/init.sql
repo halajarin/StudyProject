@@ -38,7 +38,8 @@ CREATE TABLE "user" (
     pseudo VARCHAR(80) NOT NULL UNIQUE,
     credit INTEGER DEFAULT 20,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE,
+    preferred_language VARCHAR(5) DEFAULT 'en'
 );
 
 -- User role association table
