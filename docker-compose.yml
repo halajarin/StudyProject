@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecoride-postgres
+    environment:
+      POSTGRES_DB: ecoride
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ecoride"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecoride-network
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7-jammy
+    container_name: ecoride-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: ecoride_nosql
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecoride-network
+
+  # .NET Backend API
+  backend:
+    build:
+      context: ./EcoRide.Backend
+      dockerfile: Dockerfile
+    container_name: ecoride-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__PostgreSQL=Host=postgres;Database=ecoride;Username=postgres;Password=postgres
+      - ConnectionStrings__MongoDB=mongodb://mongodb:27017
+      - MongoDbSettings__DatabaseName=ecoride_nosql
+      - MongoDbSettings__PreferencesCollectionName=preferences
+      - MongoDbSettings__NotificationsCollectionName=notifications
+      - JwtSettings__SecretKey=VotreCleSuperSecreteQuiDoitEtreTresLonguePourEtreSecurisee123456
+      - JwtSettings__Issuer=EcoRideAPI
+      - JwtSettings__Audience=EcoRideClient
+      - JwtSettings__ExpirationInMinutes=1440
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ecoride-network
+    restart: unless-stopped
+
+  # Angular Frontend
+  frontend:
+    build:
+      context: ./EcoRide.Frontend
+      dockerfile: Dockerfile
+    container_name: ecoride-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - ecoride-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  mongodb_data:
+    driver: local
+
+networks:
+  ecoride-network:
+    driver: bridge
