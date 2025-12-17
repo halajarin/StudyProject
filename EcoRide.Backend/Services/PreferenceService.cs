@@ -27,8 +27,8 @@ public class PreferenceService : IPreferenceService
         var document = new BsonDocument
         {
             { "utilisateur_id", userId },
-            { "fumeur", preferences.ContainsKey("fumeur") ? preferences["fumeur"] : false },
-            { "animaux", preferences.ContainsKey("animaux") ? preferences["animaux"] : false }
+            { "fumeur", BsonValue.Create(preferences.ContainsKey("fumeur") && (bool)preferences["fumeur"]) },
+            { "animaux", BsonValue.Create(preferences.ContainsKey("animaux") && (bool)preferences["animaux"]) }
         };
 
         // Add custom preferences

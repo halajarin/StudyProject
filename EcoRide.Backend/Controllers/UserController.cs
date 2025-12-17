@@ -159,7 +159,12 @@ public class UserController : BaseController
         var userId = GetCurrentUserId();
         var preferences = await _preferenceService.GetPreferencesAsync(userId);
 
-        return Ok(preferences ?? new { });
+        if (preferences == null)
+        {
+            return Ok(new { });
+        }
+
+        return Ok(preferences);
     }
 
     [HttpPost("preferences")]
