@@ -1,44 +1,47 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { User } from '../../../models/user.model';
+import { AdminStats } from '../../../interfaces/admin-stats.interface';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="container">
-      <h1>EcoRide Administration</h1>
+      <h1>{{ 'admin.dashboard' | translate }}</h1>
 
       <div class="grid grid-2">
         <div class="card">
-          <h2>Create an employee</h2>
+          <h2>{{ 'admin.create_employee' | translate }}</h2>
           <form (ngSubmit)="createEmployee()">
             <div class="form-group">
-              <label>Username</label>
+              <label>{{ 'auth.username' | translate }}</label>
               <input type="text" [(ngModel)]="newEmployee.username" name="username" required>
             </div>
             <div class="form-group">
-              <label>Email</label>
+              <label>{{ 'auth.email' | translate }}</label>
               <input type="email" [(ngModel)]="newEmployee.email" name="email" required>
             </div>
             <div class="form-group">
-              <label>Password</label>
+              <label>{{ 'auth.password' | translate }}</label>
               <input type="password" [(ngModel)]="newEmployee.password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-primary">{{ 'common.add' | translate }}</button>
           </form>
         </div>
 
         <div class="card">
-          <h2>Statistics</h2>
+          <h2>{{ 'admin.statistics' | translate }}</h2>
           @if (stats) {
             <div class="stats-grid">
               <div class="stat-card">
-                <h3>Total Credits Earned</h3>
-                <p class="stat-value">{{ stats.totalCreditsGagnes }}</p>
+                <h3>{{ 'admin.total_credits' | translate }}</h3>
+                <p class="stat-value">{{ stats.platformCreditsEarned }}</p>
               </div>
             </div>
           }
@@ -46,22 +49,22 @@ import { environment } from '../../../../environments/environment';
       </div>
 
       <div class="card mt-3">
-        <h2>Users</h2>
-        @if (users.length > 0) {
+        <h2>{{ 'admin.users' | translate }}</h2>
+        @if (users().length > 0) {
           <table class="users-table">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Credits</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{{ 'auth.username' | translate }}</th>
+                <th>{{ 'auth.email' | translate }}</th>
+                <th>{{ 'user.roles' | translate }}</th>
+                <th>{{ 'user.credits' | translate }}</th>
+                <th>{{ 'carpool.status' | translate }}</th>
+                <th>{{ 'common.edit' | translate }}</th>
               </tr>
             </thead>
             <tbody>
-              @for (user of users; track user.userId) {
+              @for (user of users(); track user.userId) {
                 <tr>
                   <td>{{ user.userId }}</td>
                   <td>{{ user.username }}</td>
@@ -70,17 +73,17 @@ import { environment } from '../../../../environments/environment';
                   <td>{{ user.credits }}</td>
                   <td>
                     <span [class]="user.isActive ? 'badge-success' : 'badge-danger'">
-                      {{ user.isActive ? 'Active' : 'Suspended' }}
+                      {{ user.isActive ? ('admin.user_active' | translate) : ('admin.user_suspended' | translate) }}
                     </span>
                   </td>
                   <td>
                     @if (user.isActive) {
                       <button (click)="suspendUser(user.userId)" class="btn-sm btn-danger">
-                        Suspend
+                        {{ 'admin.deactivate_user' | translate }}
                       </button>
                     } @else {
                       <button (click)="activateUser(user.userId)" class="btn-sm btn-primary">
-                        Activate
+                        {{ 'admin.activate_user' | translate }}
                       </button>
                     }
                   </td>
@@ -143,10 +146,13 @@ export class DashboardComponent implements OnInit {
     password: ''
   };
 
-  stats: any = null;
-  users: any[] = [];
+  stats: AdminStats | null = null;
+  users = signal<User[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     this.loadStats();
@@ -156,35 +162,32 @@ export class DashboardComponent implements OnInit {
   createEmployee() {
     this.http.post(`${environment.apiUrl}/admin/create-employee`, this.newEmployee).subscribe({
       next: () => {
-        alert('Employee created successfully');
+        alert(this.translate.instant('messages.operation_successful'));
         this.newEmployee = { username: '', email: '', password: '' };
       },
-      error: (err) => alert('Error: ' + (err.error?.message || 'Unknown error'))
+      error: (err) => alert(this.translate.instant('common.error') + ': ' + (err.error?.message || this.translate.instant('messages.error_occurred')))
     });
   }
 
   loadStats() {
-    this.http.get(`${environment.apiUrl}/admin/statistics`).subscribe({
+    this.http.get<AdminStats>(`${environment.apiUrl}/admin/statistics`).subscribe({
       next: (data) => this.stats = data,
-      error: (err) => console.error(err)
     });
   }
 
   loadUsers() {
-    this.http.get<any[]>(`${environment.apiUrl}/admin/users`).subscribe({
-      next: (data) => this.users = data,
-      error: (err) => console.error(err)
+    this.http.get<User[]>(`${environment.apiUrl}/admin/users`).subscribe({
+      next: (data) => this.users.set(data),
     });
   }
 
   suspendUser(id: number) {
-    if (confirm('Are you sure you want to suspend this user?')) {
+    if (confirm(this.translate.instant('messages.confirm_delete'))) {
       this.http.put(`${environment.apiUrl}/admin/suspend-user/${id}`, {}).subscribe({
         next: () => {
-          alert('User suspended');
+          alert(this.translate.instant('messages.operation_successful'));
           this.loadUsers();
         },
-        error: (err) => console.error(err)
       });
     }
   }
@@ -192,10 +195,9 @@ export class DashboardComponent implements OnInit {
   activateUser(id: number) {
     this.http.put(`${environment.apiUrl}/admin/activate-user/${id}`, {}).subscribe({
       next: () => {
-        alert('User activated');
+        alert(this.translate.instant('messages.operation_successful'));
         this.loadUsers();
       },
-      error: (err) => console.error(err)
     });
   }
 }

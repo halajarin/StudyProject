@@ -1,58 +1,59 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CarpoolService } from '../../../services/carpool.service';
 import { AuthService } from '../../../services/auth.service';
-import { Carpool } from '../../../models/carpool.model';
+import { Carpool, CarpoolStatus } from '../../../models/carpool.model';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-carpool-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslateModule],
   template: `
     <div class="container">
-      @if (loading) {
-        <div class="loading">Loading...</div>
+      @if (loading()) {
+        <div class="loading">{{ 'common.loading' | translate }}</div>
       }
 
-      @if (carpool) {
+      @if (carpool()) {
         <div class="detail-card card">
           <div class="header">
-            <h1>{{ carpool.departureCity }} → {{ carpool.arrivalCity }}</h1>
-            <span class="badge badge-{{ getStatusClass() }}">{{ carpool.status }}</span>
+            <h1>{{ carpool()?.departureCity }} → {{ carpool()?.arrivalCity }}</h1>
+            <span class="badge badge-{{ getStatusClass() }}">{{ getStatusLabel() | translate }}</span>
           </div>
 
           <div class="trip-info grid grid-2">
             <div>
-              <h3>Departure</h3>
-              <p><strong>{{ carpool.departureLocation }}</strong></p>
-              <p>{{ carpool.departureDate | date:'dd/MM/yyyy' }} at {{ carpool.departureTime }}</p>
+              <h3>{{ 'carpool.departure' | translate }}</h3>
+              <p><strong>{{ carpool()?.departureLocation }}</strong></p>
+              <p>{{ carpool()?.departureDate | date:'dd/MM/yyyy' }} {{ 'common.at' | translate }} {{ carpool()?.departureTime }}</p>
             </div>
             <div>
-              <h3>Arrival</h3>
-              <p><strong>{{ carpool.arrivalLocation }}</strong></p>
-              <p>{{ carpool.arrivalDate | date:'dd/MM/yyyy' }} at {{ carpool.arrivalTime }}</p>
+              <h3>{{ 'carpool.arrival' | translate }}</h3>
+              <p><strong>{{ carpool()?.arrivalLocation }}</strong></p>
+              <p>{{ carpool()?.arrivalDate | date:'dd/MM/yyyy' }} {{ 'common.at' | translate }} {{ carpool()?.arrivalTime }}</p>
             </div>
           </div>
 
           <div class="driver-section">
-            <h3>Driver</h3>
+            <h3>{{ 'carpool.driver' | translate }}</h3>
             <div class="driver-card">
               <div>
-                <h4>{{ carpool.driverUsername }}</h4>
-                <p class="rating">⭐ {{ carpool.driverAverageRating.toFixed(1) }}/5</p>
+                <h4>{{ carpool()?.driverUsername }}</h4>
+                <p class="rating">⭐ {{ carpool()?.driverAverageRating?.toFixed(1) }}/5</p>
               </div>
             </div>
           </div>
 
           <div class="vehicle-section">
-            <h3>Vehicle</h3>
+            <h3>{{ 'carpool.vehicle' | translate }}</h3>
             <div class="vehicle-info">
-              <p><strong>{{ carpool.vehicleBrand }} {{ carpool.vehicleModel }}</strong></p>
-              <p>Color: {{ carpool.vehicleColor }}</p>
-              <p>Energy: {{ carpool.vehicleEnergyType }}
-                @if (carpool.isEcological) {
-                  <span class="badge badge-eco">🔋 Electric</span>
+              <p><strong>{{ carpool()?.vehicleBrand }} {{ carpool()?.vehicleModel }}</strong></p>
+              <p>{{ 'vehicle.color' | translate }}: {{ carpool()?.vehicleColor }}</p>
+              <p>{{ 'vehicle.energy_type' | translate }}: {{ carpool()?.vehicleEnergyType }}
+                @if (carpool()?.isEcological) {
+                  <span class="badge badge-eco">🔋 {{ 'carpool.electric' | translate }}</span>
                 }
               </p>
             </div>
@@ -60,36 +61,36 @@ import { Carpool } from '../../../models/carpool.model';
 
           <div class="details-grid grid grid-2">
             <div class="detail-item">
-              <span class="label">Available seats:</span>
-              <span class="value">{{ carpool.availableSeats }} / {{ carpool.totalSeats }}</span>
+              <span class="label">{{ 'carpool.seats_available' | translate }}:</span>
+              <span class="value">{{ carpool()?.availableSeats }} / {{ carpool()?.totalSeats }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">Price:</span>
-              <span class="value price">{{ carpool.pricePerPerson }} credits</span>
+              <span class="label">{{ 'carpool.price' | translate }}:</span>
+              <span class="value price">{{ carpool()?.pricePerPerson }} {{ 'common.credits' | translate }}</span>
             </div>
-            @if (carpool.estimatedDurationMinutes) {
+            @if (carpool()?.estimatedDurationMinutes) {
               <div class="detail-item">
-                <span class="label">Estimated duration:</span>
-                <span class="value">{{ carpool.estimatedDurationMinutes }} minutes</span>
+                <span class="label">{{ 'carpool.estimated_duration' | translate }}:</span>
+                <span class="value">{{ carpool()?.estimatedDurationMinutes }} {{ 'carpool.minutes' | translate }}</span>
               </div>
             }
           </div>
 
-          @if (authService.isLoggedIn && carpool.availableSeats > 0 && carpool.status === 'En attente') {
+          @if (authService.isLoggedIn() && carpool()?.userId !== authService.currentUser()?.userId && (carpool()?.availableSeats ?? 0) > 0 && carpool()?.status === CarpoolStatus.Pending) {
             <div class="action-section">
-              <button (click)="participate()" class="btn btn-primary" [disabled]="participating">
-                {{ participating ? 'Joining...' : 'Join this carpool' }}
+              <button (click)="participate()" class="btn btn-primary" [disabled]="participating()">
+                {{ participating() ? ('carpool.creating' | translate) : ('carpool.join' | translate) }}
               </button>
             </div>
-          } @else if (!authService.isLoggedIn) {
+          } @else if (!authService.isLoggedIn()) {
             <div class="alert alert-info">
-              <p>You must be logged in to join this carpool.</p>
-              <a routerLink="/login" class="btn btn-primary">Login</a>
+              <p>{{ 'carpool.login_required' | translate }}</p>
+              <a routerLink="/login" class="btn btn-primary">{{ 'common.login' | translate }}</a>
             </div>
           }
 
-          @if (message) {
-            <div class="alert" [class]="messageType">{{ message }}</div>
+          @if (message()) {
+            <div class="alert" [class]="messageType()">{{ message() }}</div>
           }
         </div>
       }
@@ -181,17 +182,22 @@ import { Carpool } from '../../../models/carpool.model';
   `]
 })
 export class CarpoolDetailComponent implements OnInit {
-  carpool: Carpool | null = null;
-  loading = true;
-  participating = false;
-  message = '';
-  messageType = '';
+  // Expose enum to template
+  CarpoolStatus = CarpoolStatus;
+
+  // Signal-based state
+  carpool = signal<Carpool | null>(null);
+  loading = signal(true);
+  participating = signal(false);
+  message = signal('');
+  messageType = signal('');
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private carpoolService: CarpoolService,
-    public authService: AuthService
+    public authService: AuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -204,46 +210,57 @@ export class CarpoolDetailComponent implements OnInit {
   loadCarpool(id: number) {
     this.carpoolService.getById(id).subscribe({
       next: (data) => {
-        this.carpool = data;
-        this.loading = false;
+        this.carpool.set(data);
+        this.loading.set(false);
       },
       error: (err) => {
-        console.error(err);
-        this.loading = false;
-        this.message = 'Error loading carpool';
-        this.messageType = 'alert-danger';
+        this.loading.set(false);
+        this.message.set(this.translate.instant('messages.error_occurred'));
+        this.messageType.set('alert-danger');
       }
     });
   }
 
   participate() {
-    if (!this.carpool) return;
+    if (!this.carpool()) return;
+    const carpoolId = this.carpool()?.carpoolId;
+    if (!carpoolId) return;
 
-    if (confirm(`Do you really want to join this carpool for ${this.carpool.pricePerPerson} credits?`)) {
-      this.participating = true;
+    const confirmMessage = this.translate.instant('carpool.join_confirm', { price: this.carpool()?.pricePerPerson });
+    if (confirm(confirmMessage)) {
+      this.participating.set(true);
 
-      this.carpoolService.participate(this.carpool.carpoolId).subscribe({
+      this.carpoolService.participate(carpoolId).subscribe({
         next: (response) => {
-          this.message = 'Participation confirmed! You can see your trips in your profile.';
-          this.messageType = 'alert-success';
-          this.participating = false;
-          this.loadCarpool(this.carpool!.carpoolId);
+          this.message.set(this.translate.instant('carpool.joined_successfully'));
+          this.messageType.set('alert-success');
+          this.participating.set(false);
+          this.loadCarpool(this.carpool()!.carpoolId);
         },
         error: (err) => {
-          this.message = err.error?.message || 'Error joining carpool';
-          this.messageType = 'alert-danger';
-          this.participating = false;
+          this.message.set(err.error?.message || this.translate.instant('messages.error_occurred'));
+          this.messageType.set('alert-danger');
+          this.participating.set(false);
         }
       });
     }
   }
 
   getStatusClass() {
-    switch(this.carpool?.status) {
-      case 'En attente': return 'info';
-      case 'En cours': return 'warning';
-      case 'Terminé': return 'success';
+    switch(this.carpool()?.status) {
+      case CarpoolStatus.Pending: return 'info';
+      case CarpoolStatus.InProgress: return 'warning';
+      case CarpoolStatus.Completed: return 'success';
       default: return 'info';
+    }
+  }
+
+  getStatusLabel() {
+    switch(this.carpool()?.status) {
+      case CarpoolStatus.Pending: return 'carpool.status.pending';
+      case CarpoolStatus.InProgress: return 'carpool.status.in_progress';
+      case CarpoolStatus.Completed: return 'carpool.status.completed';
+      default: return 'carpool.status.pending';
     }
   }
 }

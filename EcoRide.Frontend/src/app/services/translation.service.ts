@@ -9,14 +9,14 @@ export class TranslationService {
   private readonly DEFAULT_LANGUAGE = 'en';
   private readonly SUPPORTED_LANGUAGES = ['en', 'fr'];
 
-  constructor(private translate: TranslateService) {
+  constructor(private translateService: TranslateService) {
     this.initializeLanguage();
   }
 
   private initializeLanguage(): void {
     // Set supported languages
-    this.translate.addLangs(this.SUPPORTED_LANGUAGES);
-    this.translate.setDefaultLang(this.DEFAULT_LANGUAGE);
+    this.translateService.addLangs(this.SUPPORTED_LANGUAGES);
+    this.translateService.setDefaultLang(this.DEFAULT_LANGUAGE);
 
     // Determine which language to use
     const language = this.getPreferredLanguage();
@@ -31,7 +31,7 @@ export class TranslationService {
     }
 
     // 2. Check browser language
-    const browserLang = this.translate.getBrowserLang();
+    const browserLang = this.translateService.getBrowserLang();
     if (browserLang && this.SUPPORTED_LANGUAGES.includes(browserLang)) {
       return browserLang;
     }
@@ -42,7 +42,7 @@ export class TranslationService {
 
   setLanguage(language: string): void {
     if (this.SUPPORTED_LANGUAGES.includes(language)) {
-      this.translate.use(language);
+      this.translateService.use(language);
       localStorage.setItem(this.STORAGE_KEY, language);
       // Set HTML lang attribute for accessibility
       document.documentElement.lang = language;
@@ -50,7 +50,7 @@ export class TranslationService {
   }
 
   getCurrentLanguage(): string {
-    return this.translate.currentLang || this.DEFAULT_LANGUAGE;
+    return this.translateService.currentLang || this.DEFAULT_LANGUAGE;
   }
 
   getSupportedLanguages(): string[] {
@@ -58,6 +58,6 @@ export class TranslationService {
   }
 
   translate(key: string, params?: Object): string {
-    return this.translate.instant(key, params);
+    return this.translateService.instant(key, params);
   }
 }

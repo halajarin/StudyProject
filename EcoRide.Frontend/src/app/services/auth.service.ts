@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
 import { environment } from '../../environments/environment';
@@ -10,27 +10,26 @@ import { environment } from '../../environments/environment';
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
 
-  constructor(private http: HttpClient, private router: Router) {
+  // Signal-based state management
+  private currentUserSignal = signal<User | null>(this.getUserFromStorage());
+
+  // Public readonly signal
+  public currentUser = this.currentUserSignal.asReadonly();
+
+  // Computed signals for derived state
+  public isLoggedIn = computed(() => !!this.currentUserSignal());
+  public token = computed(() => localStorage.getItem('token'));
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  private getUserFromStorage(): User | null {
     const storedUser = localStorage.getItem('currentUser');
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      storedUser ? JSON.parse(storedUser) : null
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
+    return storedUser ? JSON.parse(storedUser) : null;
   }
 
   public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
-  }
-
-  public get isLoggedIn(): boolean {
-    return !!this.currentUserValue;
-  }
-
-  public get token(): string | null {
-    return localStorage.getItem('token');
+    return this.currentUserSignal();
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
@@ -39,7 +38,7 @@ export class AuthService {
         if (response.token) {
           localStorage.setItem('token', response.token);
           localStorage.setItem('currentUser', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user as any);
+          this.currentUserSignal.set(response.user as any);
         }
       })
     );
@@ -51,7 +50,7 @@ export class AuthService {
         if (response.token) {
           localStorage.setItem('token', response.token);
           localStorage.setItem('currentUser', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user as any);
+          this.currentUserSignal.set(response.user as any);
         }
       })
     );
@@ -60,12 +59,17 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
+    this.currentUserSignal.set(null);
     this.router.navigate(['/login']);
   }
 
   hasRole(role: string): boolean {
-    const user = this.currentUserValue;
-    return user ? user.roles.includes(role) : false;
+    const user = this.currentUserSignal();
+    return user && user.roles ? user.roles.includes(role) : false;
+  }
+
+  refreshCurrentUser(): void {
+    const user = this.getUserFromStorage();
+    this.currentUserSignal.set(user);
   }
 }

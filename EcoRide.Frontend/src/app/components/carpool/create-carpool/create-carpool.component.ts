@@ -1,100 +1,105 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CarpoolService } from '../../../services/carpool.service';
 import { UserService } from '../../../services/user.service';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
+import { Vehicle } from '../../../models/vehicle.model';
+import { CreateCarpoolForm } from '../../../interfaces/carpool-form.interface';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-carpool',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="container">
-      <h1>Create a carpool</h1>
+      <h1>{{ 'carpool.create_title' | translate }}</h1>
 
-      @if (error) {
-        <div class="alert alert-danger">{{ error }}</div>
+      @if (error()) {
+        <div class="alert alert-danger">{{ error() }}</div>
       }
 
-      @if (success) {
-        <div class="alert alert-success">{{ success }}</div>
+      @if (success()) {
+        <div class="alert alert-success">{{ success() }}</div>
       }
 
       <div class="card">
         <form (ngSubmit)="createTrip()">
           <div class="grid grid-2">
             <div class="form-group">
-              <label>Departure city *</label>
+              <label>{{ 'carpool.departure_city' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input type="text" [(ngModel)]="trip.departureCity" name="departureCity" required>
             </div>
 
             <div class="form-group">
-              <label>Departure location *</label>
+              <label>{{ 'carpool.departure_location' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input type="text" [(ngModel)]="trip.departureLocation" name="departureLocation"
-                     placeholder="Ex: Montparnasse Station" required>
+                     [placeholder]="'carpool.placeholder_departure_location' | translate" required>
             </div>
           </div>
 
           <div class="grid grid-2">
             <div class="form-group">
-              <label>Arrival city *</label>
+              <label>{{ 'carpool.arrival_city' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input type="text" [(ngModel)]="trip.arrivalCity" name="arrivalCity" required>
             </div>
 
             <div class="form-group">
-              <label>Arrival location *</label>
+              <label>{{ 'carpool.arrival_location' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input type="text" [(ngModel)]="trip.arrivalLocation" name="arrivalLocation"
-                     placeholder="Ex: Lyon Station" required>
+                     [placeholder]="'carpool.placeholder_arrival_location' | translate" required>
             </div>
           </div>
 
           <div class="grid grid-2">
             <div class="form-group">
-              <label>Departure date *</label>
-              <input type="date" [(ngModel)]="trip.departureDate" name="departureDate" required>
+              <label>{{ 'carpool.departure_date' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
+              <input type="date" [(ngModel)]="trip.departureDate" name="departureDate"
+                     (ngModelChange)="calculateDuration()" required>
             </div>
 
             <div class="form-group">
-              <label>Departure time *</label>
-              <input type="time" [(ngModel)]="trip.departureTime" name="departureTime" required>
-            </div>
-          </div>
-
-          <div class="grid grid-2">
-            <div class="form-group">
-              <label>Arrival date *</label>
-              <input type="date" [(ngModel)]="trip.arrivalDate" name="arrivalDate" required>
-            </div>
-
-            <div class="form-group">
-              <label>Arrival time *</label>
-              <input type="time" [(ngModel)]="trip.arrivalTime" name="arrivalTime" required>
+              <label>{{ 'carpool.departure_time' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
+              <input type="time" [(ngModel)]="trip.departureTime" name="departureTime"
+                     (ngModelChange)="calculateDuration()" required>
             </div>
           </div>
 
           <div class="grid grid-2">
             <div class="form-group">
-              <label>Number of seats *</label>
+              <label>{{ 'carpool.arrival_date' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
+              <input type="date" [(ngModel)]="trip.arrivalDate" name="arrivalDate"
+                     (ngModelChange)="calculateDuration()" required>
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'carpool.arrival_time' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
+              <input type="time" [(ngModel)]="trip.arrivalTime" name="arrivalTime"
+                     (ngModelChange)="calculateDuration()" required>
+            </div>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label>{{ 'carpool.number_of_seats' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input type="number" [(ngModel)]="trip.totalSeats" name="totalSeats" min="1" max="8" required>
             </div>
 
             <div class="form-group">
-              <label>Price per person (credits) *</label>
+              <label>{{ 'carpool.price_per_person' | translate }} ({{ 'common.credits' | translate }}) {{ 'auth.required_field_marker' | translate }}</label>
               <input type="number" [(ngModel)]="trip.pricePerPerson" name="pricePerPerson"
                      min="2" required>
-              <small>Minimum 2 credits (platform commission)</small>
+              <small>{{ 'carpool.platform_commission' | translate }}</small>
             </div>
           </div>
 
           <div class="grid grid-2">
             <div class="form-group">
-              <label>Vehicle *</label>
+              <label>{{ 'carpool.vehicle' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <select [(ngModel)]="trip.vehicleId" name="vehicleId" required>
-                <option value="">Select a vehicle</option>
-                @for (vehicle of vehicles; track vehicle.vehicleId) {
+                <option value="">{{ 'carpool.select_vehicle' | translate }}</option>
+                @for (vehicle of vehicles(); track vehicle.vehicleId) {
                   <option [value]="vehicle.vehicleId">
                     {{ vehicle.brandLabel }} {{ vehicle.model }} ({{ vehicle.registrationNumber }})
                   </option>
@@ -103,13 +108,14 @@ import { environment } from '../../../../environments/environment';
             </div>
 
             <div class="form-group">
-              <label>Estimated duration (minutes)</label>
-              <input type="number" [(ngModel)]="trip.estimatedDurationMinutes" name="estimatedDurationMinutes" min="1">
+              <label>{{ 'carpool.estimated_duration' | translate }} ({{ 'carpool.minutes' | translate }})</label>
+              <input type="number" [(ngModel)]="trip.estimatedDurationMinutes" name="estimatedDurationMinutes" min="1" readonly>
+              <small>{{ 'carpool.duration_auto_calculated' | translate }}</small>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary" [disabled]="loading">
-            {{ loading ? 'Creating...' : 'Create carpool' }}
+          <button type="submit" class="btn btn-primary" [disabled]="loading()">
+            {{ loading() ? ('carpool.creating' | translate) : ('common.add' | translate) }}
           </button>
         </form>
       </div>
@@ -129,7 +135,7 @@ import { environment } from '../../../../environments/environment';
   `]
 })
 export class CreateCarpoolComponent implements OnInit {
-  trip: any = {
+  trip: CreateCarpoolForm = {
     departureCity: '',
     departureLocation: '',
     arrivalCity: '',
@@ -140,20 +146,21 @@ export class CreateCarpoolComponent implements OnInit {
     arrivalTime: '',
     totalSeats: 3,
     pricePerPerson: 20,
-    vehicleId: '',
-    estimatedDurationMinutes: null
+    vehicleId: 0,
+    estimatedDurationMinutes: undefined
   };
 
-  vehicles: any[] = [];
-  error = '';
-  success = '';
-  loading = false;
+  vehicles = signal<Vehicle[]>([]);
+  error = signal('');
+  success = signal('');
+  loading = signal(false);
 
   constructor(
     private carpoolService: CarpoolService,
     private userService: UserService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private translate: TranslateService
+  ) { }
 
   ngOnInit() {
     this.loadVehicles();
@@ -162,30 +169,59 @@ export class CreateCarpoolComponent implements OnInit {
   loadVehicles() {
     this.userService.getVehicles().subscribe({
       next: (data) => {
-        this.vehicles = data;
-        if (this.vehicles.length === 0) {
-          this.error = 'You must first add a vehicle in your profile.';
+        this.vehicles.set(data);
+        if (this.vehicles().length === 0) {
+          this.error.set(this.translate.instant('carpool.must_add_vehicle'));
         }
       },
-      error: (err) => console.error(err)
     });
   }
 
-  createTrip() {
-    this.error = '';
-    this.success = '';
-    this.loading = true;
+  calculateDuration() {
+    // Only calculate if all date/time fields are filled
+    if (!this.trip.departureDate || !this.trip.departureTime ||
+      !this.trip.arrivalDate || !this.trip.arrivalTime) {
+      return;
+    }
 
-    this.carpoolService.create(this.trip).subscribe({
+    // Combine date and time into full DateTime objects
+    const departureDateTime = new Date(`${this.trip.departureDate}T${this.trip.departureTime}`);
+    const arrivalDateTime = new Date(`${this.trip.arrivalDate}T${this.trip.arrivalTime}`);
+
+    // Calculate difference in milliseconds, then convert to minutes
+    const diffMs = arrivalDateTime.getTime() - departureDateTime.getTime();
+    const diffMinutes = Math.round(diffMs / 60000);
+
+    // Only set if the duration is positive
+    if (diffMinutes > 0) {
+      this.trip.estimatedDurationMinutes = diffMinutes;
+    } else {
+      this.trip.estimatedDurationMinutes = undefined;
+    }
+  }
+
+  createTrip() {
+    this.error.set('');
+    this.success.set('');
+    this.loading.set(true);
+
+    // Convert form data to CreateCarpool format
+    const carpoolData = {
+      ...this.trip,
+      departureDate: new Date(this.trip.departureDate),
+      arrivalDate: new Date(this.trip.arrivalDate)
+    };
+
+    this.carpoolService.create(carpoolData).subscribe({
       next: () => {
-        this.success = 'Carpool created successfully! Redirecting...';
+        this.success.set(this.translate.instant('carpool.created_successfully'));
         setTimeout(() => {
           this.router.navigate(['/profile']);
         }, 2000);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Error creating carpool';
-        this.loading = false;
+        this.error.set(err.error?.message || this.translate.instant('messages.error_occurred'));
+        this.loading.set(false);
       }
     });
   }

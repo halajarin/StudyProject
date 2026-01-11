@@ -1,5 +1,12 @@
+export enum CarpoolStatus {
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Completed = 'Completed'
+}
+
 export interface Carpool {
   carpoolId: number;
+  userId: number;  // Driver user ID
   departureDate: Date;
   departureTime: string;
   departureLocation: string;
@@ -8,7 +15,7 @@ export interface Carpool {
   arrivalTime: string;
   arrivalLocation: string;
   arrivalCity: string;
-  status: string;
+  status: CarpoolStatus;
   totalSeats: number;
   availableSeats: number;
   pricePerPerson: number;
@@ -26,7 +33,7 @@ export interface Carpool {
 export interface SearchCarpool {
   departureCity: string;
   arrivalCity: string;
-  departureDate: Date;
+  departureDate?: string; // ISO date string (YYYY-MM-DD), optional
   isEcological?: boolean;
   maxPrice?: number;
   maxDurationMinutes?: number;

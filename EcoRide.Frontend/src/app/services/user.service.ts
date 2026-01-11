@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { Vehicle, CreateVehicle, Brand } from '../models/vehicle.model';
+import { UserPreferences } from '../interfaces/user-preferences.interface';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -17,27 +18,27 @@ export class UserService {
     return this.http.get<User>(`${this.apiUrl}/profile`);
   }
 
-  updateProfile(data: Partial<User>): Observable<any> {
-    return this.http.put(`${this.apiUrl}/profile`, data);
+  updateProfile(data: Partial<User>): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/profile`, data);
   }
 
-  addRole(roleId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/add-role/${roleId}`, {});
+  addRole(roleId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/add-role/${roleId}`, {});
   }
 
   getVehicles(): Observable<Vehicle[]> {
     return this.http.get<Vehicle[]>(`${this.apiUrl}/vehicles`);
   }
 
-  addVehicle(vehicle: CreateVehicle): Observable<any> {
-    return this.http.post(`${this.apiUrl}/vehicles`, vehicle);
+  addVehicle(vehicle: CreateVehicle): Observable<Vehicle> {
+    return this.http.post<Vehicle>(`${this.apiUrl}/vehicles`, vehicle);
   }
 
-  getPreferences(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/preferences`);
+  getPreferences(): Observable<UserPreferences> {
+    return this.http.get<UserPreferences>(`${this.apiUrl}/preferences`);
   }
 
-  savePreferences(preferences: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/preferences`, preferences);
+  savePreferences(preferences: UserPreferences): Observable<UserPreferences> {
+    return this.http.post<UserPreferences>(`${this.apiUrl}/preferences`, preferences);
   }
 }

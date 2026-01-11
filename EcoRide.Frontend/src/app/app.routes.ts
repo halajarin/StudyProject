@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './guards/auth.guard';
+import { UserRole } from './models/role.enum';
 
 export const routes: Routes = [
   {
@@ -25,7 +26,7 @@ export const routes: Routes = [
   {
     path: 'create-carpool',
     loadComponent: () => import('./components/carpool/create-carpool/create-carpool.component').then(m => m.CreateCarpoolComponent),
-    canActivate: [roleGuard(['Chauffeur'])]
+    canActivate: [roleGuard([UserRole.Driver])]
   },
   {
     path: 'profile',
@@ -35,12 +36,12 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () => import('./components/admin/dashboard/dashboard.component').then(m => m.DashboardComponent),
-    canActivate: [roleGuard(['Administrateur'])]
+    canActivate: [roleGuard([UserRole.Administrator])]
   },
   {
     path: 'employee',
     loadComponent: () => import('./components/employee/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent),
-    canActivate: [roleGuard(['Employe', 'Administrateur'])]
+    canActivate: [roleGuard([UserRole.Employee, UserRole.Administrator])]
   },
   {
     path: '**',

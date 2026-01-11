@@ -13,7 +13,15 @@ export class CarpoolService {
   constructor(private http: HttpClient) {}
 
   search(searchData: SearchCarpool): Observable<Carpool[]> {
-    return this.http.post<Carpool[]>(`${this.apiUrl}/search`, searchData);
+    // Clean up empty fields to avoid serialization issues
+    const cleanedData: any = { ...searchData };
+
+    // Remove empty date field
+    if (!cleanedData.departureDate || cleanedData.departureDate === '') {
+      delete cleanedData.departureDate;
+    }
+
+    return this.http.post<Carpool[]>(`${this.apiUrl}/search`, cleanedData);
   }
 
   getById(id: number): Observable<Carpool> {

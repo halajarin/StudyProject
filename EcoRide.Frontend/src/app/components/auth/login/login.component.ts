@@ -1,43 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="container">
       <div class="login-container">
         <div class="card">
-          <h2 class="text-center">Login to EcoRide</h2>
+          <h2 class="text-center">{{ 'auth.login_title' | translate }}</h2>
 
-          @if (error) {
-            <div class="alert alert-danger">{{ error }}</div>
+          @if (error()) {
+            <div class="alert alert-danger">{{ error() }}</div>
           }
 
           <form (ngSubmit)="login()">
             <div class="form-group">
-              <label for="email">Email</label>
+              <label for="email">{{ 'auth.email' | translate }}</label>
               <input
                 type="email"
                 id="email"
                 [(ngModel)]="credentials.email"
                 name="email"
-                placeholder="your@email.com"
+                [placeholder]="'auth.placeholder_email' | translate"
                 required>
             </div>
 
             <div class="form-group">
-              <label for="password">Password</label>
+              <label for="password">{{ 'auth.password' | translate }}</label>
               <input
                 type="password"
                 id="password"
                 [(ngModel)]="credentials.password"
                 name="password"
-                placeholder="Your password"
+                [placeholder]="'auth.placeholder_password' | translate"
                 required>
             </div>
 
@@ -45,20 +46,20 @@ import { AuthService } from '../../../services/auth.service';
               type="submit"
               class="btn btn-primary"
               style="width: 100%;"
-              [disabled]="loading">
-              {{ loading ? 'Logging in...' : 'Login' }}
+              [disabled]="loading()">
+              {{ loading() ? ('auth.logging_in' | translate) : ('common.login' | translate) }}
             </button>
           </form>
 
           <p class="text-center mt-3">
-            Don't have an account?
-            <a routerLink="/register">Sign up</a>
+            {{ 'auth.no_account' | translate }}
+            <a routerLink="/register">{{ 'auth.sign_up' | translate }}</a>
           </p>
 
           <div class="test-credentials">
-            <p><strong>Test accounts:</strong></p>
-            <p><small>Email: jean.dupont@email.com | Password: Password123!</small></p>
-            <p><small>Email: admin@ecoride.fr | Password: Password123!</small></p>
+            <p><strong>{{ 'auth.test_accounts' | translate }}:</strong></p>
+            <p><small>Email: jean.dupont@email.com | {{ 'auth.password' | translate }}: Password123!</small></p>
+            <p><small>Email: admin@ecoride.fr | {{ 'auth.password' | translate }}: Password123!</small></p>
           </div>
         </div>
       </div>
@@ -97,8 +98,9 @@ export class LoginComponent {
     email: '',
     password: ''
   };
-  error = '';
-  loading = false;
+
+  error = signal('');
+  loading = signal(false);
 
   constructor(
     private authService: AuthService,
@@ -106,16 +108,16 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.error = '';
-    this.loading = true;
+    this.error.set('');
+    this.loading.set(true);
 
     this.authService.login(this.credentials).subscribe({
       next: () => {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Login error';
-        this.loading = false;
+        this.error.set(err.error?.message || 'Login error');
+        this.loading.set(false);
       }
     });
   }

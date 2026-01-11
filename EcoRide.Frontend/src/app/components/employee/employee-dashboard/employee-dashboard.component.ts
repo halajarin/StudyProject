@@ -1,38 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { Review } from '../../../interfaces/review.interface';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-employee-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   template: `
     <div class="container">
-      <h1>Employee Dashboard</h1>
+      <h1>{{ 'navigation.employee_dashboard' | translate }}</h1>
 
       <div class="card">
-        <h2>Reviews pending validation</h2>
+        <h2>{{ 'admin.pending_reviews' | translate }}</h2>
         @if (pendingReviews.length > 0) {
           @for (review of pendingReviews; track review.reviewId) {
             <div class="review-card">
               <div class="review-header">
                 <h4>{{ review.authorUsername }} → {{ review.targetUsername }}</h4>
-                <span class="rating">Rating: {{ review.rating }}/5</span>
+                <span class="rating">{{ 'carpool.rating' | translate }}: {{ review.note }}/5</span>
               </div>
               <p>{{ review.comment }}</p>
               <div class="review-actions">
                 <button (click)="validateReview(review.reviewId)" class="btn btn-primary">
-                  Validate
+                  {{ 'admin.validate_review' | translate }}
                 </button>
                 <button (click)="rejectReview(review.reviewId)" class="btn btn-danger">
-                  Reject
+                  {{ 'admin.reject_review' | translate }}
                 </button>
               </div>
             </div>
           }
         } @else {
-          <p>No pending reviews</p>
+          <p>{{ 'review.no_reviews' | translate }}</p>
         }
       </div>
     </div>
@@ -65,9 +67,12 @@ import { environment } from '../../../../environments/environment';
   `]
 })
 export class EmployeeDashboardComponent implements OnInit {
-  pendingReviews: any[] = [];
+  pendingReviews: Review[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     this.loadPendingReviews();
@@ -76,27 +81,24 @@ export class EmployeeDashboardComponent implements OnInit {
   loadPendingReviews() {
     this.http.get<any[]>(`${environment.apiUrl}/review/pending`).subscribe({
       next: (data) => this.pendingReviews = data,
-      error: (err) => console.error(err)
     });
   }
 
   validateReview(id: number) {
     this.http.put(`${environment.apiUrl}/review/${id}/validate`, {}).subscribe({
       next: () => {
-        alert('Review validated');
+        alert(this.translate.instant('messages.operation_successful'));
         this.loadPendingReviews();
       },
-      error: (err) => console.error(err)
     });
   }
 
   rejectReview(id: number) {
     this.http.put(`${environment.apiUrl}/review/${id}/reject`, {}).subscribe({
       next: () => {
-        alert('Review rejected');
+        alert(this.translate.instant('messages.operation_successful'));
         this.loadPendingReviews();
       },
-      error: (err) => console.error(err)
     });
   }
 }

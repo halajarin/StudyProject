@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { LanguageSelectorComponent } from './components/language-selector/language-selector.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, TranslateModule, LanguageSelectorComponent],
   template: `
     <nav class="navbar">
       <div class="container">
@@ -16,30 +18,34 @@ import { AuthService } from './services/auth.service';
           </a>
         </div>
         <ul class="nav-menu">
-          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
-          <li><a routerLink="/carpools" routerLinkActive="active">Carpools</a></li>
+          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'common.home' | translate }}</a></li>
+          <li><a routerLink="/carpools" routerLinkActive="active">{{ 'navigation.carpools' | translate }}</a></li>
 
-          @if (authService.isLoggedIn) {
-            <li><a routerLink="/profile" routerLinkActive="active">My Profile</a></li>
+          @if (authService.isLoggedIn()) {
+            <li><a routerLink="/profile" routerLinkActive="active">{{ 'navigation.my_profile' | translate }}</a></li>
 
             @if (authService.hasRole('Employe') || authService.hasRole('Administrateur')) {
-              <li><a routerLink="/employee" routerLinkActive="active">Employee Dashboard</a></li>
+              <li><a routerLink="/employee" routerLinkActive="active">{{ 'navigation.employee_dashboard' | translate }}</a></li>
             }
 
             @if (authService.hasRole('Administrateur')) {
-              <li><a routerLink="/admin" routerLinkActive="active">Administration</a></li>
+              <li><a routerLink="/admin" routerLinkActive="active">{{ 'navigation.admin' | translate }}</a></li>
             }
 
             <li>
               <span class="credit-badge">
-                {{ authService.currentUserValue?.credits }} credits
+                {{ authService.currentUserValue?.credits }} {{ 'common.credits' | translate }}
               </span>
             </li>
-            <li><button class="btn-logout" (click)="authService.logout()">Logout</button></li>
+            <li><button class="btn-logout" (click)="authService.logout()">{{ 'common.logout' | translate }}</button></li>
           } @else {
-            <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
-            <li><a routerLink="/register" class="btn-register">Sign up</a></li>
+            <li><a routerLink="/login" routerLinkActive="active">{{ 'common.login' | translate }}</a></li>
+            <li><a routerLink="/register" class="btn-register">{{ 'navigation.sign_up' | translate }}</a></li>
           }
+
+          <li>
+            <app-language-selector></app-language-selector>
+          </li>
         </ul>
       </div>
     </nav>
@@ -50,8 +56,8 @@ import { AuthService } from './services/auth.service';
 
     <footer class="footer">
       <div class="container">
-        <p>&copy; 2025 EcoRide - Eco-friendly Carpooling</p>
-        <p>Contact: <a href="mailto:contact@ecoride.fr">contact@ecoride.fr</a> | <a routerLink="/legal-notice">Legal notice</a></p>
+        <p>&copy; 2025 EcoRide - {{ 'footer.copyright' | translate }}</p>
+        <p>{{ 'footer.contact' | translate }}: <a href="mailto:contact@ecoride.fr">contact@ecoride.fr</a> | <a routerLink="/legal-notice">{{ 'footer.legal_notice' | translate }}</a></p>
       </div>
     </footer>
   `,

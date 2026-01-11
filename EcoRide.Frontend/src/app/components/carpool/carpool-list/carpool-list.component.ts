@@ -1,81 +1,82 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CarpoolService } from '../../../services/carpool.service';
 import { Carpool, SearchCarpool } from '../../../models/carpool.model';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-carpool-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="container">
-      <h1>Search for a carpool</h1>
+      <h1>{{ 'carpool.search_title' | translate }}</h1>
 
       <div class="card search-section">
         <form (ngSubmit)="search()">
           <div class="grid grid-3">
             <div class="form-group">
-              <label>Departure city</label>
+              <label>{{ 'carpool.departure_city' | translate }}</label>
               <input type="text" [(ngModel)]="searchForm.departureCity" name="departureCity" required>
             </div>
             <div class="form-group">
-              <label>Arrival city</label>
+              <label>{{ 'carpool.arrival_city' | translate }}</label>
               <input type="text" [(ngModel)]="searchForm.arrivalCity" name="arrivalCity" required>
             </div>
             <div class="form-group">
-              <label>Date</label>
-              <input type="date" [(ngModel)]="searchForm.departureDate" name="departureDate" required>
+              <label>{{ 'home.date' | translate }}</label>
+              <input type="date" [(ngModel)]="searchForm.departureDate" name="departureDate">
             </div>
           </div>
 
           <div class="filters">
-            <h3>Filters</h3>
+            <h3>{{ 'carpool.filters' | translate }}</h3>
             <div class="grid grid-3">
               <div class="form-group">
                 <label>
                   <input type="checkbox" [(ngModel)]="searchForm.isEcological" name="isEcological">
-                  Electric vehicles only
+                  {{ 'carpool.electric_vehicles_only' | translate }}
                 </label>
               </div>
               <div class="form-group">
-                <label>Maximum price (credits)</label>
+                <label>{{ 'carpool.maximum_price' | translate }}</label>
                 <input type="number" [(ngModel)]="searchForm.maxPrice" name="maxPrice" min="0">
               </div>
               <div class="form-group">
-                <label>Minimum rating</label>
+                <label>{{ 'carpool.minimum_rating' | translate }}</label>
                 <select [(ngModel)]="searchForm.minimumRating" name="minimumRating">
-                  <option [ngValue]="undefined">All</option>
-                  <option [ngValue]="3">3 stars minimum</option>
-                  <option [ngValue]="4">4 stars minimum</option>
-                  <option [ngValue]="5">5 stars only</option>
+                  <option [ngValue]="undefined">{{ 'carpool.all' | translate }}</option>
+                  <option [ngValue]="3">{{ 'carpool.stars_minimum' | translate:{count: 3} }}</option>
+                  <option [ngValue]="4">{{ 'carpool.stars_minimum' | translate:{count: 4} }}</option>
+                  <option [ngValue]="5">{{ 'carpool.stars_only' | translate:{count: 5} }}</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary">Search</button>
+          <button type="submit" class="btn btn-primary">{{ 'common.search' | translate }}</button>
         </form>
       </div>
 
-      @if (loading) {
-        <div class="loading">Searching...</div>
+      @if (loading()) {
+        <div class="loading">{{ 'carpool.searching' | translate }}</div>
       }
 
-      @if (carpools.length > 0) {
+      @if (carpools().length > 0) {
         <div class="results">
-          <h2>{{ carpools.length }} trip(s) found</h2>
+          <h2>{{ 'carpool.trips_found' | translate:{count: carpools().length} }}</h2>
 
-          @for (carpool of carpools; track carpool.carpoolId) {
+          @for (carpool of carpools(); track carpool.carpoolId) {
             <div class="carpool-card card">
               <div class="card-header">
                 <div class="route">
                   <h3>{{ carpool.departureCity }} → {{ carpool.arrivalCity }}</h3>
-                  <p class="date">{{ carpool.departureDate | date:'dd/MM/yyyy' }} at {{ carpool.departureTime }}</p>
+                  <p class="date">{{ carpool.departureDate | date:'dd/MM/yyyy' }} {{ 'common.at' | translate }} {{ carpool.departureTime }}</p>
                 </div>
                 <div class="price">
-                  <span class="amount">{{ carpool.pricePerPerson }}</span> credits
+                  <span class="amount">{{ carpool.pricePerPerson }}</span> {{ 'common.credits' | translate }}
                 </div>
               </div>
 
@@ -88,29 +89,29 @@ import { Carpool, SearchCarpool } from '../../../models/carpool.model';
                   <div class="car-info">
                     {{ carpool.vehicleBrand }} {{ carpool.vehicleModel }} - {{ carpool.vehicleColor }}
                     @if (carpool.isEcological) {
-                      <span class="badge badge-eco">🔋 Electric</span>
+                      <span class="badge badge-eco">🔋 {{ 'carpool.electric' | translate }}</span>
                     }
                   </div>
                 </div>
 
                 <div class="trip-details">
-                  <span>{{ carpool.availableSeats }} seat(s) available</span>
+                  <span>{{ carpool.availableSeats }} {{ (carpool.availableSeats > 1 ? 'carpool.seats_available_plural' : 'carpool.seat_available') | translate }}</span>
                   @if (carpool.estimatedDurationMinutes) {
-                    <span>Duration: {{ carpool.estimatedDurationMinutes }} min</span>
+                    <span>{{ 'carpool.duration' | translate }}: {{ carpool.estimatedDurationMinutes }} {{ 'carpool.min' | translate }}</span>
                   }
                 </div>
               </div>
 
               <div class="card-footer">
-                <a [routerLink]="['/carpool', carpool.carpoolId]" class="btn btn-primary">View details</a>
+                <a [routerLink]="['/carpool', carpool.carpoolId]" class="btn btn-primary">{{ 'carpool.view_details' | translate }}</a>
               </div>
             </div>
           }
         </div>
-      } @else if (!loading && searched) {
+      } @else if (!loading() && searched()) {
         <div class="alert alert-info">
-          <p>No carpools found for these criteria.</p>
-          <p>Try modifying your search or choosing another date.</p>
+          <p>{{ 'carpool.no_results' | translate }}</p>
+          <p>{{ 'carpool.no_results_action' | translate }}</p>
         </div>
       }
     </div>
@@ -202,41 +203,41 @@ export class CarpoolListComponent implements OnInit {
   searchForm: SearchCarpool = {
     departureCity: '',
     arrivalCity: '',
-    departureDate: new Date()
+    departureDate: ''
   };
 
-  carpools: Carpool[] = [];
-  loading = false;
-  searched = false;
+  carpools = signal<Carpool[]>([]);
+  loading = signal(false);
+  searched = signal(false);
 
   constructor(
     private carpoolService: CarpoolService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      if (params['departureCity']) {
+      if (params['departureCity'] && params['arrivalCity']) {
         this.searchForm.departureCity = params['departureCity'];
         this.searchForm.arrivalCity = params['arrivalCity'];
-        this.searchForm.departureDate = new Date(params['departureDate']);
+        this.searchForm.departureDate = params['departureDate'] || '';
         this.search();
       }
     });
   }
 
   search() {
-    this.loading = true;
-    this.searched = true;
+    this.loading.set(true);
+    this.searched.set(true);
 
     this.carpoolService.search(this.searchForm).subscribe({
       next: (results) => {
-        this.carpools = results;
-        this.loading = false;
+        this.carpools.set(results);
+        this.loading.set(false);
       },
       error: (err) => {
-        console.error(err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

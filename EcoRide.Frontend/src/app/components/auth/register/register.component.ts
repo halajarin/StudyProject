@@ -1,107 +1,108 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="container">
       <div class="register-container">
         <div class="card">
-          <h2 class="text-center">Create an EcoRide account</h2>
+          <h2 class="text-center">{{ 'auth.register_title' | translate }}</h2>
 
-          @if (error) {
-            <div class="alert alert-danger">{{ error }}</div>
+          @if (error()) {
+            <div class="alert alert-danger">{{ error() }}</div>
           }
 
-          @if (success) {
-            <div class="alert alert-success">{{ success }}</div>
+          @if (success()) {
+            <div class="alert alert-success">{{ success() }}</div>
           }
 
           <form (ngSubmit)="register()">
             <div class="form-group">
-              <label for="username">Username *</label>
+              <label for="username">{{ 'auth.username' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input
                 type="text"
                 id="username"
                 [(ngModel)]="userData.username"
                 name="username"
-                placeholder="Your username"
+                [placeholder]="'auth.placeholder_username' | translate"
                 required
                 minlength="3">
-              @if (errors.username) {
-                <span class="error">{{ errors.username }}</span>
+              @if (errors().username) {
+                <span class="error">{{ errors().username }}</span>
               }
             </div>
 
             <div class="form-group">
-              <label for="email">Email *</label>
+              <label for="email">{{ 'auth.email' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input
                 type="email"
                 id="email"
                 [(ngModel)]="userData.email"
                 name="email"
-                placeholder="your@email.com"
+                [placeholder]="'auth.placeholder_email' | translate"
                 required>
             </div>
 
             <div class="form-group">
-              <label for="password">Password *</label>
+              <label for="password">{{ 'auth.password' | translate }} {{ 'auth.required_field_marker' | translate }}</label>
               <input
                 type="password"
                 id="password"
                 [(ngModel)]="userData.password"
                 name="password"
-                placeholder="Minimum 8 characters"
+                [placeholder]="'auth.placeholder_password_min' | translate"
                 required
                 minlength="8">
-              <small>Password must contain at least one uppercase, one lowercase, one number and one special character</small>
-              @if (errors.password) {
-                <span class="error">{{ errors.password }}</span>
+              <small>{{ 'auth.password_requirements' | translate }}</small>
+              @if (errors().password) {
+                <span class="error">{{ errors().password }}</span>
               }
             </div>
 
             <div class="form-group">
-              <label for="lastName">Last name</label>
+              <label for="lastName">{{ 'auth.last_name' | translate }}</label>
               <input
                 type="text"
                 id="lastName"
                 [(ngModel)]="userData.lastName"
                 name="lastName"
-                placeholder="Your last name">
+                [placeholder]="'auth.placeholder_lastname' | translate">
             </div>
 
             <div class="form-group">
-              <label for="firstName">First name</label>
+              <label for="firstName">{{ 'auth.first_name' | translate }}</label>
               <input
                 type="text"
                 id="firstName"
                 [(ngModel)]="userData.firstName"
                 name="firstName"
-                placeholder="Your first name">
+                [placeholder]="'auth.placeholder_firstname' | translate">
             </div>
 
             <div class="info-box">
-              <p>✓ You will receive 20 credits upon registration</p>
-              <p>✓ You can become a driver from your profile</p>
+              <p>✓ {{ 'auth.registration_bonus' | translate }}</p>
+              <p>✓ {{ 'auth.become_driver' | translate }}</p>
             </div>
 
             <button
               type="submit"
               class="btn btn-primary"
               style="width: 100%;"
-              [disabled]="loading">
-              {{ loading ? 'Registering...' : 'Sign up' }}
+              [disabled]="loading()">
+              {{ loading() ? ('auth.registering' | translate) : ('auth.sign_up' | translate) }}
             </button>
           </form>
 
           <p class="text-center mt-3">
-            Already have an account?
-            <a routerLink="/login">Login</a>
+            {{ 'auth.have_account' | translate }}
+            <a routerLink="/login">{{ 'common.login' | translate }}</a>
           </p>
         </div>
       </div>
@@ -150,46 +151,48 @@ export class RegisterComponent {
     firstName: ''
   };
 
-  errors: any = {};
-  error = '';
-  success = '';
-  loading = false;
+  // Signal-based state
+  errors = signal<any>({});
+  error = signal('');
+  success = signal('');
+  loading = signal(false);
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   register() {
-    this.errors = {};
-    this.error = '';
-    this.success = '';
-    this.loading = true;
+    this.errors.set({});
+    this.error.set('');
+    this.success.set('');
+    this.loading.set(true);
 
     // Validation
     if (this.userData.username.length < 3) {
-      this.errors.username = 'Username must contain at least 3 characters';
-      this.loading = false;
+      this.errors.set({ username: this.translate.instant('auth.username_min_length') });
+      this.loading.set(false);
       return;
     }
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(this.userData.password)) {
-      this.errors.password = 'Password does not meet security requirements';
-      this.loading = false;
+      this.errors.set({ password: this.translate.instant('auth.password_security_error') });
+      this.loading.set(false);
       return;
     }
 
     this.authService.register(this.userData).subscribe({
       next: () => {
-        this.success = 'Registration successful! Redirecting...';
+        this.success.set(this.translate.instant('auth.registration_success'));
         setTimeout(() => {
           this.router.navigate(['/']);
         }, 1500);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Registration error';
-        this.loading = false;
+        this.error.set(err.error?.message || this.translate.instant('auth.registration_error'));
+        this.loading.set(false);
       }
     });
   }

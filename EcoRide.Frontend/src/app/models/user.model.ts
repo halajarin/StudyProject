@@ -12,6 +12,7 @@ export interface User {
   roles: string[];
   averageRating: number;
   reviewCount: number;
+  isActive?: boolean;
 }
 
 export interface RegisterRequest {
@@ -34,6 +35,9 @@ export interface AuthResponse {
     username: string;
     email: string;
     credits: number;
+    roles: string[];
+    averageRating: number;
+    reviewCount: number;
   };
   token: string;
 }

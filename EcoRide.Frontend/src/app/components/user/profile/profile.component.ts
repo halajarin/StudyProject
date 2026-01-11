@@ -1,68 +1,74 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CarpoolService } from '../../../services/carpool.service';
+import { AuthService } from '../../../services/auth.service';
 import { User } from '../../../models/user.model';
+import { UserRole, RoleId } from '../../../models/role.enum';
+import { Vehicle } from '../../../models/vehicle.model';
+import { Carpool } from '../../../models/carpool.model';
+import { CreateVehicleForm } from '../../../interfaces/vehicle.interface';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="container">
-      <h1>My Profile</h1>
+      <h1>{{ 'user.profile' | translate }}</h1>
 
-      @if (user) {
+      @if (user()) {
         <div class="grid grid-2">
           <div class="card">
-            <h2>My Profile</h2>
+            <h2>{{ 'user.profile' | translate }}</h2>
             <div class="profile-info">
-              <p><strong>Username:</strong> {{ user.username }}</p>
-              <p><strong>Email:</strong> {{ user.email }}</p>
-              <p><strong>Credits:</strong> <span class="credit-amount">{{ user.credits }}</span></p>
-              <p><strong>Average rating:</strong> ⭐ {{ user.averageRating.toFixed(1) }} ({{ user.reviewCount }} reviews)</p>
-              <p><strong>Roles:</strong> {{ user.roles.join(', ') }}</p>
+              <p><strong>{{ 'auth.username' | translate }}:</strong> {{ user()?.username }}</p>
+              <p><strong>{{ 'auth.email' | translate }}:</strong> {{ user()?.email }}</p>
+              <p><strong>{{ 'user.credits' | translate }}:</strong> <span class="credit-amount">{{ user()?.credits }}</span></p>
+              <p><strong>{{ 'carpool.rating' | translate }}:</strong> ⭐ {{ user()?.averageRating?.toFixed(1) }} ({{ user()?.reviewCount }} {{ 'review.reviews' | translate }})</p>
+              <p><strong>{{ 'user.roles' | translate }}:</strong> {{ user()?.roles?.join(', ') }}</p>
             </div>
 
             <div class="role-section">
-              <h3>Become a driver</h3>
-              @if (!user.roles.includes('Chauffeur')) {
+              <h3>{{ 'auth.become_driver' | translate }}</h3>
+              @if (!hasRole(UserRole.Driver)) {
                 <button (click)="becomeDriver()" class="btn btn-primary">
-                  Add Driver role
+                  {{ 'user.become_driver_action' | translate }}
                 </button>
               } @else {
-                <p class="badge badge-success">You are already a driver</p>
+                <p class="badge badge-success">{{ 'user.is_driver' | translate }}</p>
               }
             </div>
           </div>
 
           <div class="card">
-            <h2>My Vehicles</h2>
-            @if (vehicles.length > 0) {
-              @for (vehicle of vehicles; track vehicle.vehicleId) {
+            <h2>{{ 'user.my_vehicles' | translate }}</h2>
+            @if (vehicles().length > 0) {
+              @for (vehicle of vehicles(); track vehicle.vehicleId) {
                 <div class="vehicle-card">
                   <h4>{{ vehicle.brandLabel }} {{ vehicle.model }}</h4>
                   <p>{{ vehicle.registrationNumber }} - {{ vehicle.energyType }}</p>
-                  <p>{{ vehicle.seatCount }} seats - {{ vehicle.color }}</p>
+                  <p>{{ vehicle.seatCount }} {{ 'carpool.seats_available' | translate }} - {{ vehicle.color }}</p>
                 </div>
               }
             } @else {
-              <p>No registered vehicles</p>
+              <p>{{ 'user.no_vehicles' | translate }}</p>
             }
 
-            @if (user.roles.includes('Chauffeur')) {
-              <button (click)="showAddVehicle = !showAddVehicle" class="btn btn-secondary mt-2">
-                {{ showAddVehicle ? 'Cancel' : 'Add a vehicle' }}
+            @if (hasRole(UserRole.Driver)) {
+              <button (click)="showAddVehicle.set(!showAddVehicle())" class="btn btn-secondary mt-2">
+                {{ showAddVehicle() ? ('common.cancel' | translate) : ('user.add_vehicle' | translate) }}
               </button>
 
-              @if (showAddVehicle) {
+              @if (showAddVehicle()) {
                 <form (ngSubmit)="addVehicle()" class="mt-2">
                   <div class="form-group">
-                    <label>Brand</label>
+                    <label>{{ 'vehicle.brand' | translate }}</label>
                     <select [(ngModel)]="newVehicle.brandId" name="brandId" required>
-                      <option value="">Select...</option>
+                      <option value="">{{ 'carpool.select_vehicle' | translate }}</option>
                       <option value="1">Renault</option>
                       <option value="2">Peugeot</option>
                       <option value="3">Citroën</option>
@@ -70,74 +76,76 @@ import { User } from '../../../models/user.model';
                     </select>
                   </div>
                   <div class="form-group">
-                    <label>Model</label>
+                    <label>{{ 'vehicle.model' | translate }}</label>
                     <input type="text" [(ngModel)]="newVehicle.model" name="model" required>
                   </div>
                   <div class="form-group">
-                    <label>Registration number</label>
+                    <label>{{ 'vehicle.registration_number' | translate }}</label>
                     <input type="text" [(ngModel)]="newVehicle.registrationNumber" name="registrationNumber" required>
                   </div>
                   <div class="form-group">
-                    <label>Energy type</label>
+                    <label>{{ 'vehicle.energy_type' | translate }}</label>
                     <select [(ngModel)]="newVehicle.energyType" name="energyType" required>
-                      <option value="Essence">Gas</option>
-                      <option value="Diesel">Diesel</option>
-                      <option value="Electrique">Electric</option>
-                      <option value="Hybride">Hybrid</option>
+                      <option value="Gasoline">{{ 'vehicle.types.gasoline' | translate }}</option>
+                      <option value="Diesel">{{ 'vehicle.types.diesel' | translate }}</option>
+                      <option value="Electric">{{ 'vehicle.types.electric' | translate }}</option>
+                      <option value="Hybrid">{{ 'vehicle.types.hybrid' | translate }}</option>
+                      <option value="LPG">{{ 'vehicle.types.lpg' | translate }}</option>
+                      <option value="CNG">{{ 'vehicle.types.cng' | translate }}</option>
                     </select>
                   </div>
                   <div class="form-group">
-                    <label>Color</label>
+                    <label>{{ 'vehicle.color' | translate }}</label>
                     <input type="text" [(ngModel)]="newVehicle.color" name="color" required>
                   </div>
                   <div class="form-group">
-                    <label>Number of seats</label>
+                    <label>{{ 'vehicle.seat_count' | translate }}</label>
                     <input type="number" [(ngModel)]="newVehicle.seatCount" name="seatCount" min="1" max="8" required>
                   </div>
-                  <button type="submit" class="btn btn-primary">Save</button>
+                  <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
                 </form>
               }
             }
           </div>
         </div>
 
-        @if (user.roles.includes('Chauffeur')) {
+        @if (hasRole(UserRole.Driver)) {
           <div class="card mt-3">
-            <h2>Driver Actions</h2>
+            <h2>{{ 'carpool.driver' | translate }}</h2>
             <a routerLink="/create-carpool" class="btn btn-primary">
-              ➕ Create a new carpool
+              ➕ {{ 'navigation.create_carpool' | translate }}
             </a>
           </div>
         }
 
         <div class="card mt-3">
-          <h2>My Carpools</h2>
-          @if (loading) {
-            <p>Loading...</p>
+          <h2>{{ 'navigation.my_trips' | translate }}</h2>
+          @if (loading()) {
+            <p>{{ 'common.loading' | translate }}</p>
           } @else {
             <div class="trips-section">
-              <h3>As driver</h3>
-              @if (myTrips.asDriver && myTrips.asDriver.length > 0) {
-                @for (trip of myTrips.asDriver; track trip.carpoolId) {
+              <h3>{{ 'carpool.driver' | translate }}</h3>
+              @if (myTrips().asDriver && myTrips().asDriver.length > 0) {
+                @for (trip of myTrips().asDriver; track trip.carpoolId) {
                   <div class="trip-card">
                     <p><strong>{{ trip.departureCity }} → {{ trip.arrivalCity }}</strong></p>
                     <p>{{ trip.departureDate | date:'dd/MM/yyyy' }} - {{ trip.status }}</p>
                   </div>
                 }
               } @else {
-                <p>No trips as driver</p>
+                <p>{{ 'carpool.no_trips_driver' | translate }}</p>
               }
 
-              <h3 class="mt-2">As passenger</h3>
-              @if (myTrips.asPassenger && myTrips.asPassenger.length > 0) {
-                @for (trip of myTrips.asPassenger; track trip.carpoolId) {
+              <h3 class="mt-2">{{ 'carpool.passengers' | translate }}</h3>
+              @if (myTrips().asPassenger && myTrips().asPassenger.length > 0) {
+                @for (trip of myTrips().asPassenger; track trip.carpoolId) {
                   <div class="trip-card">
                     <p><strong>{{ trip.departureCity }} → {{ trip.arrivalCity }}</strong></p>
                     <p>{{ trip.departureDate | date:'dd/MM/yyyy' }} - {{ trip.status }}</p>
                   </div>
                 }
               } @else {
-                <p>No trips as passenger</p>
+                <p>{{ 'carpool.no_trips_passenger' | translate }}</p>
               }
             </div>
           }
@@ -182,13 +190,17 @@ import { User } from '../../../models/user.model';
   `]
 })
 export class ProfileComponent implements OnInit {
-  user: User | null = null;
-  vehicles: any[] = [];
-  myTrips: any = { asDriver: [], asPassenger: [] };
-  loading = true;
-  showAddVehicle = false;
-  newVehicle: any = {
-    brandId: '',
+  // Expose enum to template
+  UserRole = UserRole;
+
+  // Signal-based state
+  user = signal<User | null>(null);
+  vehicles = signal<Vehicle[]>([]);
+  myTrips = signal<{ asDriver: Carpool[], asPassenger: Carpool[] }>({ asDriver: [], asPassenger: [] });
+  loading = signal(true);
+  showAddVehicle = signal(false);
+  newVehicle: CreateVehicleForm = {
+    brandId: 0,
     model: '',
     registrationNumber: '',
     energyType: '',
@@ -198,7 +210,9 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private carpoolService: CarpoolService
+    private carpoolService: CarpoolService,
+    private authService: AuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -210,52 +224,59 @@ export class ProfileComponent implements OnInit {
   loadProfile() {
     this.userService.getProfile().subscribe({
       next: (data) => {
-        this.user = data;
+        this.user.set(data);
+        // Update localStorage to keep auth service in sync
+        localStorage.setItem('currentUser', JSON.stringify(data));
+        // Refresh auth service signal
+        this.authService.refreshCurrentUser();
       },
-      error: (err) => console.error(err)
     });
   }
 
   loadVehicles() {
     this.userService.getVehicles().subscribe({
       next: (data) => {
-        this.vehicles = data;
+        this.vehicles.set(data);
       },
-      error: (err) => console.error(err)
     });
   }
 
   loadMyTrips() {
     this.carpoolService.getMyTrips().subscribe({
       next: (data) => {
-        this.myTrips = data;
-        this.loading = false;
+        this.myTrips.set(data);
+        this.loading.set(false);
       },
       error: (err) => {
-        console.error(err);
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
 
+  hasRole(role: UserRole): boolean {
+    return this.user()?.roles?.includes(role) ?? false;
+  }
+
   becomeDriver() {
-    this.userService.addRole(2).subscribe({
-      next: () => {
-        alert('You are now a driver!');
+    this.userService.addRole(RoleId.Driver).subscribe({
+      next: (response: any) => {
+        // Update token if returned
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+        alert(this.translate.instant('messages.operation_successful'));
         this.loadProfile();
       },
-      error: (err) => console.error(err)
     });
   }
 
   addVehicle() {
     this.userService.addVehicle(this.newVehicle).subscribe({
       next: () => {
-        alert('Vehicle added successfully');
-        this.showAddVehicle = false;
+        alert(this.translate.instant('messages.operation_successful'));
+        this.showAddVehicle.set(false);
         this.loadVehicles();
       },
-      error: (err) => console.error(err)
     });
   }
 }

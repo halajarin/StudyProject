@@ -1,56 +1,55 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="hero">
       <div class="container">
-        <h1>Welcome to EcoRide</h1>
-        <p class="subtitle">The eco-friendly carpooling platform for your travels</p>
+        <h1>{{ 'home.hero_title' | translate }}</h1>
+        <p class="subtitle">{{ 'home.hero_subtitle' | translate }}</p>
 
         <div class="search-box card">
-          <h2>Find your ride</h2>
+          <h2>{{ 'home.search_title' | translate }}</h2>
           <form (ngSubmit)="searchTrip()">
             <div class="search-fields">
               <div class="form-group">
-                <label for="departureCity">Departure city</label>
+                <label for="departureCity">{{ 'home.departure_city' | translate }}</label>
                 <input
                   type="text"
                   id="departureCity"
                   [(ngModel)]="searchForm.departureCity"
                   name="departureCity"
-                  placeholder="Ex: Paris"
+                  [placeholder]="'home.placeholder_departure' | translate"
                   required>
               </div>
 
               <div class="form-group">
-                <label for="arrivalCity">Arrival city</label>
+                <label for="arrivalCity">{{ 'home.arrival_city' | translate }}</label>
                 <input
                   type="text"
                   id="arrivalCity"
                   [(ngModel)]="searchForm.arrivalCity"
                   name="arrivalCity"
-                  placeholder="Ex: Lyon"
+                  [placeholder]="'home.placeholder_arrival' | translate"
                   required>
               </div>
 
               <div class="form-group">
-                <label for="departureDate">Date</label>
+                <label for="departureDate">{{ 'home.date' | translate }}</label>
                 <input
                   type="date"
                   id="departureDate"
                   [(ngModel)]="searchForm.departureDate"
-                  name="departureDate"
-                  required>
+                  name="departureDate">
               </div>
 
-              <button type="submit" class="btn btn-primary">Search</button>
+              <button type="submit" class="btn btn-primary">{{ 'common.search' | translate }}</button>
             </div>
           </form>
         </div>
@@ -59,45 +58,41 @@ import { Router } from '@angular/router';
 
     <div class="container">
       <section class="features">
-        <h2 class="text-center">Why choose EcoRide?</h2>
+        <h2 class="text-center">{{ 'home.why_choose_title' | translate }}</h2>
         <div class="grid grid-3">
           <div class="feature-card card">
             <div class="icon">🌱</div>
-            <h3>Eco-friendly</h3>
-            <p>Reduce your carbon footprint by sharing your trips</p>
+            <h3>{{ 'home.feature_eco_title' | translate }}</h3>
+            <p>{{ 'home.feature_eco_desc' | translate }}</p>
           </div>
 
           <div class="feature-card card">
             <div class="icon">💰</div>
-            <h3>Economical</h3>
-            <p>Share travel costs and save on your trips</p>
+            <h3>{{ 'home.feature_economical_title' | translate }}</h3>
+            <p>{{ 'home.feature_economical_desc' | translate }}</p>
           </div>
 
           <div class="feature-card card">
             <div class="icon">👥</div>
-            <h3>Social</h3>
-            <p>Meet new people and travel together</p>
+            <h3>{{ 'home.feature_social_title' | translate }}</h3>
+            <p>{{ 'home.feature_social_desc' | translate }}</p>
           </div>
         </div>
       </section>
 
       <section class="about">
-        <h2 class="text-center">About EcoRide</h2>
+        <h2 class="text-center">{{ 'home.about_title' | translate }}</h2>
         <p class="text-center">
-          EcoRide is a carpooling platform that encourages eco-friendly travel.
-          Our mission is to reduce the environmental impact of transportation by facilitating
-          vehicle sharing between individuals.
+          {{ 'home.about_description' | translate }}
         </p>
         <div class="grid grid-2 mt-3">
           <div class="about-image">
             <div class="placeholder-image">🚗💚</div>
           </div>
           <div class="about-text">
-            <h3>Our ecological commitment</h3>
+            <h3>{{ 'home.ecological_commitment_title' | translate }}</h3>
             <p>
-              We highlight trips made with electric vehicles
-              and encourage more responsible mobility. Every shared trip is
-              a step towards a greener future.
+              {{ 'home.ecological_commitment_desc' | translate }}
             </p>
           </div>
         </div>
@@ -205,8 +200,11 @@ export class HomeComponent {
   constructor(private router: Router) {}
 
   searchTrip() {
-    this.router.navigate(['/carpools'], {
-      queryParams: this.searchForm
-    });
+    // Only navigate if required fields are filled (date is optional)
+    if (this.searchForm.departureCity && this.searchForm.arrivalCity) {
+      this.router.navigate(['/carpools'], {
+        queryParams: this.searchForm
+      });
+    }
   }
 }
