@@ -17,35 +17,35 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByIdAsync(int id)
     {
-        return await _context.Users
-            .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
+        return await _context
+            .Users.Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
             .Include(u => u.Vehicles)
-                .ThenInclude(v => v.Brand)
+            .ThenInclude(v => v.Brand)
             .FirstOrDefaultAsync(u => u.UserId == id);
     }
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await _context.Users
-            .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
+        return await _context
+            .Users.Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
             .FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<User?> GetByUsernameAsync(string username)
     {
-        return await _context.Users
-            .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
+        return await _context
+            .Users.Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
             .FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<List<User>> GetAllAsync()
     {
-        return await _context.Users
-            .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
+        return await _context
+            .Users.Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
             .ToListAsync();
     }
 
@@ -85,8 +85,8 @@ public class UserRepository : IUserRepository
 
     public async Task<List<string>> GetUserRolesAsync(int userId)
     {
-        return await _context.UserRoles
-            .Where(ur => ur.UserId == userId)
+        return await _context
+            .UserRoles.Where(ur => ur.UserId == userId)
             .Include(ur => ur.Role)
             .Select(ur => ur.Role.Label)
             .ToListAsync();
@@ -98,7 +98,7 @@ public class UserRepository : IUserRepository
         {
             UserId = userId,
             RoleId = roleId,
-            AssignedAt = DateTime.UtcNow
+            AssignedAt = DateTime.UtcNow,
         };
         _context.UserRoles.Add(userRole);
         await _context.SaveChangesAsync();
@@ -106,16 +106,32 @@ public class UserRepository : IUserRepository
 
     public async Task<double> GetAverageRatingAsync(int userId)
     {
-        var reviews = await _context.Reviews
-            .Where(a => a.TargetUserId == userId && a.Status == ReviewStatus.Validated)
+        var reviews = await _context
+            .Reviews.Where(a => a.TargetUserId == userId && a.Status == ReviewStatus.Validated)
             .ToListAsync();
 
-        return reviews.Any() ? reviews.Average(a => a.Note) : 0;
+        return reviews.Count != 0 ? reviews.Average(a => a.Note) : 0;
     }
 
     public async Task<int> GetRatingCountAsync(int userId)
     {
-        return await _context.Reviews
-            .CountAsync(a => a.TargetUserId == userId && a.Status == ReviewStatus.Validated);
+        return await _context.Reviews.CountAsync(a =>
+            a.TargetUserId == userId && a.Status == ReviewStatus.Validated
+        );
+    }
+
+    public async Task<Dictionary<int, double>> GetAverageRatingsAsync(IEnumerable<int> userIds)
+    {
+        var userIdList = userIds.ToList();
+        if (userIdList.Count == 0)
+            return new Dictionary<int, double>();
+
+        var ratings = await _context
+            .Reviews.Where(r => userIdList.Contains(r.TargetUserId) && r.Status == ReviewStatus.Validated)
+            .GroupBy(r => r.TargetUserId)
+            .Select(g => new { UserId = g.Key, AverageRating = g.Average(r => r.Note) })
+            .ToListAsync();
+
+        return ratings.ToDictionary(r => r.UserId, r => r.AverageRating);
     }
 }

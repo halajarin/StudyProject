@@ -18,14 +18,16 @@ EcoRide est une application web de covoiturage qui encourage les déplacements �
 
 ### Fonctionnalités principales
 
-- **Gestion des utilisateurs** : Inscription, connexion, profil utilisateur
+- **Gestion des utilisateurs** : Inscription, connexion, profil utilisateur avec préférences
 - **Recherche de covoiturages** : Recherche par ville de départ/arrivée et date avec filtres avancés
 - **Gestion des trajets** : Création, participation, annulation de covoiturages
-- **Système de crédits** : Monnaie virtuelle pour les transactions
-- **Système d'avis** : Notation et commentaires des chauffeurs
-- **Espace chauffeur** : Gestion des véhicules et des trajets
-- **Espace employé** : Modération des avis
+- **Système de crédits** : Monnaie virtuelle pour les transactions avec remboursements automatiques
+- **Système d'avis** : Notation et commentaires des chauffeurs avec workflow de validation
+- **Espace chauffeur** : Gestion des véhicules et des trajets avec calcul de note moyenne
+- **Espace employé** : Modération des avis (validation/rejet)
 - **Espace administrateur** : Gestion des utilisateurs et statistiques
+- **Internationalisation** : Support complet Français/Anglais (i18n)
+- **Notifications email** : Emails automatiques pour annulations et complétions de trajets
 
 ## 🚀 Technologies utilisées
 
@@ -44,6 +46,19 @@ EcoRide est une application web de covoiturage qui encourage les déplacements �
 - **TypeScript 5.6** - Langage
 - **RxJS 7.8** - Programmation réactive
 - **Chart.js** - Graphiques (dashboard admin)
+- **ngx-translate** - Internationalisation (i18n)
+
+### Infrastructure
+- **Docker** - Conteneurisation
+- **Docker Compose** - Orchestration multi-conteneurs
+
+### Optimisations & Bonnes pratiques
+- **Architecture en couches** : Séparation claire (WebApi, Business, Data, Dtos)
+- **Repository Pattern** : Abstraction de l'accès aux données
+- **DTO Pattern** : Évite les références circulaires et sécurise les échanges
+- **Batch queries** : Optimisation N+1 queries avec chargement groupé des ratings
+- **Clean Code** : Respect des principes SOLID, DRY, KISS, YAGNI
+- **Error handling** : Middleware centralisé de gestion des erreurs
 
 ## 📦 Prérequis
 
@@ -148,10 +163,32 @@ export const environment = {
 
 ## 🏃 Déploiement local
 
-### Démarrer le Backend
+### Option 1 : Avec Docker (recommandé)
 
 ```bash
-cd EcoRide.Backend
+# Démarrer tous les services
+docker compose up -d
+
+# Vérifier l'état des conteneurs
+docker compose ps
+
+# Voir les logs
+docker compose logs -f
+```
+
+Les services seront accessibles sur :
+- Frontend : http://localhost:4200
+- Backend API : http://localhost:5000
+- Swagger UI : http://localhost:5000/swagger
+- PostgreSQL : localhost:5432
+- MongoDB : localhost:27017
+
+### Option 2 : Démarrage manuel
+
+#### Démarrer le Backend
+
+```bash
+cd EcoRide.Backend/EcoRide.Backend.WebApi
 dotnet run
 ```
 
@@ -159,7 +196,7 @@ L'API sera accessible sur :
 - http://localhost:5000
 - Swagger UI : http://localhost:5000/swagger
 
-### Démarrer le Frontend
+#### Démarrer le Frontend
 
 ```bash
 cd EcoRide.Frontend
@@ -173,31 +210,55 @@ L'application sera accessible sur : http://localhost:4200
 ```
 EcoRide/
 ├── EcoRide.Backend/
-│   ├── Controllers/          # Contrôleurs API
-│   ├── Data/                 # Context EF Core
-│   ├── DTOs/                 # Data Transfer Objects
-│   ├── Models/               # Entités
-│   ├── Repositories/         # Couche d'accès aux données
-│   ├── Services/             # Logique métier
-│   ├── Middleware/           # Middlewares personnalisés
-│   └── Program.cs            # Point d'entrée
+│   ├── EcoRide.Backend.WebApi/      # API REST et contrôleurs
+│   │   ├── Controllers/             # Contrôleurs API
+│   │   ├── Middleware/              # Middlewares (gestion erreurs)
+│   │   └── Program.cs               # Point d'entrée
+│   │
+│   ├── EcoRide.Backend.Business/    # Logique métier
+│   │   ├── Services/                # Services métier
+│   │   ├── Mappers/                 # Mappers entités <-> DTOs
+│   │   └── Helpers/                 # Helpers (email, etc.)
+│   │
+│   ├── EcoRide.Backend.Data/        # Accès aux données
+│   │   ├── Context/                 # EF Core DbContext
+│   │   ├── Models/                  # Entités
+│   │   ├── Repositories/            # Repositories
+│   │   └── Enums/                   # Enums
+│   │
+│   ├── EcoRide.Backend.Dtos/        # Data Transfer Objects
+│   │   ├── Auth/                    # DTOs authentification
+│   │   ├── Carpool/                 # DTOs covoiturage
+│   │   ├── Review/                  # DTOs avis
+│   │   └── User/                    # DTOs utilisateur
+│   │
+│   ├── EcoRide.Backend.Client/      # Client MongoDB
+│   │   └── UserPreferencesService   # Gestion préférences
+│   │
+│   └── EcoRide.Backend.Tests/       # Tests unitaires
+│       └── Services/                # Tests des services
 │
 ├── EcoRide.Frontend/
 │   └── src/
-│       └── app/
-│           ├── components/   # Composants Angular
-│           ├── services/     # Services
-│           ├── models/       # Modèles TypeScript
-│           ├── guards/       # Guards de routing
-│           └── interceptors/ # Intercepteurs HTTP
+│       ├── app/
+│       │   ├── components/          # Composants Angular
+│       │   ├── services/            # Services HTTP
+│       │   ├── models/              # Modèles TypeScript
+│       │   ├── guards/              # Guards de routing
+│       │   └── interceptors/        # Intercepteurs HTTP
+│       │
+│       └── assets/
+│           └── i18n/                # Fichiers de traduction (FR/EN)
 │
 ├── Database/
-│   ├── 01_create_database.sql
-│   ├── 02_create_tables.sql
-│   └── 03_insert_data.sql
+│   ├── 01_create_database.sql       # Création BDD
+│   ├── 02_create_tables.sql         # Création tables
+│   ├── 03_insert_data.sql           # Données de test
+│   └── 05_fix_energy_types.sql      # Correctifs
 │
-├── Documentation/            # Documentation complète
-└── README.md                # Ce fichier
+├── Documentation/                    # Documentation complète
+├── docker-compose.yml               # Configuration Docker
+└── README.md                        # Ce fichier
 ```
 
 ## 🔑 Identifiants de test

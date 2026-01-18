@@ -17,4 +17,5 @@ public interface IUserRepository
     Task AddUserRoleAsync(int userId, int roleId);
     Task<double> GetAverageRatingAsync(int userId);
     Task<int> GetRatingCountAsync(int userId);
+    Task<Dictionary<int, double>> GetAverageRatingsAsync(IEnumerable<int> userIds);
 }

@@ -1,7 +1,8 @@
 export enum CarpoolStatus {
   Pending = 'Pending',
   InProgress = 'InProgress',
-  Completed = 'Completed'
+  Completed = 'Completed',
+  Cancelled = 'Cancelled'
 }
 
 export interface Carpool {

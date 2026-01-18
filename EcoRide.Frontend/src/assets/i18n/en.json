@@ -176,7 +176,14 @@
     "arrival": "Arrival",
     "departure": "Departure",
     "no_trips_driver": "No trips as driver",
-    "no_trips_passenger": "No trips as passenger"
+    "no_trips_passenger": "No trips as passenger",
+    "validate_trip": "Validate trip",
+    "validate_trip_confirm": "Did the trip go well? This will pay the driver.",
+    "trip_validated_success": "Trip validated! The driver has been paid.",
+    "report_problem": "Report a problem",
+    "problem_comment_required": "Please describe the problem (minimum 10 characters)",
+    "problem_comment_placeholder": "Describe what went wrong...",
+    "problem_reported_success": "Problem reported. Support will contact you."
   },
   "user": {
     "profile": "Profile",
@@ -225,7 +232,9 @@
     "stars": "{{count}} stars",
     "pending_validation": "Pending validation",
     "validated": "Validated",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "review_submitted_success": "Review submitted successfully! It will be visible after employee validation.",
+    "already_reviewed": "You have already reviewed this trip"
   },
   "admin": {
     "dashboard": "Administration",

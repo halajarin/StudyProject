@@ -29,18 +29,43 @@ public class CarpoolService : ICarpoolService
         _logger = logger;
     }
 
+    #region Private Helpers
+
+    private async Task PopulateDriverRatingsAsync(List<CarpoolDTO> carpoolDtos)
+    {
+        if (carpoolDtos.Count == 0)
+            return;
+
+        var driverIds = carpoolDtos.Select(c => c.UserId).Distinct().ToList();
+        var ratings = await _userRepository.GetAverageRatingsAsync(driverIds);
+
+        foreach (var dto in carpoolDtos)
+        {
+            dto.DriverAverageRating = ratings.GetValueOrDefault(dto.UserId, 0);
+        }
+    }
+
+    #endregion
+
     #region CRUD Operations
 
     public async Task<CarpoolDTO?> GetByIdAsync(int id)
     {
         var carpool = await _carpoolRepository.GetByIdAsync(id);
-        return carpool?.ToDTO();
+        if (carpool == null) return null;
+
+        var dto = carpool.ToDTO();
+        dto.DriverAverageRating = await _userRepository.GetAverageRatingAsync(carpool.UserId);
+        return dto;
     }
 
     public async Task<List<CarpoolDTO>> GetAllAsync()
     {
         var carpools = await _carpoolRepository.GetAllAsync();
-        return [.. carpools.Select(c => c.ToDTO())];
+        var dtos = carpools.Select(c => c.ToDTO()).ToList();
+        await PopulateDriverRatingsAsync(dtos);
+
+        return dtos;
     }
 
     public async Task<CarpoolDTO> CreateAsync(CreateCarpoolDTO createDto, int userId)
@@ -66,7 +91,10 @@ public class CarpoolService : ICarpoolService
         };
 
         var createdCarpool = await _carpoolRepository.CreateAsync(carpool);
-        return createdCarpool.ToDTO();
+        var dto = createdCarpool.ToDTO();
+        dto.DriverAverageRating = await _userRepository.GetAverageRatingAsync(userId);
+
+        return dto;
     }
 
     public async Task DeleteAsync(int id)
@@ -89,19 +117,29 @@ public class CarpoolService : ICarpoolService
             searchDto.MaxDurationMinutes,
             searchDto.MinimumRating
         );
-        return carpools.Select(c => c.ToDTO()).ToList();
+
+        var dtos = carpools.Select(c => c.ToDTO()).ToList();
+        await PopulateDriverRatingsAsync(dtos);
+
+        return dtos;
     }
 
     public async Task<List<CarpoolDTO>> GetByDriverAsync(int userId)
     {
         var carpools = await _carpoolRepository.GetByDriverAsync(userId);
-        return carpools.Select(c => c.ToDTO()).ToList();
+        var dtos = carpools.Select(c => c.ToDTO()).ToList();
+        await PopulateDriverRatingsAsync(dtos);
+
+        return dtos;
     }
 
     public async Task<List<CarpoolDTO>> GetByPassengerAsync(int userId)
     {
         var carpools = await _carpoolRepository.GetByPassengerAsync(userId);
-        return carpools.Select(c => c.ToDTO()).ToList();
+        var dtos = carpools.Select(c => c.ToDTO()).ToList();
+        await PopulateDriverRatingsAsync(dtos);
+
+        return dtos;
     }
 
     #endregion
@@ -312,6 +350,10 @@ public class CarpoolService : ICarpoolService
         var participation = await _carpoolRepository.GetParticipationAsync(carpoolId, userId);
         if (participation == null)
             return (false, "Participation not found");
+
+        // Prevent double validation
+        if (participation.TripValidated != null)
+            return (false, "Trip already validated or problem already reported");
 
         if (tripOk)
         {

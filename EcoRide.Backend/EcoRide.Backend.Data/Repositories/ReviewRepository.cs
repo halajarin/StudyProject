@@ -39,6 +39,17 @@ public class ReviewRepository : IReviewRepository
         return await query.OrderByDescending(a => a.CreatedAt).ToListAsync();
     }
 
+    public async Task<List<Review>> GetByAuthorUserAsync(int userId)
+    {
+        return await _context.Reviews
+            .Include(a => a.Author)
+            .Include(a => a.Target)
+            .Include(a => a.Carpool)
+            .Where(a => a.AuthorUserId == userId)
+            .OrderByDescending(a => a.CreatedAt)
+            .ToListAsync();
+    }
+
     public async Task<List<Review>> GetPendingReviewsAsync()
     {
         return await _context.Reviews
@@ -54,7 +65,9 @@ public class ReviewRepository : IReviewRepository
     {
         _context.Reviews.Add(review);
         await _context.SaveChangesAsync();
-        return review;
+
+        // Reload with navigation properties
+        return await GetByIdAsync(review.ReviewId) ?? review;
     }
 
     public async Task<Review> UpdateAsync(Review review)

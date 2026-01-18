@@ -73,6 +73,18 @@ public class ReviewController(
             }
         }
 
+        // Check for duplicate review
+        var existingReviews = await _reviewRepository.GetByAuthorUserAsync(userId);
+        var duplicateReview = existingReviews.FirstOrDefault(r =>
+            r.TargetUserId == createDto.TargetUserId &&
+            r.CarpoolId == createDto.CarpoolId
+        );
+
+        if (duplicateReview != null)
+        {
+            return BadRequest(new { message = "You have already reviewed this trip" });
+        }
+
         var review = new Review
         {
             Comment = createDto.Comment,
@@ -87,7 +99,8 @@ public class ReviewController(
         var created = await _reviewRepository.CreateAsync(review);
         _logger.LogInformation($"New review created: {created.ReviewId}");
 
-        return CreatedAtAction(nameof(GetByUser), new { userId = createDto.TargetUserId }, created);
+        var dto = MapToReviewDTO(created);
+        return CreatedAtAction(nameof(GetByUser), new { userId = createDto.TargetUserId }, dto);
     }
 
     [Authorize(Roles = "Employee,Administrator")]

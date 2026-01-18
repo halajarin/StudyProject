@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using EcoRide.Backend.Business.Services.Interfaces;
+using EcoRide.Backend.Data.Repositories.Interfaces;
 using EcoRide.Backend.Dtos.User;
 using EcoRide.Backend.Dtos.Vehicle;
-using EcoRide.Backend.Data.Repositories.Interfaces;
-using EcoRide.Backend.Business.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EcoRide.Backend.WebApi.Controllers;
 
@@ -22,7 +22,8 @@ public class UserController : BaseController
         IVehicleRepository vehicleRepository,
         IPreferenceService preferenceService,
         IAuthService authService,
-        ILogger<UserController> logger)
+        ILogger<UserController> logger
+    )
     {
         _userRepository = userRepository;
         _vehicleRepository = vehicleRepository;
@@ -60,7 +61,7 @@ public class UserController : BaseController
             Credits = user.Credits,
             Roles = roles,
             AverageRating = averageRating,
-            ReviewCount = reviewCount
+            ReviewCount = reviewCount,
         };
 
         return Ok(profile);
@@ -122,21 +123,25 @@ public class UserController : BaseController
 
             foreach (var vehicle in vehicles)
             {
-                _logger.LogInformation($"Vehicle {vehicle.VehicleId}: EnergyType='{vehicle.EnergyType}'");
+                _logger.LogInformation(
+                    $"Vehicle {vehicle.VehicleId}: EnergyType='{vehicle.EnergyType}'"
+                );
             }
 
-            var result = vehicles.Select(v => new VehicleDTO
-            {
-                VehicleId = v.VehicleId,
-                Model = v.Model,
-                RegistrationNumber = v.RegistrationNumber,
-                EnergyType = v.EnergyType,
-                Color = v.Color,
-                FirstRegistrationDate = v.FirstRegistrationDate,
-                BrandId = v.BrandId,
-                BrandLabel = v.Brand.Label,
-                SeatCount = v.SeatCount
-            }).ToList();
+            var result = vehicles
+                .Select(v => new VehicleDTO
+                {
+                    VehicleId = v.VehicleId,
+                    Model = v.Model,
+                    RegistrationNumber = v.RegistrationNumber,
+                    EnergyType = v.EnergyType,
+                    Color = v.Color,
+                    FirstRegistrationDate = v.FirstRegistrationDate,
+                    BrandId = v.BrandId,
+                    BrandLabel = v.Brand.Label,
+                    SeatCount = v.SeatCount,
+                })
+                .ToList();
 
             return Ok(result);
         }
@@ -166,7 +171,7 @@ public class UserController : BaseController
             FirstRegistrationDate = createDto.FirstRegistrationDate,
             BrandId = createDto.BrandId,
             UserId = userId,
-            SeatCount = createDto.SeatCount
+            SeatCount = createDto.SeatCount,
         };
 
         var created = await _vehicleRepository.CreateAsync(vehicle);
@@ -190,7 +195,9 @@ public class UserController : BaseController
     }
 
     [HttpPost("preferences")]
-    public async Task<IActionResult> SavePreferences([FromBody] Dictionary<string, object> preferences)
+    public async Task<IActionResult> SavePreferences(
+        [FromBody] Dictionary<string, object> preferences
+    )
     {
         var userId = GetCurrentUserId();
         await _preferenceService.CreateOrUpdatePreferencesAsync(userId, preferences);

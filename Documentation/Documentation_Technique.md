@@ -66,6 +66,41 @@ EcoRide suit une architecture en 3 couches :
 - **PostgreSQL** : Données structurées (utilisateurs, covoiturages, etc.)
 - **MongoDB** : Données flexibles (préférences personnalisées utilisateur)
 
+### 1.3 Architecture Backend en couches
+
+Le backend est organisé en 5 projets distincts suivant le principe de séparation des responsabilités :
+
+```
+EcoRide.Backend.WebApi      → Couche présentation (Controllers, Middleware)
+         ↓
+EcoRide.Backend.Business    → Couche métier (Services, Mappers, Helpers)
+         ↓
+EcoRide.Backend.Data        → Couche accès données (Repositories, Models, Context)
+         ↓
+EcoRide.Backend.Dtos        → Objets de transfert (DTOs)
+         ↓
+EcoRide.Backend.Client      → Client MongoDB (Préférences utilisateur)
+```
+
+**Avantages de cette architecture :**
+- **Testabilité** : Chaque couche peut être testée indépendamment
+- **Maintenabilité** : Séparation claire des responsabilités
+- **Évolutivité** : Facile d'ajouter de nouvelles fonctionnalités
+- **Réutilisabilité** : Les Dtos peuvent être partagés avec d'autres clients
+- **Sécurité** : Les DTOs évitent l'exposition directe des entités
+
+**Patterns appliqués :**
+- **Repository Pattern** : Abstraction de l'accès aux données
+- **DTO Pattern** : Évite les références circulaires et contrôle les données exposées
+- **Service Layer Pattern** : Logique métier centralisée
+- **Dependency Injection** : Couplage faible entre les couches
+
+**Optimisations implémentées :**
+- **Batch Queries** : Chargement groupé des ratings (évite N+1 queries)
+- **Helper Methods** : Factorisation du code (DRY principle)
+- **Async/Await** : Opérations asynchrones pour meilleure performance
+- **DTO Mapping** : Évite les cycles de sérialisation JSON
+
 ---
 
 ## 2. Réflexions technologiques

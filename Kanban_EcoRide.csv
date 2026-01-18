@@ -1,0 +1,31 @@
+ID;Tache;Description;Statut;Priorite;Date debut;Date fin;Notes
+1;Setup projet;Init repo + structure backend/frontend;Termine;Haute;15/11/2025;16/11/2025;Docker compose ok, structure propre
+2;Config Docker;Docker-compose pour Postgres + MongoDB + Backend;Termine;Haute;16/11/2025;17/11/2025;Tout roule en local
+3;Modele de donnees;Creer les entites EF Core (User Vehicle Carpool Review);Termine;Haute;18/11/2025;20/11/2025;Schema valide, relations ok
+4;Script BDD;Scripts SQL pour creer tables + donnees de test;Termine;Haute;20/11/2025;21/11/2025;Password123! pour tous les comptes test, pratique
+5;Auth JWT;Systeme d'authentification avec tokens;Termine;Haute;22/11/2025;24/11/2025;Login/register fonctionnels, roles ok
+6;API Users;CRUD users + gestion des roles;Termine;Moyenne;24/11/2025;25/11/2025;Endpoints testes avec Postman
+7;API Vehicles;CRUD vehicules lies aux users;Termine;Moyenne;25/11/2025;26/11/2025;Energy types a revoir plus tard
+8;API Carpools;Creer/rechercher/gerer les trajets;Termine;Haute;27/11/2025;30/11/2025;Search avec filtres ok, performant
+9;Participations;Systeme de reservation + gestion credits;Termine;Haute;01/12/2025;03/12/2025;Logique metier complexe mais ca marche, refund ok
+10;Reviews systeme;CRUD avis + validation employes;Termine;Haute;04/12/2025;06/12/2025;Status Pending/Validated/Rejected
+11;Calcul ratings;Note moyenne des conducteurs;Termine;Moyenne;06/12/2025;07/12/2025;Query optimisee avec GroupBy
+12;Frontend Angular;Setup Angular 20 + routing;Termine;Haute;08/12/2025;09/12/2025;Compatibilite TypeScript reglee
+13;i18n FR/EN;Internationalisation complete;Termine;Moyenne;10/12/2025;12/12/2025;Fichiers json, langue par defaut FR
+14;Composants UI;Login Register Profile Carpool Search;Termine;Haute;13/12/2025;18/12/2025;Design basique mais fonctionnel
+15;Service HTTP;Angular services pour appels API;Termine;Haute;15/12/2025;16/12/2025;Interceptors pour le token JWT
+16;Email notifs;Envoi emails pour annulations/completions;Termine;Basse;19/12/2025;20/12/2025;SMTP configure, templates simples
+17;Tests backend;Tests unitaires services critiques;En cours;Moyenne;21/12/2025;;Quelques tests ecrits, manque coverage
+18;Fix energy types;Corriger enum EnergyType (Electric vs Electricity);Termine;Moyenne;15/01/2026;15/01/2026;Bug trouve dans les donnees de seed
+19;Fix rating display;Driver rating toujours a 0 dans l'UI;Termine;Haute;18/01/2026;18/01/2026;Pb dans CarpoolMapper, popule maintenant dans le service
+20;Fix JSON circular ref;Erreur creation review (cycle detecte);Termine;Haute;18/01/2026;18/01/2026;Retourner DTO au lieu de l'entite brute
+21;Optimisation N+1;Requetes multiples pour les ratings;Termine;Haute;18/01/2026;18/01/2026;Batch query avec GetAverageRatingsAsync, perf+++
+22;Refacto DRY;Code duplique dans CarpoolService;Termine;Moyenne;18/01/2026;18/01/2026;Helper PopulateDriverRatingsAsync, clean code
+23;Validation avis;Interface employe pour valider les reviews;A faire;Moyenne;;;API existe, manque juste le composant Angular
+24;Historique trajets;Page avec historique complet user;A faire;Basse;;;Backlog pour plus tard
+25;Stats dashboard;Dashboard admin avec statistiques;A faire;Basse;;;Nice to have si le temps
+26;PWA support;Rendre l'app installable;Backlog;Basse;;;Pas prioritaire pour l'exam
+27;Tests E2E;Tests end-to-end avec Cypress;Backlog;Moyenne;;;Manque de temps probablement
+28;Doc API;Swagger/OpenAPI documentation;En cours;Basse;17/01/2026;;Swagger auto-genere ok, reste a nettoyer
+29;README projet;Doc installation et utilisation;A faire;Moyenne;;;Important pour la soutenance
+30;Deploiement prod;Config pour deploiement reel;Backlog;Basse;;;Pas necessaire pour l'exam

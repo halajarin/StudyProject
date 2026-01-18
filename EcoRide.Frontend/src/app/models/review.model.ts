@@ -10,7 +10,7 @@ export interface Review {
 
 export interface CreateReview {
   comment: string;
-  rating: number;
+  note: number;
   targetUserId: number;
   carpoolId?: number;
 }

@@ -176,7 +176,14 @@
     "arrival": "Arrivée",
     "departure": "Départ",
     "no_trips_driver": "Aucun trajet en tant que conducteur",
-    "no_trips_passenger": "Aucun trajet en tant que passager"
+    "no_trips_passenger": "Aucun trajet en tant que passager",
+    "validate_trip": "Valider le trajet",
+    "validate_trip_confirm": "Le trajet s'est-il bien passé ? Cela paiera le conducteur.",
+    "trip_validated_success": "Trajet validé ! Le conducteur a été payé.",
+    "report_problem": "Signaler un problème",
+    "problem_comment_required": "Veuillez décrire le problème (minimum 10 caractères)",
+    "problem_comment_placeholder": "Décrivez ce qui s'est mal passé...",
+    "problem_reported_success": "Problème signalé. Le support va vous contacter."
   },
   "user": {
     "profile": "Profil",
@@ -225,7 +232,9 @@
     "stars": "{{count}} étoiles",
     "pending_validation": "En attente de validation",
     "validated": "Validé",
-    "rejected": "Rejeté"
+    "rejected": "Rejeté",
+    "review_submitted_success": "Avis soumis avec succès ! Il sera visible après validation par un employé.",
+    "already_reviewed": "Vous avez déjà évalué ce trajet"
   },
   "admin": {
     "dashboard": "Administration",

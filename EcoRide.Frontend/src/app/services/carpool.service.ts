@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class CarpoolService {
   private apiUrl = `${environment.apiUrl}/carpool`;
+  private participationUrl = `${environment.apiUrl}/participation`;
 
   constructor(private http: HttpClient) {}
 
@@ -50,5 +51,12 @@ export class CarpoolService {
 
   getMyTrips(): Observable<any> {
     return this.http.get(`${this.apiUrl}/my-trips`);
+  }
+
+  validateTrip(carpoolId: number, tripOk: boolean, comment?: string): Observable<any> {
+    return this.http.post(`${this.participationUrl}/${carpoolId}/validate`, {
+      tripOk,
+      comment
+    });
   }
 }
