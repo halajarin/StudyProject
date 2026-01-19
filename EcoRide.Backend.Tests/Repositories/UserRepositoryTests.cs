@@ -1,8 +1,9 @@
 using Xunit;
 using Microsoft.EntityFrameworkCore;
-using EcoRide.Backend.Data;
-using EcoRide.Backend.Models;
-using EcoRide.Backend.Repositories;
+using EcoRide.Backend.Data.Context;
+using EcoRide.Backend.Data.Models;
+using EcoRide.Backend.Data.Repositories;
+using EcoRide.Backend.Data.Enums;
 
 namespace EcoRide.Backend.Tests.Repositories;
 
@@ -27,8 +28,8 @@ public class UserRepositoryTests : IDisposable
     {
         var roles = new List<Role>
         {
-            new Role { RoleId = 1, Name = "Passenger" },
-            new Role { RoleId = 2, Name = "Driver" }
+            new Role { RoleId = 1, Label = "Passenger" },
+            new Role { RoleId = 2, Label = "Driver" }
         };
 
         var users = new List<User>
@@ -36,20 +37,38 @@ public class UserRepositoryTests : IDisposable
             new User
             {
                 UserId = 1,
-                Username = "User1",
+                Username = "user1",
                 Email = "user1@test.com",
                 Password = "hash1",
                 Credits = 100,
-                RegistrationDate = DateTime.UtcNow
+                FirstName = "John",
+                LastName = "Doe",
+                Phone = "0601020304",
+                IsActive = true
             },
             new User
             {
                 UserId = 2,
-                Username = "User2",
+                Username = "user2",
                 Email = "user2@test.com",
                 Password = "hash2",
                 Credits = 50,
-                RegistrationDate = DateTime.UtcNow
+                FirstName = "Jane",
+                LastName = "Smith",
+                Phone = "0605060708",
+                IsActive = true
+            },
+            new User
+            {
+                UserId = 3,
+                Username = "user3",
+                Email = "user3@test.com",
+                Password = "hash3",
+                Credits = 75,
+                FirstName = "Bob",
+                LastName = "Johnson",
+                Phone = "0609101112",
+                IsActive = true
             }
         };
 
@@ -58,22 +77,52 @@ public class UserRepositoryTests : IDisposable
             new Review
             {
                 ReviewId = 1,
-                Rating = 5,
-                Comment = "Excellent",
+                Note = 5,
+                Comment = "Excellent driver!",
                 AuthorUserId = 2,
                 TargetUserId = 1,
-                Status = "Validated",
-                CreatedDate = DateTime.UtcNow
+                Status = ReviewStatus.Validated,
+                CreatedAt = DateTime.UtcNow
             },
             new Review
             {
                 ReviewId = 2,
-                Rating = 4,
+                Note = 4,
                 Comment = "Very good",
-                AuthorUserId = 2,
+                AuthorUserId = 3,
                 TargetUserId = 1,
-                Status = "Validated",
-                CreatedDate = DateTime.UtcNow
+                Status = ReviewStatus.Validated,
+                CreatedAt = DateTime.UtcNow
+            },
+            new Review
+            {
+                ReviewId = 3,
+                Note = 3,
+                Comment = "Okay",
+                AuthorUserId = 1,
+                TargetUserId = 2,
+                Status = ReviewStatus.Pending,
+                CreatedAt = DateTime.UtcNow
+            },
+            new Review
+            {
+                ReviewId = 4,
+                Note = 5,
+                Comment = "Great!",
+                AuthorUserId = 1,
+                TargetUserId = 3,
+                Status = ReviewStatus.Validated,
+                CreatedAt = DateTime.UtcNow
+            },
+            new Review
+            {
+                ReviewId = 5,
+                Note = 4,
+                Comment = "Good",
+                AuthorUserId = 2,
+                TargetUserId = 3,
+                Status = ReviewStatus.Validated,
+                CreatedAt = DateTime.UtcNow
             }
         };
 
@@ -91,7 +140,7 @@ public class UserRepositoryTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("User1", result.Username);
+        Assert.Equal("user1", result.Username);
         Assert.Equal("user1@test.com", result.Email);
     }
 
@@ -114,7 +163,7 @@ public class UserRepositoryTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.Equal(1, result.UserId);
-        Assert.Equal("User1", result.Username);
+        Assert.Equal("user1", result.Username);
     }
 
     [Fact]
@@ -131,7 +180,7 @@ public class UserRepositoryTests : IDisposable
     public async Task GetByUsernameAsync_ExistingUsername_ReturnsUser()
     {
         // Act
-        var result = await _repository.GetByUsernameAsync("User1");
+        var result = await _repository.GetByUsernameAsync("user1");
 
         // Assert
         Assert.NotNull(result);
@@ -145,11 +194,14 @@ public class UserRepositoryTests : IDisposable
         // Arrange
         var newUser = new User
         {
-            Username = "NewUser",
+            Username = "newuser",
             Email = "newuser@test.com",
             Password = "hash",
             Credits = 100,
-            RegistrationDate = DateTime.UtcNow
+            FirstName = "New",
+            LastName = "User",
+            Phone = "0600000000",
+            IsActive = true
         };
 
         // Act
@@ -158,7 +210,7 @@ public class UserRepositoryTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.True(result.UserId > 0);
-        Assert.Equal("NewUser", result.Username);
+        Assert.Equal("newuser", result.Username);
 
         // Verify it's in the database
         var fromDb = await _repository.GetByEmailAsync("newuser@test.com");
@@ -186,9 +238,9 @@ public class UserRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task GetAverageRatingAsync_UserWithRatings_ReturnsAverageRating()
+    public async Task GetAverageRatingAsync_UserWithValidatedRatings_ReturnsAverageRating()
     {
-        // User1 has two ratings: 5 and 4, average = 4.5
+        // User1 has two validated ratings: 5 and 4, average = 4.5
         // Act
         var result = await _repository.GetAverageRatingAsync(1);
 
@@ -197,9 +249,9 @@ public class UserRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task GetAverageRatingAsync_UserWithoutRatings_ReturnsZero()
+    public async Task GetAverageRatingAsync_UserWithoutValidatedRatings_ReturnsZero()
     {
-        // User2 has no ratings
+        // User2 has one rating but it's Pending, not Validated
         // Act
         var result = await _repository.GetAverageRatingAsync(2);
 
@@ -208,43 +260,183 @@ public class UserRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task AddRoleAsync_ValidRole_AddsRoleToUser()
+    public async Task GetAverageRatingAsync_UserWithNoRatings_ReturnsZero()
     {
-        // Arrange
-        var user = await _repository.GetByIdAsync(1);
-        Assert.NotNull(user);
+        // Create a user with no ratings
+        var newUser = new User
+        {
+            Username = "noratings",
+            Email = "noratings@test.com",
+            Password = "hash",
+            Credits = 100,
+            FirstName = "No",
+            LastName = "Ratings",
+            Phone = "0600000001",
+            IsActive = true
+        };
+        var created = await _repository.CreateAsync(newUser);
 
         // Act
-        await _repository.AddRoleAsync(1, 2); // Add Driver role
+        var result = await _repository.GetAverageRatingAsync(created.UserId);
 
         // Assert
-        var updatedUser = await _context.Users
-            .Include(u => u.UserRoles)
-            .ThenInclude(ur => ur.Role)
-            .FirstOrDefaultAsync(u => u.UserId == 1);
-
-        Assert.NotNull(updatedUser);
-        Assert.Contains(updatedUser.UserRoles, ur => ur.RoleId == 2);
+        Assert.Equal(0, result);
     }
 
     [Fact]
-    public async Task HasRoleAsync_UserHasRole_ReturnsTrue()
+    public async Task GetAverageRatingsAsync_MultipleUsers_ReturnsDictionary()
     {
-        // Arrange - Add a role first
-        await _repository.AddRoleAsync(1, 2);
+        // Arrange
+        var userIds = new List<int> { 1, 2, 3 };
 
         // Act
-        var result = await _repository.HasRoleAsync(1, 2);
+        var result = await _repository.GetAverageRatingsAsync(userIds);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(4.5, result.GetValueOrDefault(1, 0)); // User1: (5+4)/2 = 4.5
+        Assert.Equal(0, result.GetValueOrDefault(2, 0));   // User2: 0 (Pending review doesn't count)
+        Assert.Equal(4.5, result.GetValueOrDefault(3, 0)); // User3: (5+4)/2 = 4.5
+    }
+
+    [Fact]
+    public async Task GetAverageRatingsAsync_EmptyList_ReturnsEmptyDictionary()
+    {
+        // Arrange
+        var userIds = new List<int>();
+
+        // Act
+        var result = await _repository.GetAverageRatingsAsync(userIds);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetAverageRatingsAsync_UsersWithoutRatings_ReturnsOnlyUsersWithRatings()
+    {
+        // Arrange
+        var newUser = new User
+        {
+            Username = "noratings2",
+            Email = "noratings2@test.com",
+            Password = "hash",
+            Credits = 100,
+            FirstName = "No",
+            LastName = "Ratings2",
+            Phone = "0600000002",
+            IsActive = true
+        };
+        var created = await _repository.CreateAsync(newUser);
+        var userIds = new List<int> { 1, created.UserId };
+
+        // Act
+        var result = await _repository.GetAverageRatingsAsync(userIds);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result); // Only user1 has ratings
+        Assert.Equal(4.5, result.GetValueOrDefault(1, 0));
+        Assert.False(result.ContainsKey(created.UserId)); // User without ratings not in dictionary
+    }
+
+    [Fact]
+    public async Task GetRatingCountAsync_UserWithValidatedRatings_ReturnsCount()
+    {
+        // User1 has 2 validated ratings
+        // Act
+        var result = await _repository.GetRatingCountAsync(1);
+
+        // Assert
+        Assert.Equal(2, result);
+    }
+
+    [Fact]
+    public async Task GetRatingCountAsync_UserWithoutRatings_ReturnsZero()
+    {
+        // User2 has a pending rating (doesn't count)
+        // Act
+        var result = await _repository.GetRatingCountAsync(2);
+
+        // Assert
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public async Task AddUserRoleAsync_ValidRole_AddsRoleToUser()
+    {
+        // Act
+        await _repository.AddUserRoleAsync(1, 2); // Add Driver role to user1
+
+        // Assert
+        var roles = await _repository.GetUserRolesAsync(1);
+        Assert.Contains("Driver", roles);
+    }
+
+    [Fact]
+    public async Task GetUserRolesAsync_UserWithNoRoles_ReturnsEmptyList()
+    {
+        // Act
+        var result = await _repository.GetUserRolesAsync(1);
+
+        // Assert - User1 has no roles initially
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetUserRolesAsync_UserWithRoles_ReturnsRolesList()
+    {
+        // Arrange - Add roles to user
+        await _repository.AddUserRoleAsync(1, 1); // Passenger
+        await _repository.AddUserRoleAsync(1, 2); // Driver
+
+        // Act
+        var result = await _repository.GetUserRolesAsync(1);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Contains("Passenger", result);
+        Assert.Contains("Driver", result);
+    }
+
+    [Fact]
+    public async Task EmailExistsAsync_ExistingEmail_ReturnsTrue()
+    {
+        // Act
+        var result = await _repository.EmailExistsAsync("user1@test.com");
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public async Task HasRoleAsync_UserDoesNotHaveRole_ReturnsFalse()
+    public async Task EmailExistsAsync_NonExistingEmail_ReturnsFalse()
     {
         // Act
-        var result = await _repository.HasRoleAsync(1, 2);
+        var result = await _repository.EmailExistsAsync("doesnotexist@test.com");
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task UsernameExistsAsync_ExistingUsername_ReturnsTrue()
+    {
+        // Act
+        var result = await _repository.UsernameExistsAsync("user1");
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UsernameExistsAsync_NonExistingUsername_ReturnsFalse()
+    {
+        // Act
+        var result = await _repository.UsernameExistsAsync("doesnotexist");
 
         // Assert
         Assert.False(result);
