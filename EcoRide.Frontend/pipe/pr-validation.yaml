@@ -1,0 +1,31 @@
+# Pipeline de validation des Pull Requests pour EcoRide Frontend (Angular 20)
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+      - dev
+
+pool:
+  name: PoolDocker
+  demands: npm
+
+variables:
+  - group: Common
+
+resources:
+  repositories:
+    - repository: Templates
+      type: git
+      name: MyPortal3e.Pipelines.Templates
+
+extends:
+  template: angular/V1/pr-validation.yaml@Templates
+  parameters:
+    sourceDirectory: "$(Build.SourcesDirectory)/EcoRide.Frontend"
+    projectName: "EcoRide.Frontend"
+    sonarCloudOrganization: "clauger3e-sonarcloud"
+    sonarCloudProjectKey: "halajarin_EcoRide_Frontend"
+    sonarCloudProjectName: "EcoRide.Frontend"
