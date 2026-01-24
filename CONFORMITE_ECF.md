@@ -2,7 +2,7 @@
 
 ## Resume executif
 
-**Score global : 78/100** (mis à jour après corrections + documentation)
+**Score global : 85/100** (mis à jour après PDFs, structure Git, dépôt public)
 
 ### Points forts ✅
 - Architecture backend solide et complete
@@ -13,11 +13,14 @@
 - Optimisations appliquees (SOLID, DRY, KISS)
 
 ### Points critiques ❌
-- **DEPLOIEMENT EN LIGNE MANQUANT** (requis obligatoire)
-- Maquettes wireframes/mockups absentes
-- Manuel utilisateur PDF manquant
-- Structure Git non conforme (pas de branches dev/features)
-- Frontend incomplet (certaines US manquantes)
+- **DEPLOIEMENT EN LIGNE MANQUANT** (requis obligatoire - ELIMINATOIRE)
+- **Maquettes wireframes/mockups absentes** (12 fichiers requis)
+
+### Points resolus recemment ✅
+- ✅ Structure Git conforme (main/dev/features)
+- ✅ Depot public sur GitHub
+- ✅ Manuel utilisateur PDF (669KB)
+- ✅ Charte graphique PDF (1.1MB)
 
 ---
 
@@ -61,26 +64,26 @@
 
 ## Livrables - Conformite
 
-### 1. Depot GitHub ❌ NON CONFORME
+### 1. Depot GitHub ⚠️ PARTIEL
 
 **Requis :**
 - [x] Code source
-- [ ] **Depot PUBLIC** (actuellement prive)
-- [ ] **Structure branches** (main/dev/features)
+- [x] **Depot PUBLIC** ✅
+- [x] **Structure branches** (main/dev/features) ✅
 - [x] README.md avec instructions
 - [x] Scripts SQL (Database/)
-- [ ] **Manuel utilisateur PDF**
-- [ ] **Charte graphique PDF**
-- [ ] **Maquettes (3 desktop + 3 mobile)**
+- [x] **Manuel utilisateur PDF** ✅
+- [x] **Charte graphique PDF** ✅
+- [ ] **Maquettes (3 wireframes desktop + 3 mobile + 3 mockups desktop + 3 mobile)**
 - [x] Documentation gestion projet
 - [x] Documentation technique
 
 **Manquants critiques :**
-1. Depot doit etre PUBLIC
-2. Structure Git : main <- dev <- feature/US-XX
-3. ✅ Manuel utilisateur (Markdown cree, a convertir en PDF)
-4. ✅ Charte graphique (Markdown cree, a convertir en PDF)
-5. Maquettes wireframes/mockups (guide cree, a realiser dans Figma)
+1. ✅ Depot PUBLIC (fait)
+2. ✅ Structure Git : main <- dev <- feature/US-XX (fait)
+3. ✅ Manuel utilisateur PDF (669KB, 27 pages)
+4. ✅ Charte graphique PDF (1.1MB)
+5. ❌ **Maquettes wireframes/mockups** (12 fichiers - guide fourni, a realiser dans Figma)
 
 ### 2. Application deployee ❌ MANQUANT CRITIQUE
 
@@ -170,37 +173,42 @@
 
 ### PRIORITE 1 - CRITIQUE ⚠️
 
-1. **DEPLOIEMENT EN LIGNE** (ELIMINATOIRE)
-   - Deployer backend sur Heroku/Azure/fly.io
+1. **DEPLOIEMENT EN LIGNE** (ELIMINATOIRE) ❌
+   - Deployer backend sur Kubernetes/Heroku/Azure/fly.io
    - Deployer frontend sur Vercel/Netlify
    - Tester l'application deployee
+   - **Statut** : Prevu sur Kubernetes Enterprise
 
-2. **GIT PUBLIC avec structure branches**
-   - Rendre depot public
-   - Creer branche dev
-   - Creer branches feature/US-XX
-   - Merge propres dev -> main
-
-3. **Maquettes obligatoires**
+2. **Maquettes obligatoires** ❌
    - 3 wireframes desktop (accueil, recherche, detail)
    - 3 wireframes mobile
    - 3 mockups desktop
    - 3 mockups mobile
    - Export PDF
+   - **Statut** : Guide fourni (Guide_Maquettes_Wireframes.pdf), a realiser dans Figma
 
-4. **Manuel utilisateur PDF**
-   - Presentation application
-   - Parcours utilisateur
-   - Identifiants test
-   - Screenshots
+3. ✅ **GIT PUBLIC avec structure branches** (FAIT)
+   - ✅ Depot rendu public
+   - ✅ Branche main creee
+   - ✅ Branche dev creee
+   - ✅ Branches feature/US-XX utilisees
+   - ✅ Merges propres dev -> main
+
+4. ✅ **Manuel utilisateur PDF** (FAIT)
+   - ✅ Manuel_Utilisateur_EcoRide.pdf (669KB, 27 pages)
+   - ✅ Presentation application
+   - ✅ Parcours utilisateur
+   - ✅ Identifiants test
+   - ✅ Screenshots textuels
 
 ### PRIORITE 2 - IMPORTANT 📋
 
-5. **Charte graphique PDF**
-   - Palette couleurs
-   - Typographie
-   - Logo
-   - Integration maquettes
+5. ✅ **Charte graphique PDF** (FAIT)
+   - ✅ Charte_Graphique_EcoRide.pdf (1.1MB)
+   - ✅ Palette couleurs
+   - ✅ Typographie
+   - ✅ Logo
+   - ✅ Composants UI
 
 6. **Diagrammes UML**
    - Diagramme cas utilisation
@@ -226,17 +234,18 @@
 
 ## Estimation temps restant
 
-| Tache | Duree estimee |
-|-------|---------------|
-| Deploiement en ligne | 4-6h |
-| Maquettes (wireframes + mockups) | 6-8h |
-| Manuel utilisateur PDF | 2-3h |
-| Charte graphique PDF | 2-3h |
-| Structure Git + branches | 1-2h |
-| Diagrammes UML | 3-4h |
-| Documentation deploiement | 1-2h |
-| Graphiques admin | 2-3h |
-| **TOTAL** | **21-31h** |
+| Tache | Duree estimee | Statut |
+|-------|---------------|--------|
+| Deploiement en ligne | 4-6h | ❌ A faire |
+| Maquettes (wireframes + mockups) | 6-8h | ❌ A faire |
+| ~~Manuel utilisateur PDF~~ | ~~2-3h~~ | ✅ Fait |
+| ~~Charte graphique PDF~~ | ~~2-3h~~ | ✅ Fait |
+| ~~Structure Git + branches~~ | ~~1-2h~~ | ✅ Fait |
+| Diagrammes UML | 3-4h | ⏳ Optionnel |
+| Documentation deploiement | 1-2h | ⏳ Optionnel |
+| Graphiques admin | 2-3h | ⏳ Optionnel |
+| **TOTAL CRITIQUE** | **10-14h** | **2 taches** |
+| **TOTAL avec optionnel** | **16-22h** | **5 taches** |
 
 ---
 
@@ -269,28 +278,34 @@
 
 ## Conclusion
 
-### Le projet repond-il aux exigences ? ⚠️ PARTIELLEMENT
+### Le projet repond-il aux exigences ? ⚠️ MAJORITAIREMENT
 
 **OUI pour :**
 - Competences techniques (95%)
 - Architecture et qualite code (90%)
 - Fonctionnalites metier (85%)
-- Documentation technique (80%)
+- Documentation technique (90%)
+- ✅ Livrables documentaires (manuel, charte) (100%)
+- ✅ Structure Git conforme (100%)
+- ✅ Depot public (100%)
 
 **NON pour :**
-- Deploiement en ligne (CRITIQUE - 0%)
-- Livrables graphiques (maquettes, charte) (0%)
-- Manuel utilisateur (0%)
-- Structure Git conforme (30%)
+- ❌ Deploiement en ligne (CRITIQUE - 0%) - **ELIMINATOIRE**
+- ❌ Maquettes wireframes/mockups (0%)
 
 **VERDICT :**
-Le projet est techniquement excellent mais **NON CONFORME** aux exigences de livraison.
-**Il manque environ 25-30h de travail** pour etre completement conforme.
+Le projet est techniquement excellent et **BIEN AVANCE** sur les livrables.
+**Il manque environ 10-14h de travail CRITIQUE** pour etre completement conforme.
 
 **Actions immediates :**
-1. Deployer l'application (URGENT)
-2. Creer maquettes et charte graphique
-3. Rediger manuel utilisateur
-4. Restructurer Git en public avec branches
+1. ❌ **Deployer l'application** (URGENT - ELIMINATOIRE)
+2. ❌ **Creer 12 maquettes** dans Figma (wireframes + mockups)
 
-**Avec ces corrections, le projet serait EXCELLENT et largement au-dessus des attentes.**
+**Progres recents :**
+- ✅ Manuel utilisateur PDF cree (669KB)
+- ✅ Charte graphique PDF creee (1.1MB)
+- ✅ Structure Git professionnelle (main/dev/features)
+- ✅ Depot rendu public
+
+**Score actuel : 85/100**
+**Avec deploiement + maquettes : 98/100** (excellent)
