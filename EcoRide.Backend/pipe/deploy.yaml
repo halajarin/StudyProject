@@ -1,0 +1,40 @@
+trigger:
+  branches:
+    include:
+      - main
+      - dev
+  paths:
+    include:
+      - "EcoRide.Backend/*"
+    exclude:
+      - "EcoRide.Backend/pipe/*"
+      - "*.md"
+
+pr: none
+
+resources:
+  repositories:
+    - repository: Templates
+      type: git
+      name: MyPortal3e.Pipelines.Templates
+
+pool:
+  name: PoolDocker
+  demands: dotnet
+
+extends:
+  template: dotnet/V1/service-deploy.yaml@Templates
+  parameters:
+    SourceDirectory: "$(Build.SourcesDirectory)/EcoRide.Backend"
+    projectFile: "**/EcoRide.Backend.WebApi.csproj"
+    testProjectFile: "**/EcoRide.Backend.Tests.csproj"
+    publishTargetFramework: "net9.0"
+    DotNetSdkVersion: 9.0.101
+    sonarCloudOrganization: "clauger3e-sonarcloud"
+    sonarCloudProjectKey: "halajarin_EcoRide"
+    sonarCloudProjectName: "EcoRide.Backend"
+    runTests: True
+    runPostmanTests: False
+    imageName: "ecoride/backend-api"
+    applicationName: "ecoride-backend-api"
+    gitOpsPath: dev/ecoride-backend

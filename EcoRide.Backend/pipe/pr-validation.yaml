@@ -1,0 +1,36 @@
+# Pipeline de validation des Pull Requests pour EcoRide Backend
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+      - dev
+
+pool:
+  name: PoolDocker
+  demands: dotnet
+
+variables:
+  - group: Common
+
+resources:
+  repositories:
+    - repository: Templates
+      type: git
+      name: MyPortal3e.Pipelines.Templates
+
+extends:
+  template: dotnet/V1/pr-validation.yaml@Templates
+  parameters:
+    sourceDirectory: "$(Build.SourcesDirectory)/EcoRide.Backend"
+    projectFile: "**/EcoRide.Backend.WebApi.csproj"
+    testProjectFile: "**/EcoRide.Backend.Tests.csproj"
+    publishTargetFramework: "net9.0"
+    DotNetSdkVersion: 9.0.101
+    sonarCloudOrganization: "clauger3e-sonarcloud"
+    sonarCloudProjectKey: "halajarin_EcoRide"
+    sonarCloudProjectName: "EcoRide.Backend"
+    runTests: true
+    runPostmanTests: false
