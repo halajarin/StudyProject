@@ -11,8 +11,8 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build the Angular application
-RUN npm run build
+# Build the Angular application with base-href for portal path
+RUN npm run build -- --base-href /portal/ecoride/
 
 # Production stage
 FROM clauger3e.azurecr.io/nginx:alpine-patched AS final
