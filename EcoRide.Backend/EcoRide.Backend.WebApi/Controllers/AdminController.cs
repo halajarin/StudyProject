@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using EcoRide.Backend.Business.Constants;
 using EcoRide.Backend.Data.Models;
 using EcoRide.Backend.Data.Repositories.Interfaces;
+using EcoRide.Backend.Dtos.Admin;
 
 namespace EcoRide.Backend.WebApi.Controllers;
 
@@ -52,8 +54,8 @@ public class AdminController : ControllerBase
 
         var created = await _userRepository.CreateAsync(employee);
 
-        // Add Employee role (RoleId = 3)
-        await _userRepository.AddUserRoleAsync(created.UserId, 3);
+        // Add Employee role
+        await _userRepository.AddUserRoleAsync(created.UserId, RoleConstants.EMPLOYEE);
 
         _logger.LogInformation($"New employee created: {created.Email}");
 
@@ -133,13 +135,4 @@ public class AdminController : ControllerBase
 
         return Ok(result);
     }
-}
-
-public class CreateEmployeeDTO
-{
-    public string Pseudo { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string? LastName { get; set; }
-    public string? FirstName { get; set; }
 }

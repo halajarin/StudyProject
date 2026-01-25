@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EcoRide.Backend.Business.Constants;
 using EcoRide.Backend.Business.Services.Interfaces;
 using EcoRide.Backend.Data.Models;
 using EcoRide.Backend.Data.Repositories.Interfaces;
@@ -43,15 +44,15 @@ public class AuthService : IAuthService
             Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
             LastName = registerDto.LastName ?? string.Empty,
             FirstName = registerDto.FirstName ?? string.Empty,
-            Credits = 20, // 20 credits on creation
+            Credits = CreditsConstants.INITIAL_CREDITS_ON_REGISTRATION,
             CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
 
         var createdUser = await _userRepository.CreateAsync(user);
 
-        // Add Passenger role by default (RoleId = 1)
-        await _userRepository.AddUserRoleAsync(createdUser.UserId, 1);
+        // Add Passenger role by default
+        await _userRepository.AddUserRoleAsync(createdUser.UserId, RoleConstants.PASSENGER);
 
         // Get roles for token
         var roles = await _userRepository.GetUserRolesAsync(createdUser.UserId);

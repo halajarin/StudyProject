@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using EcoRide.Backend.Business.Constants;
 
 namespace EcoRide.Backend.Data.Models;
 
@@ -46,7 +47,7 @@ public class User
     public string Username { get; set; } = string.Empty;
 
     [Column("credit")]
-    public int Credits { get; set; } = 20; // 20 credits on creation
+    public int Credits { get; set; } = CreditsConstants.INITIAL_CREDITS_ON_REGISTRATION;
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

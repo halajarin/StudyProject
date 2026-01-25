@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
 import { environment } from '../../environments/environment';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,34 +12,29 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  // Signal-based state management
-  private currentUserSignal = signal<User | null>(this.getUserFromStorage());
-
-  // Public readonly signal
-  public currentUser = this.currentUserSignal.asReadonly();
+  // Use StorageService for reactive state
+  public currentUser = this.storage.currentUser;
+  public token = this.storage.token;
 
   // Computed signals for derived state
-  public isLoggedIn = computed(() => !!this.currentUserSignal());
-  public token = computed(() => localStorage.getItem('token'));
+  public isLoggedIn = computed(() => !!this.currentUser());
 
-  constructor(private http: HttpClient, private router: Router) {}
-
-  private getUserFromStorage(): User | null {
-    const storedUser = localStorage.getItem('currentUser');
-    return storedUser ? JSON.parse(storedUser) : null;
-  }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private storage: StorageService
+  ) {}
 
   public get currentUserValue(): User | null {
-    return this.currentUserSignal();
+    return this.currentUser();
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         if (response.token) {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('currentUser', JSON.stringify(response.user));
-          this.currentUserSignal.set(response.user as any);
+          this.storage.setToken(response.token);
+          this.storage.setCurrentUser(response.user as any);
         }
       })
     );
@@ -48,28 +44,24 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
       tap(response => {
         if (response.token) {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('currentUser', JSON.stringify(response.user));
-          this.currentUserSignal.set(response.user as any);
+          this.storage.setToken(response.token);
+          this.storage.setCurrentUser(response.user as any);
         }
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
-    this.currentUserSignal.set(null);
+    this.storage.clearAuth();
     this.router.navigate(['/login']);
   }
 
   hasRole(role: string): boolean {
-    const user = this.currentUserSignal();
+    const user = this.currentUser();
     return user && user.roles ? user.roles.includes(role) : false;
   }
 
   refreshCurrentUser(): void {
-    const user = this.getUserFromStorage();
-    this.currentUserSignal.set(user);
+    this.storage.refreshSignals();
   }
 }

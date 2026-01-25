@@ -66,10 +66,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICarpoolService, CarpoolService>();
 builder.Services.AddScoped<IPreferenceService, PreferenceService>();
+builder.Services.AddScoped<IUserStatsService, UserStatsService>();
 
 // Helper Services
 builder.Services.AddScoped<IEmailHelper, EmailHelper>();
-builder.Services.AddScoped<ILocalizationHelper, LocalizationHelper>();
 
 // Repository registration
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -153,9 +153,6 @@ app.UseHttpsRedirection();
 
 // Global error handling middleware
 app.UseMiddleware<ErrorHandlingMiddleware>();
-
-// Localization middleware
-app.UseMiddleware<LocalizationMiddleware>();
 
 app.UseCors("AllowAngular");
 app.UseAuthentication();

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EcoRide.Backend.Business.Services.Interfaces;
+using EcoRide.Backend.Dtos.Participation;
 
 namespace EcoRide.Backend.WebApi.Controllers;
 
@@ -32,10 +33,4 @@ public class ParticipationController : BaseController
 
         return Ok(new { message });
     }
-}
-
-public class ValidateTripDTO
-{
-    public bool TripOk { get; set; }
-    public string? Comment { get; set; }
 }

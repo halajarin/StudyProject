@@ -1,3 +1,4 @@
+using EcoRide.Backend.Business.Constants;
 using EcoRide.Backend.Business.Services.Interfaces;
 using EcoRide.Backend.Data.Repositories.Interfaces;
 using EcoRide.Backend.Dtos.User;
@@ -97,7 +98,7 @@ public class UserController : BaseController
         var roles = await _userRepository.GetUserRolesAsync(userId);
 
         // Prevent adding Employee or Administrator roles
-        if (roleId == 3 || roleId == 4)
+        if (roleId == RoleConstants.EMPLOYEE || roleId == RoleConstants.ADMINISTRATOR)
         {
             return Forbid();
         }

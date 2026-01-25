@@ -1,3 +1,4 @@
+using EcoRide.Backend.Business.Constants;
 using EcoRide.Backend.Business.Helpers;
 using EcoRide.Backend.Business.Mappers;
 using EcoRide.Backend.Business.Services.Interfaces;
@@ -367,8 +368,8 @@ public class CarpoolService : ICarpoolService
                 var driver = await _userRepository.GetByIdAsync(carpool.UserId);
                 if (driver != null)
                 {
-                    // Driver receives the price - 2 credits (platform commission)
-                    var driverCredit = (int)carpool.PricePerPerson - 2;
+                    // Driver receives the price minus platform commission
+                    var driverCredit = (int)carpool.PricePerPerson - CreditsConstants.PLATFORM_COMMISSION_PER_TRIP;
                     driver.Credits += driverCredit;
                     await _userRepository.UpdateAsync(driver);
                 }
