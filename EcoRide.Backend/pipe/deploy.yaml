@@ -2,7 +2,6 @@ trigger:
   branches:
     include:
       - main
-      - dev
   paths:
     include:
       - "EcoRide.Backend/*"
@@ -28,8 +27,8 @@ extends:
     SourceDirectory: "$(Build.SourcesDirectory)/EcoRide.Backend"
     projectFile: "**/EcoRide.Backend.WebApi.csproj"
     testProjectFile: "**/EcoRide.Backend.Tests.csproj"
-    publishTargetFramework: "net9.0"
-    DotNetSdkVersion: 9.0.101
+    publishTargetFramework: "net8.0"
+    DotNetSdkVersion: 8.0.416
     sonarCloudOrganization: "clauger3e-sonarcloud"
     sonarCloudProjectKey: "halajarin_EcoRide"
     sonarCloudProjectName: "EcoRide.Backend"
