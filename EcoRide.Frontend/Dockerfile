@@ -1,5 +1,5 @@
 # Build stage
-FROM clauger3e.azurecr.io/node:20-alpine AS build
+FROM clauger3e.azurecr.io/node:22.17.0-alpine-patched AS build
 WORKDIR /app
 
 # Copy package files
@@ -15,7 +15,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM clauger3e.azurecr.io/nginx:alpine AS final
+FROM clauger3e.azurecr.io/nginx:alpine-patched AS final
 WORKDIR /usr/share/nginx/html
 
 # Remove default nginx static content
