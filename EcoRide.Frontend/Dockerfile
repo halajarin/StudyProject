@@ -11,8 +11,10 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build the Angular application with base-href for portal path
-RUN npm run build -- --base-href /portal/ecoride/
+# Build the Angular application
+# Note: No base-href needed because Traefik stripPrefixRegex middleware
+# removes /portal/ecoride from the path before reaching nginx
+RUN npm run build
 
 # Production stage
 FROM clauger3e.azurecr.io/nginx:alpine-patched AS final
