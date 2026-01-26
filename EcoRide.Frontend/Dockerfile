@@ -27,7 +27,7 @@ RUN rm -rf ./*
 COPY --from=build /app/dist/ecoride-frontend/browser ./
 
 # Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
 EXPOSE 80
