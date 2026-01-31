@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // PostgreSQL Configuration
 builder.Services.AddDbContext<EcoRideContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"))
+    options.UseNpgsql(builder.Configuration.GetConnectionString("EcoRide"))
 );
 
 // MongoDB Configuration
