@@ -193,12 +193,12 @@ BEGIN
 
         -- Insert test users (password: Password123!)
         INSERT INTO "user" (user_id, last_name, first_name, email, password, phone, pseudo, credit, is_active) VALUES
-        (1, 'Dupont', 'Jean', 'jean.dupont@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0601020304', 'jeandu', 50, TRUE),
-        (2, 'Martin', 'Marie', 'marie.martin@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0605060708', 'mariema', 30, TRUE),
-        (3, 'Durand', 'Pierre', 'pierre.durand@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0609101112', 'pierredu', 45, TRUE),
-        (4, 'Bernard', 'Sophie', 'sophie.bernard@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0613141516', 'sophieb', 25, TRUE),
-        (5, 'Admin', 'EcoRide', 'admin@ecoride.fr', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0700000000', 'admin', 1000, TRUE),
-        (6, 'Employee', 'Support', 'support@ecoride.fr', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0700000001', 'support', 0, TRUE)
+        (1, 'Dupont', 'Jean', 'jean.dupont@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0601020304', 'jeandu', 50, TRUE),
+        (2, 'Martin', 'Marie', 'marie.martin@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0605060708', 'mariema', 30, TRUE),
+        (3, 'Durand', 'Pierre', 'pierre.durand@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0609101112', 'pierredu', 45, TRUE),
+        (4, 'Bernard', 'Sophie', 'sophie.bernard@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0613141516', 'sophieb', 25, TRUE),
+        (5, 'Admin', 'EcoRide', 'admin@ecoride.fr', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0700000000', 'admin', 1000, TRUE),
+        (6, 'Employee', 'Support', 'support@ecoride.fr', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0700000001', 'support', 0, TRUE)
         ON CONFLICT (email) DO NOTHING;
 
         -- Insert user roles
@@ -316,25 +316,25 @@ BEGIN
 
         -- Insert more realistic test users (password: Password123!)
         INSERT INTO "user" (last_name, first_name, email, password, phone, pseudo, credit, is_active, birth_date, address) VALUES
-        ('Moreau', 'Julie', 'julie.moreau@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0620304050', 'juliem', 75, TRUE, '1992-05-15', '12 Rue de la Paix, Paris'),
-        ('Leroy', 'Thomas', 'thomas.leroy@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0621304051', 'thomasL', 60, TRUE, '1988-08-22', '45 Avenue des Champs, Lyon'),
-        ('Simon', 'Emma', 'emma.simon@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0622304052', 'emmaS', 85, TRUE, '1995-03-10', '8 Boulevard Victor Hugo, Marseille'),
-        ('Laurent', 'Lucas', 'lucas.laurent@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0623304053', 'lucasL', 40, TRUE, '1990-11-30', '23 Rue Nationale, Lille'),
-        ('Michel', 'Chloé', 'chloe.michel@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0624304054', 'chloeM', 95, TRUE, '1993-07-18', '56 Cours de la Libération, Bordeaux'),
-        ('Lefebvre', 'Hugo', 'hugo.lefebvre@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0625304055', 'hugoLef', 55, TRUE, '1987-12-05', '34 Rue du Commerce, Toulouse'),
-        ('Roux', 'Léa', 'lea.roux@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0626304056', 'leaR', 70, TRUE, '1994-04-25', '15 Place Stanislas, Nancy'),
-        ('David', 'Nathan', 'nathan.david@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0627304057', 'nathanD', 45, TRUE, '1991-09-14', '67 Avenue de la République, Nantes'),
-        ('Bertrand', 'Camille', 'camille.bertrand@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0628304058', 'camilleB', 80, TRUE, '1989-06-08', '89 Rue Saint-Michel, Strasbourg'),
-        ('Robert', 'Alexandre', 'alex.robert@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0629304059', 'alexR', 65, TRUE, '1996-02-20', '12 Quai des Belges, Marseille'),
-        ('Richard', 'Sarah', 'sarah.richard@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0630304060', 'sarahR', 50, TRUE, '1992-10-12', '45 Rue de la Gare, Rennes'),
-        ('Petit', 'Maxime', 'maxime.petit@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0631304061', 'maxP', 90, TRUE, '1985-01-28', '78 Avenue Jean Jaurès, Grenoble'),
-        ('Garnier', 'Manon', 'manon.garnier@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0632304062', 'manonG', 35, TRUE, '1997-05-03', '23 Place Bellecour, Lyon'),
-        ('Rousseau', 'Antoine', 'antoine.rousseau@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0633304063', 'antoineR', 100, TRUE, '1986-11-16', '56 Boulevard Haussmann, Paris'),
-        ('Blanc', 'Laura', 'laura.blanc@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0634304064', 'lauraB', 55, TRUE, '1993-08-09', '34 Rue Foch, Nice'),
-        ('Girard', 'Julien', 'julien.girard@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0635304065', 'julienG', 70, TRUE, '1990-03-27', '89 Cours Vitton, Lyon'),
-        ('Fontaine', 'Clara', 'clara.fontaine@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0636304066', 'claraF', 45, TRUE, '1994-12-19', '12 Allée des Platanes, Montpellier'),
-        ('Lopez', 'Nicolas', 'nicolas.lopez@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0637304067', 'nicolasL', 85, TRUE, '1988-07-04', '45 Rue de Rome, Marseille'),
-        ('Bonnet', 'Océane', 'oceane.bonnet@email.com', '$2a$11$xOVKJvJIZ7y9H5cjYwX9Q.YJz1FqVmXRPz7tN9xYjHnOqPbU2U3IC', '0638304068', 'oceaneB', 60, TRUE, '1995-09-21', '67 Avenue Wilson, Toulouse')
+        ('Moreau', 'Julie', 'julie.moreau@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0620304050', 'juliem', 75, TRUE, '1992-05-15', '12 Rue de la Paix, Paris'),
+        ('Leroy', 'Thomas', 'thomas.leroy@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0621304051', 'thomasL', 60, TRUE, '1988-08-22', '45 Avenue des Champs, Lyon'),
+        ('Simon', 'Emma', 'emma.simon@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0622304052', 'emmaS', 85, TRUE, '1995-03-10', '8 Boulevard Victor Hugo, Marseille'),
+        ('Laurent', 'Lucas', 'lucas.laurent@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0623304053', 'lucasL', 40, TRUE, '1990-11-30', '23 Rue Nationale, Lille'),
+        ('Michel', 'Chloé', 'chloe.michel@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0624304054', 'chloeM', 95, TRUE, '1993-07-18', '56 Cours de la Libération, Bordeaux'),
+        ('Lefebvre', 'Hugo', 'hugo.lefebvre@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0625304055', 'hugoLef', 55, TRUE, '1987-12-05', '34 Rue du Commerce, Toulouse'),
+        ('Roux', 'Léa', 'lea.roux@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0626304056', 'leaR', 70, TRUE, '1994-04-25', '15 Place Stanislas, Nancy'),
+        ('David', 'Nathan', 'nathan.david@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0627304057', 'nathanD', 45, TRUE, '1991-09-14', '67 Avenue de la République, Nantes'),
+        ('Bertrand', 'Camille', 'camille.bertrand@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0628304058', 'camilleB', 80, TRUE, '1989-06-08', '89 Rue Saint-Michel, Strasbourg'),
+        ('Robert', 'Alexandre', 'alex.robert@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0629304059', 'alexR', 65, TRUE, '1996-02-20', '12 Quai des Belges, Marseille'),
+        ('Richard', 'Sarah', 'sarah.richard@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0630304060', 'sarahR', 50, TRUE, '1992-10-12', '45 Rue de la Gare, Rennes'),
+        ('Petit', 'Maxime', 'maxime.petit@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0631304061', 'maxP', 90, TRUE, '1985-01-28', '78 Avenue Jean Jaurès, Grenoble'),
+        ('Garnier', 'Manon', 'manon.garnier@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0632304062', 'manonG', 35, TRUE, '1997-05-03', '23 Place Bellecour, Lyon'),
+        ('Rousseau', 'Antoine', 'antoine.rousseau@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0633304063', 'antoineR', 100, TRUE, '1986-11-16', '56 Boulevard Haussmann, Paris'),
+        ('Blanc', 'Laura', 'laura.blanc@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0634304064', 'lauraB', 55, TRUE, '1993-08-09', '34 Rue Foch, Nice'),
+        ('Girard', 'Julien', 'julien.girard@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0635304065', 'julienG', 70, TRUE, '1990-03-27', '89 Cours Vitton, Lyon'),
+        ('Fontaine', 'Clara', 'clara.fontaine@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0636304066', 'claraF', 45, TRUE, '1994-12-19', '12 Allée des Platanes, Montpellier'),
+        ('Lopez', 'Nicolas', 'nicolas.lopez@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0637304067', 'nicolasL', 85, TRUE, '1988-07-04', '45 Rue de Rome, Marseille'),
+        ('Bonnet', 'Océane', 'oceane.bonnet@email.com', '$2a$11$L/bUzUM58HcAshB.wHPh.uZsCsxfHs8wzUUWjHJ1/7M/.wsUwnbv2', '0638304068', 'oceaneB', 60, TRUE, '1995-09-21', '67 Avenue Wilson, Toulouse')
         ON CONFLICT (email) DO NOTHING;
 
         -- Assign roles to new users (mix of passengers and drivers)
