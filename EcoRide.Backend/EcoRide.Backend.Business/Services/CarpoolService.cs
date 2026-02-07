@@ -69,6 +69,19 @@ public class CarpoolService : ICarpoolService
         return dtos;
     }
 
+    public async Task<List<CarpoolDTO>> GetAvailableAsync()
+    {
+        var carpools = await _carpoolRepository.GetAllAsync();
+        var available = carpools
+            .Where(c => c.Status == CarpoolStatus.Pending && c.AvailableSeats > 0)
+            .OrderBy(c => c.DepartureDate)
+            .ToList();
+        var dtos = available.Select(c => c.ToDTO()).ToList();
+        await PopulateDriverRatingsAsync(dtos);
+
+        return dtos;
+    }
+
     public async Task<CarpoolDTO> CreateAsync(CreateCarpoolDTO createDto, int userId)
     {
         var carpool = new Carpool

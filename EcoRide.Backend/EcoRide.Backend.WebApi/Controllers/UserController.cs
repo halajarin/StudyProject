@@ -181,6 +181,30 @@ public class UserController : BaseController
         return CreatedAtAction(nameof(GetVehicles), new { id = created.VehicleId }, created);
     }
 
+    [HttpPost("add-credits")]
+    public async Task<IActionResult> AddCredits([FromBody] AddCreditsDTO addCreditsDto)
+    {
+        if (addCreditsDto.Amount <= 0 || addCreditsDto.Amount > 100)
+        {
+            return BadRequest(new { message = "Amount must be between 1 and 100 credits" });
+        }
+
+        var userId = GetCurrentUserId();
+        var user = await _userRepository.GetByIdAsync(userId);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        user.Credits += addCreditsDto.Amount;
+        await _userRepository.UpdateAsync(user);
+
+        _logger.LogInformation($"User {userId} added {addCreditsDto.Amount} credits. New balance: {user.Credits}");
+
+        return Ok(new { message = "Credits added successfully", credits = user.Credits });
+    }
+
     [HttpGet("preferences")]
     public async Task<IActionResult> GetPreferences()
     {

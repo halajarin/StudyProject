@@ -34,6 +34,19 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <p><strong>{{ 'user.roles' | translate }}:</strong> {{ user()?.roles?.join(', ') }}</p>
             </div>
 
+            <div class="credits-section">
+              <h3>{{ 'user.add_credits' | translate }}</h3>
+              <div class="credits-options">
+                @for (option of creditOptions; track option) {
+                  <button (click)="addCredits(option)"
+                          class="btn btn-credit"
+                          [disabled]="addingCredits()">
+                    +{{ option }} {{ 'common.credits' | translate }}
+                  </button>
+                }
+              </div>
+            </div>
+
             <div class="role-section">
               <h3>{{ 'auth.become_driver' | translate }}</h3>
               @if (!hasRole(UserRole.Driver)) {
@@ -130,8 +143,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               @if (myTrips().asDriver && myTrips().asDriver.length > 0) {
                 @for (trip of myTrips().asDriver; track trip.carpoolId) {
                   <div class="trip-card">
-                    <p><strong>{{ trip.departureCity }} → {{ trip.arrivalCity }}</strong></p>
-                    <p>{{ trip.departureDate | date:'dd/MM/yyyy' }} - {{ trip.status }}</p>
+                    <div class="trip-header">
+                      <p><strong>{{ trip.departureCity }} → {{ trip.arrivalCity }}</strong></p>
+                      <a [routerLink]="['/carpool', trip.carpoolId]" class="btn-link">{{ 'carpool.view_details' | translate }}</a>
+                    </div>
+                    <p>{{ trip.departureDate | date:'dd/MM/yyyy' }} - {{ getStatusLabel(trip.status) | translate }}</p>
 
                     <div class="trip-actions">
                       @if (trip.status === CarpoolStatus.Pending) {
@@ -161,11 +177,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                       }
 
                       @if (trip.status === CarpoolStatus.Completed) {
-                        <span class="badge badge-success">✅ {{ 'carpool.status.completed' | translate }}</span>
+                        <span class="badge badge-success">{{ 'carpool.status.completed' | translate }}</span>
                       }
 
                       @if (trip.status === CarpoolStatus.Cancelled) {
-                        <span class="badge badge-danger">❌ {{ 'carpool.status.cancelled' | translate }}</span>
+                        <span class="badge badge-danger">{{ 'carpool.status.cancelled' | translate }}</span>
                       }
                     </div>
                   </div>
@@ -178,8 +194,21 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               @if (myTrips().asPassenger && myTrips().asPassenger.length > 0) {
                 @for (trip of myTrips().asPassenger; track trip.carpoolId) {
                   <div class="trip-card">
-                    <p><strong>{{ trip.departureCity }} → {{ trip.arrivalCity }}</strong></p>
-                    <p>{{ trip.departureDate | date:'dd/MM/yyyy' }} - {{ trip.status }}</p>
+                    <div class="trip-header">
+                      <p><strong>{{ trip.departureCity }} → {{ trip.arrivalCity }}</strong></p>
+                      <a [routerLink]="['/carpool', trip.carpoolId]" class="btn-link">{{ 'carpool.view_details' | translate }}</a>
+                    </div>
+                    <p>{{ trip.departureDate | date:'dd/MM/yyyy' }} - {{ getStatusLabel(trip.status) | translate }}</p>
+
+                    @if (trip.status === CarpoolStatus.Pending) {
+                      <div class="trip-actions">
+                        <button (click)="cancelParticipation(trip.carpoolId)"
+                                class="btn btn-danger btn-sm"
+                                [disabled]="actioningTripId() === trip.carpoolId">
+                          {{ actioningTripId() === trip.carpoolId ? ('common.loading' | translate) : ('carpool.cancel_participation' | translate) }}
+                        </button>
+                      </div>
+                    }
 
                     <!-- Validation buttons (for completed, non-validated trips) -->
                     @if (trip.status === CarpoolStatus.Completed && !hasValidated(trip.carpoolId)) {
@@ -321,6 +350,39 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       color: var(--primary-green);
     }
 
+    .credits-section {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .credits-options {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .btn-credit {
+      background-color: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .btn-credit:hover:not(:disabled) {
+      background-color: var(--dark-green);
+    }
+
+    .btn-credit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .role-section {
       margin-top: 2rem;
       padding-top: 1rem;
@@ -339,6 +401,23 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       padding: 1rem;
       margin: 0.5rem 0;
       border-radius: 5px;
+    }
+
+    .trip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-link {
+      color: var(--primary-green);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .btn-link:hover {
+      text-decoration: underline;
     }
 
     .trips-section h3 {
@@ -553,6 +632,10 @@ export class ProfileComponent implements OnInit {
   // Trip management signals
   actioningTripId = signal<number | null>(null);
 
+  // Credits
+  creditOptions = [10, 20, 50];
+  addingCredits = signal(false);
+
   // Trip validation signals
   validatedTrips = signal<Set<number>>(new Set());
   showProblemForm = signal<number | null>(null);
@@ -652,6 +735,21 @@ export class ProfileComponent implements OnInit {
         this.showAddVehicle.set(false);
         this.loadVehicles();
       },
+    });
+  }
+
+  addCredits(amount: number) {
+    this.addingCredits.set(true);
+    this.userService.addCredits(amount).subscribe({
+      next: () => {
+        alert(this.translate.instant('user.credits_added_success', { count: amount }));
+        this.addingCredits.set(false);
+        this.loadProfile();
+      },
+      error: (err) => {
+        alert(err.error?.message || this.translate.instant('messages.error_occurred'));
+        this.addingCredits.set(false);
+      }
     });
   }
 
@@ -825,5 +923,34 @@ export class ProfileComponent implements OnInit {
 
   hasValidated(carpoolId: number): boolean {
     return this.validatedTrips().has(carpoolId);
+  }
+
+  getStatusLabel(status: CarpoolStatus): string {
+    switch (status) {
+      case CarpoolStatus.Pending: return 'carpool.status.pending';
+      case CarpoolStatus.InProgress: return 'carpool.status.in_progress';
+      case CarpoolStatus.Completed: return 'carpool.status.completed';
+      case CarpoolStatus.Cancelled: return 'carpool.status.cancelled';
+      default: return 'carpool.status.pending';
+    }
+  }
+
+  cancelParticipation(carpoolId: number) {
+    if (confirm(this.translate.instant('carpool.cancel_participation_confirm'))) {
+      this.actioningTripId.set(carpoolId);
+
+      this.carpoolService.cancel(carpoolId).subscribe({
+        next: () => {
+          alert(this.translate.instant('carpool.participation_cancelled_success'));
+          this.actioningTripId.set(null);
+          this.loadMyTrips();
+          this.loadProfile();
+        },
+        error: (err) => {
+          alert(err.error?.message || this.translate.instant('messages.error_occurred'));
+          this.actioningTripId.set(null);
+        }
+      });
+    }
   }
 }

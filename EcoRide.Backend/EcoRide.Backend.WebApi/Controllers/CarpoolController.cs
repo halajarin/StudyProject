@@ -17,6 +17,13 @@ public class CarpoolController : BaseController
         _logger = logger;
     }
 
+    [HttpGet("available")]
+    public async Task<IActionResult> GetAllAvailable()
+    {
+        var result = await _carpoolService.GetAvailableAsync();
+        return Ok(result);
+    }
+
     [HttpPost("search")]
     public async Task<IActionResult> Search([FromBody] SearchCarpoolDTO searchDto)
     {

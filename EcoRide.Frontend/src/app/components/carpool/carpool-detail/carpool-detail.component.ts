@@ -12,6 +12,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   imports: [CommonModule, RouterLink, TranslateModule],
   template: `
     <div class="container">
+      <div class="back-nav">
+        <a routerLink="/carpools" class="btn-back">← {{ 'common.back' | translate }}</a>
+      </div>
+
       @if (loading()) {
         <div class="loading">{{ 'common.loading' | translate }}</div>
       }
@@ -20,7 +24,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         <div class="detail-card card">
           <div class="header">
             <h1>{{ carpool()?.departureCity }} → {{ carpool()?.arrivalCity }}</h1>
-            <span class="badge badge-{{ getStatusClass() }}">{{ getStatusLabel() | translate }}</span>
+            <span class="badge badge-{{ getStatusClass() }}">{{ getStatusLabel(carpool()!.status) | translate }}</span>
           </div>
 
           <div class="trip-info grid grid-2">
@@ -97,6 +101,25 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     </div>
   `,
   styles: [`
+    .back-nav {
+      max-width: 900px;
+      margin: 0 auto 1rem;
+    }
+
+    .btn-back {
+      display: inline-block;
+      color: var(--dark-green);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-back:hover {
+      background-color: var(--very-light-green);
+    }
+
     .detail-card {
       max-width: 900px;
       margin: 2rem auto;
@@ -255,11 +278,12 @@ export class CarpoolDetailComponent implements OnInit {
     }
   }
 
-  getStatusLabel() {
-    switch(this.carpool()?.status) {
+  getStatusLabel(status: CarpoolStatus): string {
+    switch (status) {
       case CarpoolStatus.Pending: return 'carpool.status.pending';
       case CarpoolStatus.InProgress: return 'carpool.status.in_progress';
       case CarpoolStatus.Completed: return 'carpool.status.completed';
+      case CarpoolStatus.Cancelled: return 'carpool.status.cancelled';
       default: return 'carpool.status.pending';
     }
   }

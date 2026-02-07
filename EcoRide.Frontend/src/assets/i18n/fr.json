@@ -183,7 +183,11 @@
     "report_problem": "Signaler un problème",
     "problem_comment_required": "Veuillez décrire le problème (minimum 10 caractères)",
     "problem_comment_placeholder": "Décrivez ce qui s'est mal passé...",
-    "problem_reported_success": "Problème signalé. Le support va vous contacter."
+    "problem_reported_success": "Problème signalé. Le support va vous contacter.",
+    "show_all": "Voir tous les covoiturages",
+    "cancel_participation": "Annuler ma participation",
+    "cancel_participation_confirm": "Êtes-vous sûr de vouloir annuler votre participation ? Vos crédits seront remboursés.",
+    "participation_cancelled_success": "Participation annulée. Vos crédits ont été remboursés."
   },
   "user": {
     "profile": "Profil",
@@ -193,6 +197,8 @@
     "add_vehicle": "Ajouter un véhicule",
     "credits": "Crédits",
     "credits_count": "{{count}} crédits",
+    "add_credits": "Recharger des crédits",
+    "credits_added_success": "{{count}} crédits ajoutés avec succès !",
     "address": "Adresse",
     "birth_date": "Date de naissance",
     "photo": "Photo",

@@ -13,6 +13,10 @@ export class CarpoolService {
 
   constructor(private http: HttpClient) {}
 
+  getAll(): Observable<Carpool[]> {
+    return this.http.get<Carpool[]>(`${this.apiUrl}/available`);
+  }
+
   search(searchData: SearchCarpool): Observable<Carpool[]> {
     // Clean up empty fields to avoid serialization issues
     const cleanedData: any = { ...searchData };

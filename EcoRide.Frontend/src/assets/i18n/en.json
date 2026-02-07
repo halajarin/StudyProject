@@ -183,7 +183,11 @@
     "report_problem": "Report a problem",
     "problem_comment_required": "Please describe the problem (minimum 10 characters)",
     "problem_comment_placeholder": "Describe what went wrong...",
-    "problem_reported_success": "Problem reported. Support will contact you."
+    "problem_reported_success": "Problem reported. Support will contact you.",
+    "show_all": "Show all carpools",
+    "cancel_participation": "Cancel my participation",
+    "cancel_participation_confirm": "Are you sure you want to cancel your participation? Your credits will be refunded.",
+    "participation_cancelled_success": "Participation cancelled. Your credits have been refunded."
   },
   "user": {
     "profile": "Profile",
@@ -193,6 +197,8 @@
     "add_vehicle": "Add vehicle",
     "credits": "Credits",
     "credits_count": "{{count}} credits",
+    "add_credits": "Add credits",
+    "credits_added_success": "{{count}} credits added successfully!",
     "address": "Address",
     "birth_date": "Birth date",
     "photo": "Photo",

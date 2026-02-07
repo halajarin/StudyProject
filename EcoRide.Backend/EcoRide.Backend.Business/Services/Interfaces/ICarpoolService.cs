@@ -7,6 +7,7 @@ public interface ICarpoolService
     // CRUD operations
     Task<CarpoolDTO?> GetByIdAsync(int id);
     Task<List<CarpoolDTO>> GetAllAsync();
+    Task<List<CarpoolDTO>> GetAvailableAsync();
     Task<List<CarpoolDTO>> SearchAsync(SearchCarpoolDTO searchDto);
     Task<List<CarpoolDTO>> GetByDriverAsync(int userId);
     Task<List<CarpoolDTO>> GetByPassengerAsync(int userId);

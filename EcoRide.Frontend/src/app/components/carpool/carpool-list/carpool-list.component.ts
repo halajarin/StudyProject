@@ -56,7 +56,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary">{{ 'common.search' | translate }}</button>
+          <div class="search-buttons">
+            <button type="submit" class="btn btn-primary">{{ 'common.search' | translate }}</button>
+            @if (searchForm.departureCity || searchForm.arrivalCity) {
+              <button type="button" class="btn btn-secondary" (click)="resetSearch()">{{ 'carpool.show_all' | translate }}</button>
+            }
+          </div>
         </form>
       </div>
 
@@ -197,6 +202,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       border-top: 1px solid var(--light-gray);
       text-align: right;
     }
+
+    .search-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
   `]
 })
 export class CarpoolListComponent implements OnInit {
@@ -223,8 +234,30 @@ export class CarpoolListComponent implements OnInit {
         this.searchForm.arrivalCity = params['arrivalCity'];
         this.searchForm.departureDate = params['departureDate'] || '';
         this.search();
+      } else {
+        this.loadAll();
       }
     });
+  }
+
+  loadAll() {
+    this.loading.set(true);
+    this.carpoolService.getAll().subscribe({
+      next: (results) => {
+        this.carpools.set(results);
+        this.loading.set(false);
+        this.searched.set(true);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.searched.set(true);
+      }
+    });
+  }
+
+  resetSearch() {
+    this.searchForm = { departureCity: '', arrivalCity: '', departureDate: '' };
+    this.loadAll();
   }
 
   search() {
