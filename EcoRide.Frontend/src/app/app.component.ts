@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
+import { UserRole } from './models/role.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from './components/language-selector/language-selector.component';
 
@@ -24,11 +25,11 @@ import { LanguageSelectorComponent } from './components/language-selector/langua
           @if (authService.isLoggedIn()) {
             <li><a routerLink="/profile" routerLinkActive="active">{{ 'navigation.my_profile' | translate }}</a></li>
 
-            @if (authService.hasRole('Employe') || authService.hasRole('Administrateur')) {
+            @if (authService.hasRole(UserRole.Employee) || authService.hasRole(UserRole.Administrator)) {
               <li><a routerLink="/employee" routerLinkActive="active">{{ 'navigation.employee_dashboard' | translate }}</a></li>
             }
 
-            @if (authService.hasRole('Administrateur')) {
+            @if (authService.hasRole(UserRole.Administrator)) {
               <li><a routerLink="/admin" routerLinkActive="active">{{ 'navigation.admin' | translate }}</a></li>
             }
 
@@ -178,5 +179,6 @@ import { LanguageSelectorComponent } from './components/language-selector/langua
   `]
 })
 export class AppComponent {
+  UserRole = UserRole;
   constructor(public authService: AuthService) {}
 }

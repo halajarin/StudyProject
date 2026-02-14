@@ -14,7 +14,7 @@ COPY . .
 # Build the Angular application with base-href for Traefik routing
 # The base-href ensures assets are requested with /portal/ecoride/ prefix
 # Traefik's stripPrefixRegex then removes it before routing to nginx
-RUN npm run build -- --base-href /portal/ecoride/
+RUN npm run build
 
 # Production stage
 FROM clauger3e.azurecr.io/nginx:alpine-patched AS final
