@@ -50,10 +50,18 @@ public class CarpoolRepository : ICarpoolRepository
             .Include(c => c.Vehicle)
                 .ThenInclude(v => v.Brand)
             .Include(c => c.Driver)
-            .Where(c => c.DepartureCity.ToLower() == departureCity.ToLower() &&
-                       c.ArrivalCity.ToLower() == arrivalCity.ToLower() &&
-                       c.AvailableSeats > 0 &&
+            .Where(c => c.AvailableSeats > 0 &&
                        c.Status == CarpoolStatus.Pending);
+
+        if (!string.IsNullOrWhiteSpace(departureCity))
+        {
+            query = query.Where(c => c.DepartureCity.ToLower() == departureCity.ToLower());
+        }
+
+        if (!string.IsNullOrWhiteSpace(arrivalCity))
+        {
+            query = query.Where(c => c.ArrivalCity.ToLower() == arrivalCity.ToLower());
+        }
 
         // Optional date filter
         if (departureDate.HasValue)

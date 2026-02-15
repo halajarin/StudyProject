@@ -249,6 +249,7 @@
     "cancel_participation": "Cancel my participation",
     "cancel_participation_confirm": "Are you sure you want to cancel your participation? Your credits will be refunded.",
     "participation_cancelled_success": "Participation cancelled. Your credits have been refunded.",
+    "mandatory_confirmations": "Mandatory confirmations before publishing",
     "confirm_insurance": "I confirm that my vehicle insurance is valid",
     "confirm_license": "I confirm that my driver's license is valid"
   },

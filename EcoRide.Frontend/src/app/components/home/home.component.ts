@@ -42,8 +42,7 @@ import { AuthService } from '../../services/auth.service';
                 type="text"
                 [(ngModel)]="searchForm.departureCity"
                 name="departureCity"
-                [placeholder]="'home.placeholder_departure' | translate"
-                required>
+                [placeholder]="'home.placeholder_departure' | translate">
               <label>{{ 'home.departure_city' | translate }}</label>
             </div>
 
@@ -59,8 +58,7 @@ import { AuthService } from '../../services/auth.service';
                 type="text"
                 [(ngModel)]="searchForm.arrivalCity"
                 name="arrivalCity"
-                [placeholder]="'home.placeholder_arrival' | translate"
-                required>
+                [placeholder]="'home.placeholder_arrival' | translate">
               <label>{{ 'home.arrival_city' | translate }}</label>
             </div>
 
@@ -496,10 +494,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   searchTrip() {
-    if (this.searchForm.departureCity && this.searchForm.arrivalCity) {
-      this.router.navigate(['/carpools'], {
-        queryParams: this.searchForm
-      });
-    }
+    const params: any = {};
+    if (this.searchForm.departureCity) params.departureCity = this.searchForm.departureCity;
+    if (this.searchForm.arrivalCity) params.arrivalCity = this.searchForm.arrivalCity;
+    if (this.searchForm.departureDate) params.departureDate = this.searchForm.departureDate;
+
+    this.router.navigate(['/carpools'], { queryParams: params });
   }
 }

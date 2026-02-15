@@ -21,7 +21,12 @@ export class CarpoolService {
     // Clean up empty fields to avoid serialization issues
     const cleanedData: any = { ...searchData };
 
-    // Remove empty date field
+    if (!cleanedData.departureCity || cleanedData.departureCity === '') {
+      delete cleanedData.departureCity;
+    }
+    if (!cleanedData.arrivalCity || cleanedData.arrivalCity === '') {
+      delete cleanedData.arrivalCity;
+    }
     if (!cleanedData.departureDate || cleanedData.departureDate === '') {
       delete cleanedData.departureDate;
     }

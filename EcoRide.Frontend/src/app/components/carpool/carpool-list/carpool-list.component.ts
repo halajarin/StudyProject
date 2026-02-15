@@ -19,11 +19,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           <div class="grid grid-3">
             <div class="form-group">
               <label>{{ 'carpool.departure_city' | translate }}</label>
-              <input type="text" [(ngModel)]="searchForm.departureCity" name="departureCity" required>
+              <input type="text" [(ngModel)]="searchForm.departureCity" name="departureCity">
             </div>
             <div class="form-group">
               <label>{{ 'carpool.arrival_city' | translate }}</label>
-              <input type="text" [(ngModel)]="searchForm.arrivalCity" name="arrivalCity" required>
+              <input type="text" [(ngModel)]="searchForm.arrivalCity" name="arrivalCity">
             </div>
             <div class="form-group">
               <label>{{ 'home.date' | translate }}</label>
@@ -58,7 +58,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
           <div class="search-buttons">
             <button type="submit" class="btn btn-primary">{{ 'common.search' | translate }}</button>
-            @if (searchForm.departureCity || searchForm.arrivalCity) {
+            @if (searchForm.departureCity || searchForm.arrivalCity || searchForm.departureDate) {
               <button type="button" class="btn btn-secondary" (click)="resetSearch()">{{ 'carpool.show_all' | translate }}</button>
             }
           </div>
@@ -229,9 +229,9 @@ export class CarpoolListComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      if (params['departureCity'] && params['arrivalCity']) {
-        this.searchForm.departureCity = params['departureCity'];
-        this.searchForm.arrivalCity = params['arrivalCity'];
+      if (params['departureCity'] || params['arrivalCity'] || params['departureDate']) {
+        this.searchForm.departureCity = params['departureCity'] || '';
+        this.searchForm.arrivalCity = params['arrivalCity'] || '';
         this.searchForm.departureDate = params['departureDate'] || '';
         this.search();
       } else {

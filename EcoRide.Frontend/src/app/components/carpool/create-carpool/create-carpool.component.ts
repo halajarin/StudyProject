@@ -114,14 +114,15 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </div>
           </div>
 
-          <div class="confirmations">
-            <label class="checkbox-label">
+          <div class="confirmations-box">
+            <h3>{{ 'carpool.mandatory_confirmations' | translate }}</h3>
+            <label class="checkbox-label" [class.checked]="insuranceConfirmed">
               <input type="checkbox" [(ngModel)]="insuranceConfirmed" name="insuranceConfirmed">
-              {{ 'carpool.confirm_insurance' | translate }}
+              <span>{{ 'carpool.confirm_insurance' | translate }}</span>
             </label>
-            <label class="checkbox-label">
+            <label class="checkbox-label" [class.checked]="licenseConfirmed">
               <input type="checkbox" [(ngModel)]="licenseConfirmed" name="licenseConfirmed">
-              {{ 'carpool.confirm_license' | translate }}
+              <span>{{ 'carpool.confirm_license' | translate }}</span>
             </label>
           </div>
 
@@ -144,26 +145,52 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       margin-top: 0.3rem;
     }
 
-    .confirmations {
-      margin: 1.5rem 0 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+    .confirmations-box {
+      margin: 1.5rem 0 1.5rem;
+      padding: 1.25rem;
+      border: 2px solid #e67e22;
+      border-radius: 8px;
+      background: #fef9f3;
+    }
+
+    .confirmations-box h3 {
+      margin: 0 0 1rem;
+      color: #e67e22;
+      font-size: 1rem;
     }
 
     .checkbox-label {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
       cursor: pointer;
       font-size: 0.95rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--light-gray);
+      background: var(--white);
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-label + .checkbox-label {
+      margin-top: 0.5rem;
+    }
+
+    .checkbox-label:hover {
+      border-color: var(--primary-green);
+    }
+
+    .checkbox-label.checked {
+      border-color: var(--primary-green);
+      background: #f0faf0;
     }
 
     .checkbox-label input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--primary);
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary-green);
       cursor: pointer;
+      flex-shrink: 0;
     }
   `]
 })

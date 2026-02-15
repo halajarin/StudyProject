@@ -249,6 +249,7 @@
     "cancel_participation": "Annuler ma participation",
     "cancel_participation_confirm": "Êtes-vous sûr de vouloir annuler votre participation ? Vos crédits seront remboursés.",
     "participation_cancelled_success": "Participation annulée. Vos crédits ont été remboursés.",
+    "mandatory_confirmations": "Confirmations obligatoires avant publication",
     "confirm_insurance": "Je confirme que mon assurance véhicule est valide",
     "confirm_license": "Je confirme que mon permis de conduire est valide"
   },

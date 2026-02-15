@@ -8,11 +8,9 @@ public class SearchCarpoolDTOValidator : AbstractValidator<SearchCarpoolDTO>
     public SearchCarpoolDTOValidator()
     {
         RuleFor(x => x.DepartureCity)
-            .NotEmpty().WithMessage("Departure city is required")
             .MaximumLength(100).WithMessage("Departure city must not exceed 100 characters");
 
         RuleFor(x => x.ArrivalCity)
-            .NotEmpty().WithMessage("Arrival city is required")
             .MaximumLength(100).WithMessage("Arrival city must not exceed 100 characters");
 
         // DepartureDate is optional, no validation needed
