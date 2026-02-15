@@ -18,35 +18,65 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
       @if (stats) {
         <div class="admin-stats-grid">
-          <div class="stat-card">
-            <h3>{{ 'admin.total_users' | translate }}</h3>
-            <p class="stat-value">{{ stats.totalUsers }}</p>
+          <div class="stat-card stat-card--users">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-card-content">
+              <span class="stat-label">{{ 'admin.total_users' | translate }}</span>
+              <span class="stat-value">{{ stats.totalUsers }}</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <h3>{{ 'admin.active_users' | translate }}</h3>
-            <p class="stat-value">{{ stats.activeUsers }}</p>
+          <div class="stat-card stat-card--active">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="stat-card-content">
+              <span class="stat-label">{{ 'admin.active_users' | translate }}</span>
+              <span class="stat-value">{{ stats.activeUsers }}</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <h3>{{ 'admin.total_carpools' | translate }}</h3>
-            <p class="stat-value">{{ stats.totalCarpools }}</p>
+          <div class="stat-card stat-card--carpools">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-6l2-4h9l4 4h3v6h-2"/><path d="M5 11l2-4h9l4 4"/></svg>
+            </div>
+            <div class="stat-card-content">
+              <span class="stat-label">{{ 'admin.total_carpools' | translate }}</span>
+              <span class="stat-value">{{ stats.totalCarpools }}</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <h3>{{ 'admin.active_carpools' | translate }}</h3>
-            <p class="stat-value">{{ stats.activeCarpools }}</p>
+          <div class="stat-card stat-card--active-carpools">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="stat-card-content">
+              <span class="stat-label">{{ 'admin.active_carpools' | translate }}</span>
+              <span class="stat-value">{{ stats.activeCarpools }}</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <h3>{{ 'admin.credits_circulating' | translate }}</h3>
-            <p class="stat-value">{{ stats.totalCreditsCirculating }}</p>
+          <div class="stat-card stat-card--credits">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+            </div>
+            <div class="stat-card-content">
+              <span class="stat-label">{{ 'admin.credits_circulating' | translate }}</span>
+              <span class="stat-value">{{ stats.totalCreditsCirculating }}</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <h3>{{ 'admin.total_credits' | translate }}</h3>
-            <p class="stat-value">{{ stats.platformCreditsEarned }}</p>
+          <div class="stat-card stat-card--platform">
+            <div class="stat-card-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <div class="stat-card-content">
+              <span class="stat-label">{{ 'admin.total_credits' | translate }}</span>
+              <span class="stat-value">{{ stats.platformCreditsEarned }}</span>
+            </div>
           </div>
         </div>
       }
 
-      <div class="card mt-3">
-        <h2>{{ 'admin.create_employee' | translate }}</h2>
+      <div class="employee-section">
+        <h3>{{ 'admin.create_employee' | translate }}</h3>
         <form (ngSubmit)="createEmployee()" class="employee-form">
           <div class="form-group">
             <label>{{ 'auth.username' | translate }}</label>
@@ -68,12 +98,22 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         <div class="users-header">
           <h2>{{ 'admin.users' | translate }}</h2>
           <div class="users-header-actions">
-            <div class="status-filter">
+            <div class="filter-group">
               <label>{{ 'admin.status_label' | translate }}:</label>
               <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
                 <option value="all">{{ 'admin.filter_all' | translate }}</option>
                 <option value="active">{{ 'admin.user_active' | translate }}</option>
                 <option value="suspended">{{ 'admin.user_suspended' | translate }}</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>{{ 'admin.filter_role' | translate }}:</label>
+              <select [ngModel]="roleFilter()" (ngModelChange)="roleFilter.set($event)">
+                <option value="all">{{ 'admin.filter_all' | translate }}</option>
+                <option value="Driver">{{ 'admin.roles.Driver' | translate }}</option>
+                <option value="Passenger">{{ 'admin.roles.Passenger' | translate }}</option>
+                <option value="Employee">{{ 'admin.roles.Employee' | translate }}</option>
+                <option value="Administrator">{{ 'admin.roles.Administrator' | translate }}</option>
               </select>
             </div>
             @if (filteredUsers().length > 0) {
@@ -214,37 +254,103 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styles: [`
     .admin-stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
 
     .stat-card {
-      background-color: var(--very-light-green);
-      padding: 1.2rem;
-      border-radius: 10px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid var(--light-gray);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .stat-card h3 {
-      margin: 0 0 0.5rem 0;
-      font-size: 0.8rem;
-      color: var(--dark-gray);
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .stat-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-card--users .stat-card-icon { background: #e3f2fd; color: #1565c0; }
+    .stat-card--active .stat-card-icon { background: #e8f5e9; color: #2e7d32; }
+    .stat-card--carpools .stat-card-icon { background: #fff3e0; color: #e65100; }
+    .stat-card--active-carpools .stat-card-icon { background: #f3e5f5; color: #7b1fa2; }
+    .stat-card--credits .stat-card-icon { background: #e0f7fa; color: #00838f; }
+    .stat-card--platform .stat-card-icon { background: #fce4ec; color: #c62828; }
+
+    .stat-card-content {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--gray);
       text-transform: uppercase;
+      letter-spacing: 0.03em;
+      line-height: 1.3;
     }
 
     .stat-value {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--primary-green);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--black);
       margin: 0;
+      line-height: 1.2;
+    }
+
+    .employee-section {
+      background: white;
+      border: 1px solid var(--light-gray);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .employee-section h3 {
+      margin: 0 0 1rem;
+      font-size: 1rem;
     }
 
     .employee-form {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      display: flex;
       gap: 1rem;
       align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .employee-form .form-group {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .employee-form .form-group label {
+      font-size: 0.82rem;
+      color: var(--gray);
+    }
+
+    .employee-form .form-group input {
+      margin-top: 0.25rem;
+    }
+
+    .employee-form .btn {
+      height: 42px;
+      white-space: nowrap;
     }
 
     .users-header {
@@ -263,21 +369,22 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    .status-filter {
+    .filter-group {
       display: flex;
       align-items: center;
       gap: 0.4rem;
     }
 
-    .status-filter label {
+    .filter-group label {
       font-size: 0.85rem;
-      color: var(--dark-gray);
+      color: var(--gray);
       white-space: nowrap;
     }
 
-    .status-filter select {
+    .filter-group select {
       padding: 0.3rem 0.5rem;
       border: 1px solid var(--light-gray);
       border-radius: 6px;
@@ -467,16 +574,19 @@ export class DashboardComponent implements OnInit {
   stats: AdminStats | null = null;
   users = signal<User[]>([]);
   statusFilter = signal<'all' | 'active' | 'suspended'>('all');
+  roleFilter = signal<string>('all');
   expandedUserIds = signal<Set<number>>(new Set());
   userStatsMap = signal<Record<number, AdminUserDetailStats>>({});
   loadingStatsIds = signal<Set<number>>(new Set());
 
   filteredUsers = computed(() => {
-    const filter = this.statusFilter();
-    const all = this.users();
-    if (filter === 'active') return all.filter(u => u.isActive);
-    if (filter === 'suspended') return all.filter(u => !u.isActive);
-    return all;
+    const status = this.statusFilter();
+    const role = this.roleFilter();
+    let result = this.users();
+    if (status === 'active') result = result.filter(u => u.isActive);
+    if (status === 'suspended') result = result.filter(u => !u.isActive);
+    if (role !== 'all') result = result.filter(u => u.roles.includes(role));
+    return result;
   });
 
   allExpanded = computed(() => {
