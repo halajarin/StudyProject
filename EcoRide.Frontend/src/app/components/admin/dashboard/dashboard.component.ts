@@ -141,6 +141,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             <span class="result-count">{{ filteredUsers().length }} / {{ users().length }}</span>
           </div>
           @if (filteredUsers().length > 0) {
+            <div class="table-scroll">
             <table class="data-table">
               <thead>
                 <tr>
@@ -272,6 +273,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 }
               </tbody>
             </table>
+            </div>
           }
         </div>
       }
@@ -295,6 +297,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             <span class="result-count">{{ filteredCarpools().length }} / {{ carpools().length }}</span>
           </div>
           @if (filteredCarpools().length > 0) {
+            <div class="table-scroll">
             <table class="data-table">
               <thead>
                 <tr>
@@ -337,6 +340,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 }
               </tbody>
             </table>
+            </div>
           } @else {
             <p class="no-results">{{ 'admin.carpools_no_results' | translate }}</p>
           }
@@ -565,10 +569,32 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       color: white;
     }
 
+    .table-scroll {
+      overflow-x: auto;
+      margin: 1rem -0.5rem 0;
+      padding: 0 0.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-green) transparent;
+    }
+
+    .table-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .table-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .table-scroll::-webkit-scrollbar-thumb {
+      background: var(--primary-green);
+      border-radius: 3px;
+    }
+
     .data-table {
       width: 100%;
+      min-width: 900px;
       border-collapse: collapse;
-      margin-top: 1rem;
+      margin-top: 0;
     }
 
     .data-table th,
