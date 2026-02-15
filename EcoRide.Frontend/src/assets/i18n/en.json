@@ -316,6 +316,15 @@
     "deactivate_user": "Deactivate",
     "validate_review": "Validate",
     "reject_review": "Reject",
+    "status_label": "Status",
+    "expand_all": "Expand all",
+    "collapse_all": "Collapse all",
+    "roles": {
+      "Passenger": "Passenger",
+      "Driver": "Driver",
+      "Employee": "Employee",
+      "Administrator": "Administrator"
+    },
     "user_type": "User type",
     "stats": {
       "driver": "Driver",

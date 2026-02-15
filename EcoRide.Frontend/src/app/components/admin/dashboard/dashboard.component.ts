@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -50,27 +50,42 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       </div>
 
       <div class="card mt-3">
-        <h2>{{ 'admin.users' | translate }}</h2>
+        <div class="users-header">
+          <h2>{{ 'admin.users' | translate }}</h2>
+          @if (users().length > 0) {
+            <button class="btn-sm btn-outline" (click)="toggleAll()">
+              {{ allExpanded() ? ('admin.collapse_all' | translate) : ('admin.expand_all' | translate) }}
+            </button>
+          }
+        </div>
         @if (users().length > 0) {
           <table class="users-table">
             <thead>
               <tr>
+                <th class="th-expand"></th>
                 <th>ID</th>
                 <th>{{ 'auth.username' | translate }}</th>
                 <th>{{ 'auth.email' | translate }}</th>
                 <th>{{ 'user.roles' | translate }}</th>
                 <th>{{ 'user.credits' | translate }}</th>
-                <th>{{ 'carpool.status' | translate }}</th>
+                <th>{{ 'admin.status_label' | translate }}</th>
                 <th>{{ 'common.edit' | translate }}</th>
               </tr>
             </thead>
             <tbody>
               @for (user of users(); track user.userId) {
-                <tr class="user-row" (click)="toggleUserStats(user.userId)">
+                <tr class="user-row" [class.expanded]="isExpanded(user.userId)" (click)="toggleUserStats(user.userId)">
+                  <td class="td-expand">
+                    <span class="expand-icon" [class.rotated]="isExpanded(user.userId)">&#9656;</span>
+                  </td>
                   <td>{{ user.userId }}</td>
                   <td>{{ user.username }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user.roles.join(', ') }}</td>
+                  <td>
+                    @for (role of user.roles; track role; let last = $last) {
+                      <span class="role-tag">{{ 'admin.roles.' + role | translate }}</span>
+                    }
+                  </td>
                   <td>{{ user.credits }}</td>
                   <td>
                     <span [class]="user.isActive ? 'badge-success' : 'badge-danger'">
@@ -89,69 +104,69 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                     }
                   </td>
                 </tr>
-                @if (expandedUserId() === user.userId) {
+                @if (isExpanded(user.userId)) {
                   <tr class="stats-row">
-                    <td colspan="7">
-                      @if (loadingStats()) {
+                    <td colspan="8">
+                      @if (isLoading(user.userId)) {
                         <div class="stats-loading">{{ 'common.loading' | translate }}</div>
-                      } @else if (userStats()) {
+                      } @else if (getStats(user.userId); as stats) {
                         <div class="user-detail-stats">
                           <div class="role-badges">
-                            @if (userStats()!.isDriver) {
+                            @if (stats.isDriver) {
                               <span class="role-badge role-driver">{{ 'admin.stats.driver' | translate }}</span>
                             }
-                            @if (userStats()!.isPassenger) {
+                            @if (stats.isPassenger) {
                               <span class="role-badge role-passenger">{{ 'admin.stats.passenger' | translate }}</span>
                             }
                           </div>
 
                           <div class="stats-cards-grid">
-                            @if (userStats()!.driverStats) {
+                            @if (stats.driverStats) {
                               <div class="detail-stat-card">
                                 <h4>{{ 'admin.stats.driver_trips' | translate }}</h4>
-                                <div class="stat-main-value">{{ userStats()!.driverStats!.totalCreated }}</div>
+                                <div class="stat-main-value">{{ stats.driverStats.totalCreated }}</div>
                                 <div class="stat-breakdown">
-                                  <span class="stat-item pending">{{ 'admin.stats.pending' | translate }}: {{ userStats()!.driverStats!.pending }}</span>
-                                  <span class="stat-item in-progress">{{ 'admin.stats.in_progress' | translate }}: {{ userStats()!.driverStats!.inProgress }}</span>
-                                  <span class="stat-item completed">{{ 'admin.stats.completed' | translate }}: {{ userStats()!.driverStats!.completed }}</span>
-                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ userStats()!.driverStats!.cancelled }}</span>
+                                  <span class="stat-item pending">{{ 'admin.stats.pending' | translate }}: {{ stats.driverStats.pending }}</span>
+                                  <span class="stat-item in-progress">{{ 'admin.stats.in_progress' | translate }}: {{ stats.driverStats.inProgress }}</span>
+                                  <span class="stat-item completed">{{ 'admin.stats.completed' | translate }}: {{ stats.driverStats.completed }}</span>
+                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ stats.driverStats.cancelled }}</span>
                                 </div>
                               </div>
                             }
 
-                            @if (userStats()!.passengerStats) {
+                            @if (stats.passengerStats) {
                               <div class="detail-stat-card">
                                 <h4>{{ 'admin.stats.passenger_trips' | translate }}</h4>
-                                <div class="stat-main-value">{{ userStats()!.passengerStats!.totalParticipations }}</div>
+                                <div class="stat-main-value">{{ stats.passengerStats.totalParticipations }}</div>
                                 <div class="stat-breakdown">
-                                  <span class="stat-item confirmed">{{ 'admin.stats.confirmed' | translate }}: {{ userStats()!.passengerStats!.confirmed }}</span>
-                                  <span class="stat-item validated">{{ 'admin.stats.validated' | translate }}: {{ userStats()!.passengerStats!.validated }}</span>
-                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ userStats()!.passengerStats!.cancelled }}</span>
+                                  <span class="stat-item confirmed">{{ 'admin.stats.confirmed' | translate }}: {{ stats.passengerStats.confirmed }}</span>
+                                  <span class="stat-item validated">{{ 'admin.stats.validated' | translate }}: {{ stats.passengerStats.validated }}</span>
+                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ stats.passengerStats.cancelled }}</span>
                                 </div>
                               </div>
                             }
 
                             <div class="detail-stat-card">
                               <h4>{{ 'admin.stats.driver_ratings' | translate }}</h4>
-                              <div class="stat-main-value">{{ userStats()!.driverRatings.averageRating || '-' }}</div>
+                              <div class="stat-main-value">{{ stats.driverRatings.averageRating || '-' }}</div>
                               <div class="stat-breakdown">
-                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ userStats()!.driverRatings.count }}</span>
+                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ stats.driverRatings.count }}</span>
                               </div>
                             </div>
 
                             <div class="detail-stat-card">
                               <h4>{{ 'admin.stats.passenger_ratings' | translate }}</h4>
-                              <div class="stat-main-value">{{ userStats()!.passengerRatings.averageRating || '-' }}</div>
+                              <div class="stat-main-value">{{ stats.passengerRatings.averageRating || '-' }}</div>
                               <div class="stat-breakdown">
-                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ userStats()!.passengerRatings.count }}</span>
+                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ stats.passengerRatings.count }}</span>
                               </div>
                             </div>
 
                             <div class="detail-stat-card">
                               <h4>{{ 'admin.stats.reviews_given' | translate }}</h4>
-                              <div class="stat-main-value">{{ userStats()!.reviewsGiven.count }}</div>
+                              <div class="stat-main-value">{{ stats.reviewsGiven.count }}</div>
                               <div class="stat-breakdown">
-                                <span class="stat-item">{{ 'admin.stats.average_note_given' | translate }}: {{ userStats()!.reviewsGiven.averageNoteGiven || '-' }}</span>
+                                <span class="stat-item">{{ 'admin.stats.average_note_given' | translate }}: {{ stats.reviewsGiven.averageNoteGiven || '-' }}</span>
                               </div>
                             </div>
                           </div>
@@ -187,6 +202,30 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       margin: 0;
     }
 
+    .users-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .users-header h2 {
+      margin: 0;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary-green);
+      color: var(--primary-green);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: var(--primary-green);
+      color: white;
+    }
+
     .users-table {
       width: 100%;
       border-collapse: collapse;
@@ -205,6 +244,26 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       color: var(--white);
     }
 
+    .th-expand {
+      width: 2rem;
+    }
+
+    .td-expand {
+      width: 2rem;
+      text-align: center;
+    }
+
+    .expand-icon {
+      display: inline-block;
+      font-size: 0.9rem;
+      color: var(--primary-green);
+      transition: transform 0.2s ease;
+    }
+
+    .expand-icon.rotated {
+      transform: rotate(90deg);
+    }
+
     .user-row {
       cursor: pointer;
       transition: background-color 0.2s;
@@ -212,6 +271,20 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
     .user-row:hover {
       background-color: var(--very-light-green);
+    }
+
+    .user-row.expanded {
+      background-color: var(--very-light-green);
+    }
+
+    .role-tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      margin: 0.1rem 0.2rem;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      background-color: #e8f5e9;
+      color: #2e7d32;
     }
 
     .stats-row td {
@@ -313,9 +386,14 @@ export class DashboardComponent implements OnInit {
 
   stats: AdminStats | null = null;
   users = signal<User[]>([]);
-  expandedUserId = signal<number | null>(null);
-  userStats = signal<AdminUserDetailStats | null>(null);
-  loadingStats = signal(false);
+  expandedUserIds = signal<Set<number>>(new Set());
+  userStatsMap = signal<Record<number, AdminUserDetailStats>>({});
+  loadingStatsIds = signal<Set<number>>(new Set());
+
+  allExpanded = computed(() => {
+    const userCount = this.users().length;
+    return userCount > 0 && this.expandedUserIds().size === userCount;
+  });
 
   constructor(
     private http: HttpClient,
@@ -325,6 +403,18 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.loadStats();
     this.loadUsers();
+  }
+
+  isExpanded(userId: number): boolean {
+    return this.expandedUserIds().has(userId);
+  }
+
+  isLoading(userId: number): boolean {
+    return this.loadingStatsIds().has(userId);
+  }
+
+  getStats(userId: number): AdminUserDetailStats | null {
+    return this.userStatsMap()[userId] ?? null;
   }
 
   createEmployee() {
@@ -350,23 +440,54 @@ export class DashboardComponent implements OnInit {
   }
 
   toggleUserStats(userId: number) {
-    if (this.expandedUserId() === userId) {
-      this.expandedUserId.set(null);
-      this.userStats.set(null);
+    const current = new Set(this.expandedUserIds());
+    if (current.has(userId)) {
+      current.delete(userId);
+      this.expandedUserIds.set(current);
       return;
     }
 
-    this.expandedUserId.set(userId);
-    this.userStats.set(null);
-    this.loadingStats.set(true);
+    current.add(userId);
+    this.expandedUserIds.set(current);
+    this.loadUserStats(userId);
+  }
+
+  toggleAll() {
+    if (this.allExpanded()) {
+      this.expandedUserIds.set(new Set());
+      return;
+    }
+
+    const allIds = new Set(this.users().map(u => u.userId));
+    this.expandedUserIds.set(allIds);
+
+    for (const user of this.users()) {
+      if (!this.userStatsMap()[user.userId]) {
+        this.loadUserStats(user.userId);
+      }
+    }
+  }
+
+  private loadUserStats(userId: number) {
+    if (this.userStatsMap()[userId] || this.loadingStatsIds().has(userId)) {
+      return;
+    }
+
+    const loading = new Set(this.loadingStatsIds());
+    loading.add(userId);
+    this.loadingStatsIds.set(loading);
 
     this.http.get<AdminUserDetailStats>(`${environment.apiUrl}/admin/users/${userId}/stats`).subscribe({
       next: (data) => {
-        this.userStats.set(data);
-        this.loadingStats.set(false);
+        this.userStatsMap.set({ ...this.userStatsMap(), [userId]: data });
+        const done = new Set(this.loadingStatsIds());
+        done.delete(userId);
+        this.loadingStatsIds.set(done);
       },
       error: () => {
-        this.loadingStats.set(false);
+        const done = new Set(this.loadingStatsIds());
+        done.delete(userId);
+        this.loadingStatsIds.set(done);
       }
     });
   }
