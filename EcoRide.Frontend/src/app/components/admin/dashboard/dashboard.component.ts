@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { User } from '../../../models/user.model';
 import { AdminStats } from '../../../interfaces/admin-stats.interface';
+import { AdminUserDetailStats } from '../../../interfaces/admin-user-stats.interface';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -65,7 +66,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </thead>
             <tbody>
               @for (user of users(); track user.userId) {
-                <tr>
+                <tr class="user-row" (click)="toggleUserStats(user.userId)">
                   <td>{{ user.userId }}</td>
                   <td>{{ user.username }}</td>
                   <td>{{ user.email }}</td>
@@ -78,16 +79,87 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                   </td>
                   <td>
                     @if (user.isActive) {
-                      <button (click)="suspendUser(user.userId)" class="btn-sm btn-danger">
+                      <button (click)="suspendUser(user.userId); $event.stopPropagation()" class="btn-sm btn-danger">
                         {{ 'admin.deactivate_user' | translate }}
                       </button>
                     } @else {
-                      <button (click)="activateUser(user.userId)" class="btn-sm btn-primary">
+                      <button (click)="activateUser(user.userId); $event.stopPropagation()" class="btn-sm btn-primary">
                         {{ 'admin.activate_user' | translate }}
                       </button>
                     }
                   </td>
                 </tr>
+                @if (expandedUserId() === user.userId) {
+                  <tr class="stats-row">
+                    <td colspan="7">
+                      @if (loadingStats()) {
+                        <div class="stats-loading">{{ 'common.loading' | translate }}</div>
+                      } @else if (userStats()) {
+                        <div class="user-detail-stats">
+                          <div class="role-badges">
+                            @if (userStats()!.isDriver) {
+                              <span class="role-badge role-driver">{{ 'admin.stats.driver' | translate }}</span>
+                            }
+                            @if (userStats()!.isPassenger) {
+                              <span class="role-badge role-passenger">{{ 'admin.stats.passenger' | translate }}</span>
+                            }
+                          </div>
+
+                          <div class="stats-cards-grid">
+                            @if (userStats()!.driverStats) {
+                              <div class="detail-stat-card">
+                                <h4>{{ 'admin.stats.driver_trips' | translate }}</h4>
+                                <div class="stat-main-value">{{ userStats()!.driverStats!.totalCreated }}</div>
+                                <div class="stat-breakdown">
+                                  <span class="stat-item pending">{{ 'admin.stats.pending' | translate }}: {{ userStats()!.driverStats!.pending }}</span>
+                                  <span class="stat-item in-progress">{{ 'admin.stats.in_progress' | translate }}: {{ userStats()!.driverStats!.inProgress }}</span>
+                                  <span class="stat-item completed">{{ 'admin.stats.completed' | translate }}: {{ userStats()!.driverStats!.completed }}</span>
+                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ userStats()!.driverStats!.cancelled }}</span>
+                                </div>
+                              </div>
+                            }
+
+                            @if (userStats()!.passengerStats) {
+                              <div class="detail-stat-card">
+                                <h4>{{ 'admin.stats.passenger_trips' | translate }}</h4>
+                                <div class="stat-main-value">{{ userStats()!.passengerStats!.totalParticipations }}</div>
+                                <div class="stat-breakdown">
+                                  <span class="stat-item confirmed">{{ 'admin.stats.confirmed' | translate }}: {{ userStats()!.passengerStats!.confirmed }}</span>
+                                  <span class="stat-item validated">{{ 'admin.stats.validated' | translate }}: {{ userStats()!.passengerStats!.validated }}</span>
+                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ userStats()!.passengerStats!.cancelled }}</span>
+                                </div>
+                              </div>
+                            }
+
+                            <div class="detail-stat-card">
+                              <h4>{{ 'admin.stats.driver_ratings' | translate }}</h4>
+                              <div class="stat-main-value">{{ userStats()!.driverRatings.averageRating || '-' }}</div>
+                              <div class="stat-breakdown">
+                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ userStats()!.driverRatings.count }}</span>
+                              </div>
+                            </div>
+
+                            <div class="detail-stat-card">
+                              <h4>{{ 'admin.stats.passenger_ratings' | translate }}</h4>
+                              <div class="stat-main-value">{{ userStats()!.passengerRatings.averageRating || '-' }}</div>
+                              <div class="stat-breakdown">
+                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ userStats()!.passengerRatings.count }}</span>
+                              </div>
+                            </div>
+
+                            <div class="detail-stat-card">
+                              <h4>{{ 'admin.stats.reviews_given' | translate }}</h4>
+                              <div class="stat-main-value">{{ userStats()!.reviewsGiven.count }}</div>
+                              <div class="stat-breakdown">
+                                <span class="stat-item">{{ 'admin.stats.average_note_given' | translate }}: {{ userStats()!.reviewsGiven.averageNoteGiven || '-' }}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </td>
+                  </tr>
+                }
               }
             </tbody>
           </table>
@@ -133,6 +205,99 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       color: var(--white);
     }
 
+    .user-row {
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .user-row:hover {
+      background-color: var(--very-light-green);
+    }
+
+    .stats-row td {
+      padding: 0 !important;
+      background-color: #f8faf8;
+    }
+
+    .stats-loading {
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--medium-gray);
+    }
+
+    .user-detail-stats {
+      padding: 1.5rem;
+    }
+
+    .role-badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .role-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .role-driver {
+      background-color: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .role-passenger {
+      background-color: #f3e5f5;
+      color: #7b1fa2;
+    }
+
+    .stats-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .detail-stat-card {
+      background: white;
+      border: 1px solid var(--light-gray);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .detail-stat-card h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.85rem;
+      color: var(--medium-gray);
+      text-transform: uppercase;
+    }
+
+    .stat-main-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary-green);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .stat-item {
+      font-size: 0.8rem;
+      color: var(--dark-gray);
+    }
+
+    .stat-item.pending { color: #f57c00; }
+    .stat-item.in-progress { color: #1976d2; }
+    .stat-item.completed { color: #388e3c; }
+    .stat-item.confirmed { color: #1976d2; }
+    .stat-item.validated { color: #388e3c; }
+    .stat-item.cancelled { color: #d32f2f; }
+
     .btn-sm {
       padding: 0.3rem 0.8rem;
       font-size: 0.85rem;
@@ -148,6 +313,9 @@ export class DashboardComponent implements OnInit {
 
   stats: AdminStats | null = null;
   users = signal<User[]>([]);
+  expandedUserId = signal<number | null>(null);
+  userStats = signal<AdminUserDetailStats | null>(null);
+  loadingStats = signal(false);
 
   constructor(
     private http: HttpClient,
@@ -178,6 +346,28 @@ export class DashboardComponent implements OnInit {
   loadUsers() {
     this.http.get<User[]>(`${environment.apiUrl}/admin/users`).subscribe({
       next: (data) => this.users.set(data),
+    });
+  }
+
+  toggleUserStats(userId: number) {
+    if (this.expandedUserId() === userId) {
+      this.expandedUserId.set(null);
+      this.userStats.set(null);
+      return;
+    }
+
+    this.expandedUserId.set(userId);
+    this.userStats.set(null);
+    this.loadingStats.set(true);
+
+    this.http.get<AdminUserDetailStats>(`${environment.apiUrl}/admin/users/${userId}/stats`).subscribe({
+      next: (data) => {
+        this.userStats.set(data);
+        this.loadingStats.set(false);
+      },
+      error: () => {
+        this.loadingStats.set(false);
+      }
     });
   }
 

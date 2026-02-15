@@ -11,4 +11,7 @@ public interface IReviewRepository
     Task<Review> CreateAsync(Review review);
     Task<Review> UpdateAsync(Review review);
     Task DeleteAsync(int id);
+    Task<(int Count, double Average)> GetReceivedReviewStatsAsDriverAsync(int userId);
+    Task<(int Count, double Average)> GetReceivedReviewStatsAsPassengerAsync(int userId);
+    Task<(int Count, double Average)> GetGivenReviewStatsAsync(int userId);
 }

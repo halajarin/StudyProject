@@ -86,4 +86,40 @@ public class ReviewRepository : IReviewRepository
             await _context.SaveChangesAsync();
         }
     }
+
+    public async Task<(int Count, double Average)> GetReceivedReviewStatsAsDriverAsync(int userId)
+    {
+        var reviews = await _context.Reviews
+            .Include(r => r.Carpool)
+            .Where(r => r.TargetUserId == userId
+                     && r.Status == ReviewStatus.Validated
+                     && r.CarpoolId != null
+                     && r.Carpool!.UserId == userId)
+            .ToListAsync();
+
+        return (reviews.Count, reviews.Count > 0 ? reviews.Average(r => r.Note) : 0);
+    }
+
+    public async Task<(int Count, double Average)> GetReceivedReviewStatsAsPassengerAsync(int userId)
+    {
+        var reviews = await _context.Reviews
+            .Include(r => r.Carpool)
+            .Where(r => r.TargetUserId == userId
+                     && r.Status == ReviewStatus.Validated
+                     && r.CarpoolId != null
+                     && r.Carpool!.UserId != userId)
+            .ToListAsync();
+
+        return (reviews.Count, reviews.Count > 0 ? reviews.Average(r => r.Note) : 0);
+    }
+
+    public async Task<(int Count, double Average)> GetGivenReviewStatsAsync(int userId)
+    {
+        var reviews = await _context.Reviews
+            .Where(r => r.AuthorUserId == userId
+                     && r.Status == ReviewStatus.Validated)
+            .ToListAsync();
+
+        return (reviews.Count, reviews.Count > 0 ? reviews.Average(r => r.Note) : 0);
+    }
 }

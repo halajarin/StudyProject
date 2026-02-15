@@ -192,4 +192,26 @@ public class CarpoolRepository : ICarpoolRepository
 
         return participations.ToDictionary(x => x.Date, x => (float)x.Total);
     }
+
+    public async Task<Dictionary<CarpoolStatus, int>> GetCarpoolCountsByStatusForDriverAsync(int userId)
+    {
+        var counts = await _context.Carpools
+            .Where(c => c.UserId == userId)
+            .GroupBy(c => c.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        return counts.ToDictionary(x => x.Status, x => x.Count);
+    }
+
+    public async Task<Dictionary<ParticipationStatus, int>> GetParticipationCountsByStatusAsync(int userId)
+    {
+        var counts = await _context.CarpoolParticipations
+            .Where(p => p.UserId == userId)
+            .GroupBy(p => p.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        return counts.ToDictionary(x => x.Status, x => x.Count);
+    }
 }

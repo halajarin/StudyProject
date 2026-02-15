@@ -315,7 +315,29 @@
     "activate_user": "Activer",
     "deactivate_user": "Désactiver",
     "validate_review": "Valider",
-    "reject_review": "Rejeter"
+    "reject_review": "Rejeter",
+    "user_type": "Type d'utilisateur",
+    "stats": {
+      "driver": "Conducteur",
+      "passenger": "Passager",
+      "driver_trips": "Trajets conducteur",
+      "passenger_trips": "Trajets passager",
+      "total_created": "Total créés",
+      "total_participations": "Total participations",
+      "pending": "En attente",
+      "in_progress": "En cours",
+      "completed": "Terminés",
+      "confirmed": "Confirmées",
+      "validated": "Validées",
+      "cancelled": "Annulés",
+      "driver_ratings": "Avis en tant que conducteur",
+      "passenger_ratings": "Avis en tant que passager",
+      "reviews_given": "Avis donnés",
+      "review_count": "Nombre d'avis",
+      "average_rating": "Note moyenne",
+      "average_note_given": "Note moyenne donnée",
+      "no_data": "Aucune donnée"
+    }
   },
   "legal": {
     "title": "Mentions légales",

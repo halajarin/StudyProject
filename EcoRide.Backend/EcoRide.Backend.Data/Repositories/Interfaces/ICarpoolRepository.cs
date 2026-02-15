@@ -1,3 +1,4 @@
+using EcoRide.Backend.Data.Enums;
 using EcoRide.Backend.Data.Models;
 
 namespace EcoRide.Backend.Data.Repositories.Interfaces;
@@ -25,4 +26,6 @@ public interface ICarpoolRepository
     Task<List<CarpoolParticipation>> GetParticipationsAsync(int carpoolId);
     Task<Dictionary<DateTime, int>> GetCarpoolsCountByDateAsync(DateTime startDate, DateTime endDate);
     Task<Dictionary<DateTime, float>> GetPlatformCreditsEarnedByDateAsync(DateTime startDate, DateTime endDate);
+    Task<Dictionary<CarpoolStatus, int>> GetCarpoolCountsByStatusForDriverAsync(int userId);
+    Task<Dictionary<ParticipationStatus, int>> GetParticipationCountsByStatusAsync(int userId);
 }

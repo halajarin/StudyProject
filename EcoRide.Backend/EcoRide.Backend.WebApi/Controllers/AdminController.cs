@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EcoRide.Backend.Business.Constants;
+using EcoRide.Backend.Business.Services.Interfaces;
 using EcoRide.Backend.Data.Models;
 using EcoRide.Backend.Data.Repositories.Interfaces;
 using EcoRide.Backend.Dtos.Admin;
@@ -14,15 +15,18 @@ public class AdminController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
     private readonly ICarpoolRepository _carpoolRepository;
+    private readonly IUserStatsService _userStatsService;
     private readonly ILogger<AdminController> _logger;
 
     public AdminController(
         IUserRepository userRepository,
         ICarpoolRepository carpoolRepository,
+        IUserStatsService userStatsService,
         ILogger<AdminController> logger)
     {
         _userRepository = userRepository;
         _carpoolRepository = carpoolRepository;
+        _userStatsService = userStatsService;
         _logger = logger;
     }
 
@@ -134,5 +138,18 @@ public class AdminController : ControllerBase
         }).ToList();
 
         return Ok(result);
+    }
+
+    [HttpGet("users/{userId}/stats")]
+    public async Task<IActionResult> GetUserStats(int userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        var stats = await _userStatsService.GetAdminUserDetailStatsAsync(userId);
+        return Ok(stats);
     }
 }
