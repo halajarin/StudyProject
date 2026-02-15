@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
@@ -19,38 +19,58 @@ import { filter } from 'rxjs';
             <span class="eco">Eco</span><span class="ride">Ride</span>
           </a>
         </div>
-        <button class="hamburger" [class.open]="menuOpen()" (click)="menuOpen.set(!menuOpen())">
+        <button class="hamburger" [class.open]="menuOpen()" (click)="toggleMenu($event)" aria-label="Menu">
           <span></span>
           <span></span>
           <span></span>
         </button>
-        <ul class="nav-menu" [class.show]="menuOpen()">
-          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'common.home' | translate }}</a></li>
-          <li><a routerLink="/carpools" routerLinkActive="active">{{ 'navigation.carpools' | translate }}</a></li>
+        <div class="nav-overlay" [class.visible]="menuOpen()" (click)="closeMenu()"></div>
+        <ul class="nav-menu" [class.show]="menuOpen()" (click)="$event.stopPropagation()">
+          <li class="nav-links">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'common.home' | translate }}</a>
+          </li>
+          <li class="nav-links">
+            <a routerLink="/carpools" routerLinkActive="active">{{ 'navigation.carpools' | translate }}</a>
+          </li>
 
           @if (authService.isLoggedIn()) {
-            <li><a routerLink="/profile" routerLinkActive="active">{{ 'navigation.my_profile' | translate }}</a></li>
+            <li class="nav-links">
+              <a routerLink="/profile" routerLinkActive="active">{{ 'navigation.my_profile' | translate }}</a>
+            </li>
 
             @if (authService.hasRole(UserRole.Employee) || authService.hasRole(UserRole.Administrator)) {
-              <li><a routerLink="/employee" routerLinkActive="active">{{ 'navigation.employee_dashboard' | translate }}</a></li>
+              <li class="nav-links">
+                <a routerLink="/employee" routerLinkActive="active">{{ 'navigation.employee_dashboard' | translate }}</a>
+              </li>
             }
 
             @if (authService.hasRole(UserRole.Administrator)) {
-              <li><a routerLink="/admin" routerLinkActive="active">{{ 'navigation.admin' | translate }}</a></li>
+              <li class="nav-links">
+                <a routerLink="/admin" routerLinkActive="active">{{ 'navigation.admin' | translate }}</a>
+              </li>
             }
 
-            <li>
+            <li class="nav-separator"></li>
+
+            <li class="nav-actions">
               <span class="credit-badge">
                 {{ authService.currentUserValue?.credits }} {{ 'common.credits' | translate }}
               </span>
             </li>
-            <li><button class="btn-logout" (click)="authService.logout()">{{ 'common.logout' | translate }}</button></li>
+            <li class="nav-actions">
+              <button class="btn-logout" (click)="authService.logout()">{{ 'common.logout' | translate }}</button>
+            </li>
           } @else {
-            <li><a routerLink="/login" routerLinkActive="active">{{ 'common.login' | translate }}</a></li>
-            <li><a routerLink="/register" class="btn-register">{{ 'navigation.sign_up' | translate }}</a></li>
+            <li class="nav-separator"></li>
+            <li class="nav-actions">
+              <a routerLink="/login" routerLinkActive="active">{{ 'common.login' | translate }}</a>
+            </li>
+            <li class="nav-actions">
+              <a routerLink="/register" class="btn-register">{{ 'navigation.sign_up' | translate }}</a>
+            </li>
           }
 
-          <li>
+          <li class="nav-actions">
             <app-language-selector></app-language-selector>
           </li>
         </ul>
@@ -69,10 +89,14 @@ import { filter } from 'rxjs';
     </footer>
   `,
   styles: [`
+    /* ===== NAVBAR BASE ===== */
     .navbar {
       background-color: var(--dark-green);
       padding: 0.8rem 0;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .nav-container {
@@ -87,14 +111,10 @@ import { filter } from 'rxjs';
       text-decoration: none;
     }
 
-    .eco {
-      color: var(--light-green);
-    }
+    .eco { color: var(--light-green); }
+    .ride { color: var(--white); }
 
-    .ride {
-      color: var(--white);
-    }
-
+    /* ===== HAMBURGER ===== */
     .hamburger {
       display: none;
       flex-direction: column;
@@ -104,20 +124,21 @@ import { filter } from 'rxjs';
       border: none;
       cursor: pointer;
       padding: 0.5rem;
-      z-index: 10;
+      z-index: 120;
     }
 
     .hamburger span {
       display: block;
       width: 24px;
-      height: 2px;
+      height: 2.5px;
       background-color: var(--white);
       border-radius: 2px;
-      transition: transform 0.3s, opacity 0.3s;
+      transition: transform 0.3s ease, opacity 0.2s ease;
+      transform-origin: center;
     }
 
     .hamburger.open span:nth-child(1) {
-      transform: translateY(7px) rotate(45deg);
+      transform: translateY(7.5px) rotate(45deg);
     }
 
     .hamburger.open span:nth-child(2) {
@@ -125,9 +146,15 @@ import { filter } from 'rxjs';
     }
 
     .hamburger.open span:nth-child(3) {
-      transform: translateY(-7px) rotate(-45deg);
+      transform: translateY(-7.5px) rotate(-45deg);
     }
 
+    /* ===== OVERLAY ===== */
+    .nav-overlay {
+      display: none;
+    }
+
+    /* ===== NAV MENU (desktop) ===== */
     .nav-menu {
       display: flex;
       list-style: none;
@@ -137,10 +164,14 @@ import { filter } from 'rxjs';
       padding: 0;
     }
 
+    .nav-separator {
+      display: none;
+    }
+
     .nav-menu a {
       color: var(--white);
       text-decoration: none;
-      transition: color 0.3s;
+      transition: background-color 0.2s;
       padding: 0.4rem 0.7rem;
       border-radius: 5px;
       white-space: nowrap;
@@ -149,7 +180,7 @@ import { filter } from 'rxjs';
 
     .nav-menu a:hover,
     .nav-menu a.active {
-      background-color: rgba(255,255,255,0.1);
+      background-color: rgba(255,255,255,0.15);
     }
 
     .btn-register {
@@ -170,7 +201,7 @@ import { filter } from 'rxjs';
       padding: 0.4rem 0.8rem;
       border-radius: 5px;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.2s;
       white-space: nowrap;
       font-size: 0.9rem;
     }
@@ -190,6 +221,7 @@ import { filter } from 'rxjs';
       white-space: nowrap;
     }
 
+    /* ===== MAIN & FOOTER ===== */
     main {
       min-height: calc(100vh - 200px);
       padding: 2rem 0;
@@ -211,42 +243,96 @@ import { filter } from 'rxjs';
       text-decoration: underline;
     }
 
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 1100px) {
       .hamburger {
         display: flex;
       }
 
+      .nav-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 90;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .nav-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
       .nav-menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
+        position: fixed;
+        top: 0;
         right: 0;
+        width: 300px;
+        max-width: 85vw;
+        height: 100vh;
+        flex-direction: column;
+        align-items: stretch;
         background-color: var(--dark-green);
-        padding: 1rem;
-        gap: 0.3rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 9;
+        padding: 5rem 1.5rem 2rem;
+        gap: 0;
+        z-index: 110;
+        overflow-y: auto;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
       }
 
       .nav-menu.show {
-        display: flex;
+        transform: translateX(0);
+      }
+
+      .nav-separator {
+        display: block;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.15);
+        margin: 0.6rem 0;
+      }
+
+      .nav-menu li {
+        width: 100%;
       }
 
       .nav-menu a {
-        padding: 0.6rem 1rem;
+        display: block;
+        padding: 0.75rem 1rem;
         font-size: 1rem;
+        border-radius: 8px;
+      }
+
+      .nav-menu a:hover,
+      .nav-menu a.active {
+        background-color: rgba(255,255,255,0.12);
+      }
+
+      .btn-register {
+        text-align: center;
+        border-radius: 8px;
       }
 
       .btn-logout {
-        font-size: 1rem;
         width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
         text-align: center;
+        border-radius: 8px;
       }
 
-      .navbar {
-        position: relative;
+      .credit-badge {
+        display: block;
+        text-align: center;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 8px;
+      }
+
+      .nav-actions {
+        margin-top: 0.2rem;
       }
     }
   `]
@@ -257,7 +343,21 @@ export class AppComponent {
 
   constructor(public authService: AuthService, private router: Router) {
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
-      this.menuOpen.set(false);
+      this.closeMenu();
     });
+  }
+
+  toggleMenu(event: Event) {
+    event.stopPropagation();
+    this.menuOpen.set(!this.menuOpen());
+  }
+
+  closeMenu() {
+    this.menuOpen.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey() {
+    this.closeMenu();
   }
 }
