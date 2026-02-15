@@ -52,13 +52,23 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       <div class="card mt-3">
         <div class="users-header">
           <h2>{{ 'admin.users' | translate }}</h2>
-          @if (users().length > 0) {
-            <button class="btn-sm btn-outline" (click)="toggleAll()">
-              {{ allExpanded() ? ('admin.collapse_all' | translate) : ('admin.expand_all' | translate) }}
-            </button>
-          }
+          <div class="users-header-actions">
+            <div class="status-filter">
+              <label>{{ 'admin.status_label' | translate }}:</label>
+              <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+                <option value="all">{{ 'admin.filter_all' | translate }}</option>
+                <option value="active">{{ 'admin.user_active' | translate }}</option>
+                <option value="suspended">{{ 'admin.user_suspended' | translate }}</option>
+              </select>
+            </div>
+            @if (filteredUsers().length > 0) {
+              <button class="btn-sm btn-outline" (click)="toggleAll()">
+                {{ allExpanded() ? ('admin.collapse_all' | translate) : ('admin.expand_all' | translate) }}
+              </button>
+            }
+          </div>
         </div>
-        @if (users().length > 0) {
+        @if (filteredUsers().length > 0) {
           <table class="users-table">
             <thead>
               <tr>
@@ -75,7 +85,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               </tr>
             </thead>
             <tbody>
-              @for (user of users(); track user.userId) {
+              @for (user of filteredUsers(); track user.userId) {
                 <tr class="user-row" [class.expanded]="isExpanded(user.userId)" (click)="toggleUserStats(user.userId)">
                   <td class="td-expand">
                     <span class="expand-icon" [class.rotated]="isExpanded(user.userId)">&#9656;</span>
@@ -210,10 +220,39 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
     .users-header h2 {
       margin: 0;
+    }
+
+    .users-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .status-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .status-filter label {
+      font-size: 0.85rem;
+      color: var(--dark-gray);
+      white-space: nowrap;
+    }
+
+    .status-filter select {
+      padding: 0.3rem 0.5rem;
+      border: 1px solid var(--light-gray);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      background: white;
+      cursor: pointer;
     }
 
     .btn-outline {
@@ -396,13 +435,22 @@ export class DashboardComponent implements OnInit {
 
   stats: AdminStats | null = null;
   users = signal<User[]>([]);
+  statusFilter = signal<'all' | 'active' | 'suspended'>('all');
   expandedUserIds = signal<Set<number>>(new Set());
   userStatsMap = signal<Record<number, AdminUserDetailStats>>({});
   loadingStatsIds = signal<Set<number>>(new Set());
 
+  filteredUsers = computed(() => {
+    const filter = this.statusFilter();
+    const all = this.users();
+    if (filter === 'active') return all.filter(u => u.isActive);
+    if (filter === 'suspended') return all.filter(u => !u.isActive);
+    return all;
+  });
+
   allExpanded = computed(() => {
-    const userCount = this.users().length;
-    return userCount > 0 && this.expandedUserIds().size === userCount;
+    const filtered = this.filteredUsers();
+    return filtered.length > 0 && filtered.every(u => this.expandedUserIds().has(u.userId));
   });
 
   constructor(
@@ -463,15 +511,19 @@ export class DashboardComponent implements OnInit {
   }
 
   toggleAll() {
+    const filtered = this.filteredUsers();
     if (this.allExpanded()) {
-      this.expandedUserIds.set(new Set());
+      const current = new Set(this.expandedUserIds());
+      for (const u of filtered) current.delete(u.userId);
+      this.expandedUserIds.set(current);
       return;
     }
 
-    const allIds = new Set(this.users().map(u => u.userId));
-    this.expandedUserIds.set(allIds);
+    const current = new Set(this.expandedUserIds());
+    for (const u of filtered) current.add(u.userId);
+    this.expandedUserIds.set(current);
 
-    for (const user of this.users()) {
+    for (const user of filtered) {
       if (!this.userStatsMap()[user.userId]) {
         this.loadUserStats(user.userId);
       }

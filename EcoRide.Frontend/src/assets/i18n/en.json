@@ -317,6 +317,7 @@
     "validate_review": "Validate",
     "reject_review": "Reject",
     "status_label": "Status",
+    "filter_all": "All",
     "created_at": "Created",
     "deactivated_at": "Closed",
     "expand_all": "Expand all",
