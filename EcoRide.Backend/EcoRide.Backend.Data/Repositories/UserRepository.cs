@@ -46,6 +46,8 @@ public class UserRepository : IUserRepository
         return await _context
             .Users.Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
+            .Include(u => u.Vehicles)
+            .ThenInclude(v => v.Brand)
             .ToListAsync();
     }
 

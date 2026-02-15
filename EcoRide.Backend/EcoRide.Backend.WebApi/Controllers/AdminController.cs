@@ -146,7 +146,49 @@ public class AdminController : ControllerBase
             u.Credits,
             u.CreatedAt,
             u.DeactivatedAt,
-            Roles = u.UserRoles.Select(ur => ur.Role.Label).ToList()
+            Roles = u.UserRoles.Select(ur => ur.Role.Label).ToList(),
+            Vehicles = u.Vehicles.Select(v => new
+            {
+                v.VehicleId,
+                Brand = v.Brand?.Label ?? "",
+                v.Model,
+                v.RegistrationNumber,
+                EnergyType = v.EnergyType.ToString(),
+                v.Color
+            }).ToList()
+        }).ToList();
+
+        return Ok(result);
+    }
+
+    [HttpGet("carpools")]
+    public async Task<IActionResult> GetAllCarpools()
+    {
+        var carpools = await _carpoolRepository.GetAllAsync();
+
+        var result = carpools.Select(c => new
+        {
+            c.CarpoolId,
+            c.DepartureCity,
+            c.ArrivalCity,
+            c.DepartureDate,
+            c.DepartureTime,
+            c.ArrivalDate,
+            c.ArrivalTime,
+            Status = c.Status.ToString(),
+            c.TotalSeats,
+            c.AvailableSeats,
+            c.PricePerPerson,
+            c.EstimatedDurationMinutes,
+            DriverUsername = c.Driver.Username,
+            DriverId = c.UserId,
+            VehicleBrand = c.Vehicle.Brand?.Label ?? "",
+            VehicleModel = c.Vehicle.Model,
+            VehicleRegistration = c.Vehicle.RegistrationNumber,
+            VehicleColor = c.Vehicle.Color,
+            VehicleEnergyType = c.Vehicle.EnergyType.ToString(),
+            IsEcological = c.Vehicle.EnergyType == Dtos.Enums.EnergyType.Electric,
+            c.CreatedAt
         }).ToList();
 
         return Ok(result);

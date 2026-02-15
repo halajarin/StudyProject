@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { User } from '../../../models/user.model';
 import { AdminStats } from '../../../interfaces/admin-stats.interface';
 import { AdminUserDetailStats } from '../../../interfaces/admin-user-stats.interface';
+import { AdminCarpool } from '../../../interfaces/admin-carpool.interface';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -94,161 +95,253 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         </form>
       </div>
 
-      <div class="card mt-3">
-        <div class="users-header">
-          <h2>{{ 'admin.users' | translate }}</h2>
-          <div class="users-header-actions">
-            <div class="filter-group">
-              <label>{{ 'admin.status_label' | translate }}:</label>
-              <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
-                <option value="all">{{ 'admin.filter_all' | translate }}</option>
-                <option value="active">{{ 'admin.user_active' | translate }}</option>
-                <option value="suspended">{{ 'admin.user_suspended' | translate }}</option>
-              </select>
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab" [class.active]="activeTab() === 'users'" (click)="activeTab.set('users')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          {{ 'admin.tab_users' | translate }}
+          <span class="tab-count">{{ users().length }}</span>
+        </button>
+        <button class="tab" [class.active]="activeTab() === 'carpools'" (click)="switchToCarpools()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-6l2-4h9l4 4h3v6h-2"/><path d="M5 11l2-4h9l4 4"/></svg>
+          {{ 'admin.tab_carpools' | translate }}
+          <span class="tab-count">{{ carpools().length }}</span>
+        </button>
+      </div>
+
+      <!-- USERS TAB -->
+      @if (activeTab() === 'users') {
+        <div class="card tab-content">
+          <div class="table-header">
+            <div class="table-header-actions">
+              <div class="filter-group">
+                <label>{{ 'admin.status_label' | translate }}:</label>
+                <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+                  <option value="all">{{ 'admin.filter_all' | translate }}</option>
+                  <option value="active">{{ 'admin.user_active' | translate }}</option>
+                  <option value="suspended">{{ 'admin.user_suspended' | translate }}</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>{{ 'admin.filter_role' | translate }}:</label>
+                <select [ngModel]="roleFilter()" (ngModelChange)="roleFilter.set($event)">
+                  <option value="all">{{ 'admin.filter_all' | translate }}</option>
+                  <option value="Driver">{{ 'admin.roles.Driver' | translate }}</option>
+                  <option value="Passenger">{{ 'admin.roles.Passenger' | translate }}</option>
+                  <option value="Employee">{{ 'admin.roles.Employee' | translate }}</option>
+                  <option value="Administrator">{{ 'admin.roles.Administrator' | translate }}</option>
+                </select>
+              </div>
+              @if (filteredUsers().length > 0) {
+                <button class="btn-sm btn-outline" (click)="toggleAll()">
+                  {{ allExpanded() ? ('admin.collapse_all' | translate) : ('admin.expand_all' | translate) }}
+                </button>
+              }
             </div>
-            <div class="filter-group">
-              <label>{{ 'admin.filter_role' | translate }}:</label>
-              <select [ngModel]="roleFilter()" (ngModelChange)="roleFilter.set($event)">
-                <option value="all">{{ 'admin.filter_all' | translate }}</option>
-                <option value="Driver">{{ 'admin.roles.Driver' | translate }}</option>
-                <option value="Passenger">{{ 'admin.roles.Passenger' | translate }}</option>
-                <option value="Employee">{{ 'admin.roles.Employee' | translate }}</option>
-                <option value="Administrator">{{ 'admin.roles.Administrator' | translate }}</option>
-              </select>
-            </div>
-            @if (filteredUsers().length > 0) {
-              <button class="btn-sm btn-outline" (click)="toggleAll()">
-                {{ allExpanded() ? ('admin.collapse_all' | translate) : ('admin.expand_all' | translate) }}
-              </button>
-            }
+            <span class="result-count">{{ filteredUsers().length }} / {{ users().length }}</span>
           </div>
-        </div>
-        @if (filteredUsers().length > 0) {
-          <table class="users-table">
-            <thead>
-              <tr>
-                <th class="th-expand"></th>
-                <th>ID</th>
-                <th>{{ 'auth.username' | translate }}</th>
-                <th>{{ 'auth.email' | translate }}</th>
-                <th>{{ 'user.roles' | translate }}</th>
-                <th>{{ 'user.credits' | translate }}</th>
-                <th>{{ 'admin.created_at' | translate }}</th>
-                <th>{{ 'admin.deactivated_at' | translate }}</th>
-                <th>{{ 'admin.status_label' | translate }}</th>
-                <th>{{ 'common.edit' | translate }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (user of filteredUsers(); track user.userId) {
-                <tr class="user-row" [class.expanded]="isExpanded(user.userId)" (click)="toggleUserStats(user.userId)">
-                  <td class="td-expand">
-                    <span class="expand-icon" [class.rotated]="isExpanded(user.userId)">&#9656;</span>
-                  </td>
-                  <td>{{ user.userId }}</td>
-                  <td>{{ user.username }}</td>
-                  <td>{{ user.email }}</td>
-                  <td>
-                    @for (role of user.roles; track role; let last = $last) {
-                      <span class="role-tag">{{ 'admin.roles.' + role | translate }}</span>
-                    }
-                  </td>
-                  <td>{{ user.credits }}</td>
-                  <td class="td-date">{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
-                  <td class="td-date">{{ user.deactivatedAt ? (user.deactivatedAt | date:'dd/MM/yyyy') : '-' }}</td>
-                  <td>
-                    <span [class]="user.isActive ? 'badge-success' : 'badge-danger'">
-                      {{ user.isActive ? ('admin.user_active' | translate) : ('admin.user_suspended' | translate) }}
-                    </span>
-                  </td>
-                  <td>
-                    @if (user.isActive) {
-                      <button (click)="suspendUser(user.userId); $event.stopPropagation()" class="btn-sm btn-danger">
-                        {{ 'admin.deactivate_user' | translate }}
-                      </button>
-                    } @else {
-                      <button (click)="activateUser(user.userId); $event.stopPropagation()" class="btn-sm btn-primary">
-                        {{ 'admin.activate_user' | translate }}
-                      </button>
-                    }
-                  </td>
+          @if (filteredUsers().length > 0) {
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th class="th-expand"></th>
+                  <th>ID</th>
+                  <th>{{ 'auth.username' | translate }}</th>
+                  <th>{{ 'auth.email' | translate }}</th>
+                  <th>{{ 'user.roles' | translate }}</th>
+                  <th>{{ 'user.my_vehicles' | translate }}</th>
+                  <th>{{ 'user.credits' | translate }}</th>
+                  <th>{{ 'admin.created_at' | translate }}</th>
+                  <th>{{ 'admin.deactivated_at' | translate }}</th>
+                  <th>{{ 'admin.status_label' | translate }}</th>
+                  <th>{{ 'common.edit' | translate }}</th>
                 </tr>
-                @if (isExpanded(user.userId)) {
-                  <tr class="stats-row">
-                    <td colspan="10">
-                      @if (isLoading(user.userId)) {
-                        <div class="stats-loading">{{ 'common.loading' | translate }}</div>
-                      } @else if (getStats(user.userId); as stats) {
-                        <div class="user-detail-stats">
-                          <div class="role-badges">
-                            @if (stats.isDriver) {
-                              <span class="role-badge role-driver">{{ 'admin.stats.driver' | translate }}</span>
-                            }
-                            @if (stats.isPassenger) {
-                              <span class="role-badge role-passenger">{{ 'admin.stats.passenger' | translate }}</span>
-                            }
-                          </div>
-
-                          <div class="stats-cards-grid">
-                            @if (stats.driverStats) {
-                              <div class="detail-stat-card">
-                                <h4>{{ 'admin.stats.driver_trips' | translate }}</h4>
-                                <div class="stat-main-value">{{ stats.driverStats.totalCreated }}</div>
-                                <div class="stat-breakdown">
-                                  <span class="stat-item pending">{{ 'admin.stats.pending' | translate }}: {{ stats.driverStats.pending }}</span>
-                                  <span class="stat-item in-progress">{{ 'admin.stats.in_progress' | translate }}: {{ stats.driverStats.inProgress }}</span>
-                                  <span class="stat-item completed">{{ 'admin.stats.completed' | translate }}: {{ stats.driverStats.completed }}</span>
-                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ stats.driverStats.cancelled }}</span>
-                                </div>
-                              </div>
-                            }
-
-                            @if (stats.passengerStats) {
-                              <div class="detail-stat-card">
-                                <h4>{{ 'admin.stats.passenger_trips' | translate }}</h4>
-                                <div class="stat-main-value">{{ stats.passengerStats.totalParticipations }}</div>
-                                <div class="stat-breakdown">
-                                  <span class="stat-item confirmed">{{ 'admin.stats.confirmed' | translate }}: {{ stats.passengerStats.confirmed }}</span>
-                                  <span class="stat-item validated">{{ 'admin.stats.validated' | translate }}: {{ stats.passengerStats.validated }}</span>
-                                  <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ stats.passengerStats.cancelled }}</span>
-                                </div>
-                              </div>
-                            }
-
-                            <div class="detail-stat-card">
-                              <h4>{{ 'admin.stats.driver_ratings' | translate }}</h4>
-                              <div class="stat-main-value">{{ stats.driverRatings.averageRating || '-' }}</div>
-                              <div class="stat-breakdown">
-                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ stats.driverRatings.count }}</span>
-                              </div>
-                            </div>
-
-                            <div class="detail-stat-card">
-                              <h4>{{ 'admin.stats.passenger_ratings' | translate }}</h4>
-                              <div class="stat-main-value">{{ stats.passengerRatings.averageRating || '-' }}</div>
-                              <div class="stat-breakdown">
-                                <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ stats.passengerRatings.count }}</span>
-                              </div>
-                            </div>
-
-                            <div class="detail-stat-card">
-                              <h4>{{ 'admin.stats.reviews_given' | translate }}</h4>
-                              <div class="stat-main-value">{{ stats.reviewsGiven.count }}</div>
-                              <div class="stat-breakdown">
-                                <span class="stat-item">{{ 'admin.stats.average_note_given' | translate }}: {{ stats.reviewsGiven.averageNoteGiven || '-' }}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+              </thead>
+              <tbody>
+                @for (user of filteredUsers(); track user.userId) {
+                  <tr class="clickable-row" [class.expanded]="isExpanded(user.userId)" (click)="toggleUserStats(user.userId)">
+                    <td class="td-expand">
+                      <span class="expand-icon" [class.rotated]="isExpanded(user.userId)">&#9656;</span>
+                    </td>
+                    <td>{{ user.userId }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                      @for (role of user.roles; track role) {
+                        <span class="role-tag">{{ 'admin.roles.' + role | translate }}</span>
+                      }
+                    </td>
+                    <td class="td-vehicles">
+                      @if (user.vehicles && user.vehicles.length > 0) {
+                        @for (v of user.vehicles; track v.vehicleId) {
+                          <span class="vehicle-tag" [class.vehicle-electric]="v.energyType === 'Electric'">
+                            {{ v.brand }} {{ v.model }}
+                            <small>{{ v.registrationNumber }}</small>
+                          </span>
+                        }
+                      } @else {
+                        <span class="text-muted">-</span>
+                      }
+                    </td>
+                    <td>{{ user.credits }}</td>
+                    <td class="td-date">{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
+                    <td class="td-date">{{ user.deactivatedAt ? (user.deactivatedAt | date:'dd/MM/yyyy') : '-' }}</td>
+                    <td>
+                      <span [class]="user.isActive ? 'badge-success' : 'badge-danger'">
+                        {{ user.isActive ? ('admin.user_active' | translate) : ('admin.user_suspended' | translate) }}
+                      </span>
+                    </td>
+                    <td>
+                      @if (user.isActive) {
+                        <button (click)="suspendUser(user.userId); $event.stopPropagation()" class="btn-sm btn-danger">
+                          {{ 'admin.deactivate_user' | translate }}
+                        </button>
+                      } @else {
+                        <button (click)="activateUser(user.userId); $event.stopPropagation()" class="btn-sm btn-primary">
+                          {{ 'admin.activate_user' | translate }}
+                        </button>
                       }
                     </td>
                   </tr>
+                  @if (isExpanded(user.userId)) {
+                    <tr class="stats-row">
+                      <td colspan="11">
+                        @if (isLoading(user.userId)) {
+                          <div class="stats-loading">{{ 'common.loading' | translate }}</div>
+                        } @else if (getStats(user.userId); as stats) {
+                          <div class="user-detail-stats">
+                            <div class="role-badges">
+                              @if (stats.isDriver) {
+                                <span class="role-badge role-driver">{{ 'admin.stats.driver' | translate }}</span>
+                              }
+                              @if (stats.isPassenger) {
+                                <span class="role-badge role-passenger">{{ 'admin.stats.passenger' | translate }}</span>
+                              }
+                            </div>
+                            <div class="stats-cards-grid">
+                              @if (stats.driverStats) {
+                                <div class="detail-stat-card">
+                                  <h4>{{ 'admin.stats.driver_trips' | translate }}</h4>
+                                  <div class="stat-main-value">{{ stats.driverStats.totalCreated }}</div>
+                                  <div class="stat-breakdown">
+                                    <span class="stat-item pending">{{ 'admin.stats.pending' | translate }}: {{ stats.driverStats.pending }}</span>
+                                    <span class="stat-item in-progress">{{ 'admin.stats.in_progress' | translate }}: {{ stats.driverStats.inProgress }}</span>
+                                    <span class="stat-item completed">{{ 'admin.stats.completed' | translate }}: {{ stats.driverStats.completed }}</span>
+                                    <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ stats.driverStats.cancelled }}</span>
+                                  </div>
+                                </div>
+                              }
+                              @if (stats.passengerStats) {
+                                <div class="detail-stat-card">
+                                  <h4>{{ 'admin.stats.passenger_trips' | translate }}</h4>
+                                  <div class="stat-main-value">{{ stats.passengerStats.totalParticipations }}</div>
+                                  <div class="stat-breakdown">
+                                    <span class="stat-item confirmed">{{ 'admin.stats.confirmed' | translate }}: {{ stats.passengerStats.confirmed }}</span>
+                                    <span class="stat-item validated">{{ 'admin.stats.validated' | translate }}: {{ stats.passengerStats.validated }}</span>
+                                    <span class="stat-item cancelled">{{ 'admin.stats.cancelled' | translate }}: {{ stats.passengerStats.cancelled }}</span>
+                                  </div>
+                                </div>
+                              }
+                              <div class="detail-stat-card">
+                                <h4>{{ 'admin.stats.driver_ratings' | translate }}</h4>
+                                <div class="stat-main-value">{{ stats.driverRatings.averageRating || '-' }}</div>
+                                <div class="stat-breakdown">
+                                  <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ stats.driverRatings.count }}</span>
+                                </div>
+                              </div>
+                              <div class="detail-stat-card">
+                                <h4>{{ 'admin.stats.passenger_ratings' | translate }}</h4>
+                                <div class="stat-main-value">{{ stats.passengerRatings.averageRating || '-' }}</div>
+                                <div class="stat-breakdown">
+                                  <span class="stat-item">{{ 'admin.stats.review_count' | translate }}: {{ stats.passengerRatings.count }}</span>
+                                </div>
+                              </div>
+                              <div class="detail-stat-card">
+                                <h4>{{ 'admin.stats.reviews_given' | translate }}</h4>
+                                <div class="stat-main-value">{{ stats.reviewsGiven.count }}</div>
+                                <div class="stat-breakdown">
+                                  <span class="stat-item">{{ 'admin.stats.average_note_given' | translate }}: {{ stats.reviewsGiven.averageNoteGiven || '-' }}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </td>
+                    </tr>
+                  }
                 }
-              }
-            </tbody>
-          </table>
-        }
-      </div>
+              </tbody>
+            </table>
+          }
+        </div>
+      }
+
+      <!-- CARPOOLS TAB -->
+      @if (activeTab() === 'carpools') {
+        <div class="card tab-content">
+          <div class="table-header">
+            <div class="table-header-actions">
+              <div class="filter-group">
+                <label>{{ 'admin.status_label' | translate }}:</label>
+                <select [ngModel]="carpoolStatusFilter()" (ngModelChange)="carpoolStatusFilter.set($event)">
+                  <option value="all">{{ 'admin.filter_all' | translate }}</option>
+                  <option value="Pending">{{ 'carpool.status.pending' | translate }}</option>
+                  <option value="InProgress">{{ 'carpool.status.in_progress' | translate }}</option>
+                  <option value="Completed">{{ 'carpool.status.completed' | translate }}</option>
+                  <option value="Cancelled">{{ 'carpool.status.cancelled' | translate }}</option>
+                </select>
+              </div>
+            </div>
+            <span class="result-count">{{ filteredCarpools().length }} / {{ carpools().length }}</span>
+          </div>
+          @if (filteredCarpools().length > 0) {
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>{{ 'admin.carpools_route' | translate }}</th>
+                  <th>{{ 'carpool.departure_date' | translate }}</th>
+                  <th>{{ 'admin.carpools_driver' | translate }}</th>
+                  <th>{{ 'admin.carpools_vehicle' | translate }}</th>
+                  <th>{{ 'admin.carpools_seats' | translate }}</th>
+                  <th>{{ 'admin.carpools_price' | translate }}</th>
+                  <th>{{ 'admin.status_label' | translate }}</th>
+                  <th>{{ 'admin.created_at' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (c of filteredCarpools(); track c.carpoolId) {
+                  <tr>
+                    <td>{{ c.carpoolId }}</td>
+                    <td class="td-route">{{ c.departureCity }} → {{ c.arrivalCity }}</td>
+                    <td class="td-date">{{ c.departureDate | date:'dd/MM/yyyy' }} {{ c.departureTime }}</td>
+                    <td>{{ c.driverUsername }}</td>
+                    <td class="td-vehicle">
+                      <div>
+                        {{ c.vehicleBrand }} {{ c.vehicleModel }}
+                        @if (c.isEcological) {
+                          <span class="badge-eco">EV</span>
+                        }
+                      </div>
+                      <small class="text-muted">{{ c.vehicleRegistration }} - {{ c.vehicleColor }}</small>
+                    </td>
+                    <td>{{ c.availableSeats }} / {{ c.totalSeats }}</td>
+                    <td>{{ c.pricePerPerson }} {{ 'common.credits' | translate }}</td>
+                    <td>
+                      <span class="status-badge status-{{ c.status.toLowerCase() }}">
+                        {{ 'carpool.status.' + (c.status === 'InProgress' ? 'in_progress' : c.status.toLowerCase()) | translate }}
+                      </span>
+                    </td>
+                    <td class="td-date">{{ c.createdAt | date:'dd/MM/yyyy' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <p class="no-results">{{ 'admin.carpools_no_results' | translate }}</p>
+          }
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -353,23 +446,88 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       white-space: nowrap;
     }
 
-    .users-header {
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--light-gray);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      background: white;
+      color: var(--gray);
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: var(--dark-green);
+      background: var(--very-light-green);
+    }
+
+    .tab.active {
+      color: var(--dark-green);
+      background: white;
+      border-color: var(--light-gray);
+      position: relative;
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: white;
+    }
+
+    .tab-count {
+      background: var(--light-gray);
+      color: var(--gray);
+      padding: 0.1rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .tab.active .tab-count {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    .tab-content {
+      border-radius: 0 10px 10px 10px;
+      margin-top: 0;
+    }
+
+    .table-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 0.75rem;
+      margin-bottom: 1rem;
     }
 
-    .users-header h2 {
-      margin: 0;
-    }
-
-    .users-header-actions {
+    .table-header-actions {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       flex-wrap: wrap;
+    }
+
+    .result-count {
+      font-size: 0.85rem;
+      color: var(--gray);
     }
 
     .filter-group {
@@ -407,20 +565,20 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       color: white;
     }
 
-    .users-table {
+    .data-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
     }
 
-    .users-table th,
-    .users-table td {
+    .data-table th,
+    .data-table td {
       padding: 0.8rem;
       text-align: left;
       border-bottom: 1px solid var(--light-gray);
     }
 
-    .users-table th {
+    .data-table th {
       background-color: var(--dark-green);
       color: var(--white);
     }
@@ -445,16 +603,16 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       transform: rotate(90deg);
     }
 
-    .user-row {
+    .clickable-row {
       cursor: pointer;
       transition: background-color 0.2s;
     }
 
-    .user-row:hover {
+    .clickable-row:hover {
       background-color: var(--very-light-green);
     }
 
-    .user-row.expanded {
+    .clickable-row.expanded {
       background-color: var(--very-light-green);
     }
 
@@ -562,6 +720,79 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       padding: 0.3rem 0.8rem;
       font-size: 0.85rem;
     }
+
+    .td-route {
+      font-weight: 600;
+      color: var(--dark-green);
+      white-space: nowrap;
+    }
+
+    .td-vehicle {
+      white-space: nowrap;
+    }
+
+    .badge-eco {
+      display: inline-block;
+      padding: 0.1rem 0.4rem;
+      margin-left: 0.3rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-pending { background: #fff3e0; color: #e65100; }
+    .status-inprogress { background: #e3f2fd; color: #1565c0; }
+    .status-completed { background: #e8f5e9; color: #2e7d32; }
+    .status-cancelled { background: #fce4ec; color: #c62828; }
+
+    .no-results {
+      text-align: center;
+      color: var(--gray);
+      padding: 2rem;
+    }
+
+    .td-vehicles {
+      max-width: 200px;
+    }
+
+    .vehicle-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.15rem 0.5rem;
+      margin: 0.1rem 0.15rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      background: #f5f5f5;
+      border: 1px solid var(--light-gray);
+      white-space: nowrap;
+    }
+
+    .vehicle-tag small {
+      color: var(--gray);
+      font-size: 0.7rem;
+    }
+
+    .vehicle-electric {
+      background: #e8f5e9;
+      border-color: #a5d6a7;
+    }
+
+    .text-muted {
+      color: var(--gray);
+      font-size: 0.85rem;
+    }
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -571,6 +802,8 @@ export class DashboardComponent implements OnInit {
     password: ''
   };
 
+  activeTab = signal<'users' | 'carpools'>('users');
+
   stats: AdminStats | null = null;
   users = signal<User[]>([]);
   statusFilter = signal<'all' | 'active' | 'suspended'>('all');
@@ -578,6 +811,10 @@ export class DashboardComponent implements OnInit {
   expandedUserIds = signal<Set<number>>(new Set());
   userStatsMap = signal<Record<number, AdminUserDetailStats>>({});
   loadingStatsIds = signal<Set<number>>(new Set());
+
+  carpools = signal<AdminCarpool[]>([]);
+  carpoolStatusFilter = signal<string>('all');
+  carpoolsLoaded = false;
 
   filteredUsers = computed(() => {
     const status = this.statusFilter();
@@ -587,6 +824,13 @@ export class DashboardComponent implements OnInit {
     if (status === 'suspended') result = result.filter(u => !u.isActive);
     if (role !== 'all') result = result.filter(u => u.roles.includes(role));
     return result;
+  });
+
+  filteredCarpools = computed(() => {
+    const status = this.carpoolStatusFilter();
+    const all = this.carpools();
+    if (status === 'all') return all;
+    return all.filter(c => c.status === status);
   });
 
   allExpanded = computed(() => {
@@ -635,6 +879,22 @@ export class DashboardComponent implements OnInit {
   loadUsers() {
     this.http.get<User[]>(`${environment.apiUrl}/admin/users`).subscribe({
       next: (data) => this.users.set(data),
+    });
+  }
+
+  switchToCarpools() {
+    this.activeTab.set('carpools');
+    if (!this.carpoolsLoaded) {
+      this.loadCarpools();
+    }
+  }
+
+  loadCarpools() {
+    this.http.get<AdminCarpool[]>(`${environment.apiUrl}/admin/carpools`).subscribe({
+      next: (data) => {
+        this.carpools.set(data);
+        this.carpoolsLoaded = true;
+      },
     });
   }
 

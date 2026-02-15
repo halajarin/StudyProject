@@ -15,6 +15,16 @@ export interface User {
   isActive?: boolean;
   createdAt?: string;
   deactivatedAt?: string | null;
+  vehicles?: UserVehicle[];
+}
+
+export interface UserVehicle {
+  vehicleId: number;
+  brand: string;
+  model: string;
+  registrationNumber: string;
+  energyType: string;
+  color: string;
 }
 
 export interface RegisterRequest {

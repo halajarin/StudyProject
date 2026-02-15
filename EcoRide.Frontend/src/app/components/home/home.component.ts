@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, QueryList, ViewChildren, inject } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, ElementRef, QueryList, ViewChildren, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -434,7 +434,7 @@ import { AuthService } from '../../services/auth.service';
   `,
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HomeComponent implements AfterViewInit, OnDestroy {
   @ViewChildren('reveal') revealElements!: QueryList<ElementRef>;
 
   authService = inject(AuthService);
@@ -466,8 +466,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'Lucas Dupont', initials: 'LD', color: '#3498db' },
     { name: 'Emma Bernard', initials: 'EB', color: '#9b59b6' },
   ];
-
-  ngOnInit() {}
 
   ngAfterViewInit() {
     this.observer = new IntersectionObserver(
