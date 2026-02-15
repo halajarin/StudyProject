@@ -16,37 +16,52 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     <div class="container">
       <h1>{{ 'admin.dashboard' | translate }}</h1>
 
-      <div class="grid grid-2">
-        <div class="card">
-          <h2>{{ 'admin.create_employee' | translate }}</h2>
-          <form (ngSubmit)="createEmployee()">
-            <div class="form-group">
-              <label>{{ 'auth.username' | translate }}</label>
-              <input type="text" [(ngModel)]="newEmployee.username" name="username" required>
-            </div>
-            <div class="form-group">
-              <label>{{ 'auth.email' | translate }}</label>
-              <input type="email" [(ngModel)]="newEmployee.email" name="email" required>
-            </div>
-            <div class="form-group">
-              <label>{{ 'auth.password' | translate }}</label>
-              <input type="password" [(ngModel)]="newEmployee.password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">{{ 'common.add' | translate }}</button>
-          </form>
+      @if (stats) {
+        <div class="admin-stats-grid">
+          <div class="stat-card">
+            <h3>{{ 'admin.total_users' | translate }}</h3>
+            <p class="stat-value">{{ stats.totalUsers }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>{{ 'admin.active_users' | translate }}</h3>
+            <p class="stat-value">{{ stats.activeUsers }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>{{ 'admin.total_carpools' | translate }}</h3>
+            <p class="stat-value">{{ stats.totalCarpools }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>{{ 'admin.active_carpools' | translate }}</h3>
+            <p class="stat-value">{{ stats.activeCarpools }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>{{ 'admin.credits_circulating' | translate }}</h3>
+            <p class="stat-value">{{ stats.totalCreditsCirculating }}</p>
+          </div>
+          <div class="stat-card">
+            <h3>{{ 'admin.total_credits' | translate }}</h3>
+            <p class="stat-value">{{ stats.platformCreditsEarned }}</p>
+          </div>
         </div>
+      }
 
-        <div class="card">
-          <h2>{{ 'admin.statistics' | translate }}</h2>
-          @if (stats) {
-            <div class="stats-grid">
-              <div class="stat-card">
-                <h3>{{ 'admin.total_credits' | translate }}</h3>
-                <p class="stat-value">{{ stats.platformCreditsEarned }}</p>
-              </div>
-            </div>
-          }
-        </div>
+      <div class="card mt-3">
+        <h2>{{ 'admin.create_employee' | translate }}</h2>
+        <form (ngSubmit)="createEmployee()" class="employee-form">
+          <div class="form-group">
+            <label>{{ 'auth.username' | translate }}</label>
+            <input type="text" [(ngModel)]="newEmployee.username" name="username" required>
+          </div>
+          <div class="form-group">
+            <label>{{ 'auth.email' | translate }}</label>
+            <input type="email" [(ngModel)]="newEmployee.email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label>{{ 'auth.password' | translate }}</label>
+            <input type="password" [(ngModel)]="newEmployee.password" name="password" required>
+          </div>
+          <button type="submit" class="btn btn-primary">{{ 'common.add' | translate }}</button>
+        </form>
       </div>
 
       <div class="card mt-3">
@@ -197,23 +212,39 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     </div>
   `,
   styles: [`
-    .stats-grid {
+    .admin-stats-grid {
       display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .stat-card {
       background-color: var(--very-light-green);
-      padding: 1.5rem;
+      padding: 1.2rem;
       border-radius: 10px;
       text-align: center;
     }
 
+    .stat-card h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.8rem;
+      color: var(--dark-gray);
+      text-transform: uppercase;
+    }
+
     .stat-value {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: bold;
       color: var(--primary-green);
       margin: 0;
+    }
+
+    .employee-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      align-items: end;
     }
 
     .users-header {

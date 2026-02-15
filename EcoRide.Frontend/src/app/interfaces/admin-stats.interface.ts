@@ -5,6 +5,4 @@ export interface AdminStats {
   activeCarpools: number;
   totalCreditsCirculating: number;
   platformCreditsEarned: number;
-  carpoolsCountByDate?: { [date: string]: number };
-  platformCreditsByDate?: { [date: string]: number };
 }

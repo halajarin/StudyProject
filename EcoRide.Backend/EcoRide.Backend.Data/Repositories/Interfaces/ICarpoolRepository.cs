@@ -28,4 +28,5 @@ public interface ICarpoolRepository
     Task<Dictionary<DateTime, float>> GetPlatformCreditsEarnedByDateAsync(DateTime startDate, DateTime endDate);
     Task<Dictionary<CarpoolStatus, int>> GetCarpoolCountsByStatusForDriverAsync(int userId);
     Task<Dictionary<ParticipationStatus, int>> GetParticipationCountsByStatusAsync(int userId);
+    Task<int> GetTotalValidatedParticipationsCountAsync();
 }

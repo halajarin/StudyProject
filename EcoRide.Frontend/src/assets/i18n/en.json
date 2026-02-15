@@ -248,7 +248,9 @@
     "show_all": "Show all carpools",
     "cancel_participation": "Cancel my participation",
     "cancel_participation_confirm": "Are you sure you want to cancel your participation? Your credits will be refunded.",
-    "participation_cancelled_success": "Participation cancelled. Your credits have been refunded."
+    "participation_cancelled_success": "Participation cancelled. Your credits have been refunded.",
+    "confirm_insurance": "I confirm that my vehicle insurance is valid",
+    "confirm_license": "I confirm that my driver's license is valid"
   },
   "user": {
     "profile": "Profile",
@@ -309,7 +311,12 @@
     "users": "Users",
     "pending_reviews": "Pending reviews",
     "statistics": "Statistics",
-    "total_credits": "Total credits earned",
+    "total_users": "Total users",
+    "active_users": "Active users",
+    "total_carpools": "Total carpools",
+    "active_carpools": "Active carpools",
+    "credits_circulating": "Credits circulating",
+    "total_credits": "Platform credits earned",
     "user_active": "Active",
     "user_suspended": "Suspended",
     "activate_user": "Activate",

@@ -214,4 +214,11 @@ public class CarpoolRepository : ICarpoolRepository
 
         return counts.ToDictionary(x => x.Status, x => x.Count);
     }
+
+    public async Task<int> GetTotalValidatedParticipationsCountAsync()
+    {
+        return await _context.CarpoolParticipations
+            .Where(p => p.Status == ParticipationStatus.Validated)
+            .CountAsync();
+    }
 }

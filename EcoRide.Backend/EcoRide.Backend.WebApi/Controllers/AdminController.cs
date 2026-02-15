@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EcoRide.Backend.Business.Constants;
 using EcoRide.Backend.Business.Services.Interfaces;
+using EcoRide.Backend.Data.Enums;
 using EcoRide.Backend.Data.Models;
 using EcoRide.Backend.Data.Repositories.Interfaces;
 using EcoRide.Backend.Dtos.Admin;
@@ -103,21 +104,29 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("statistics")]
-    public async Task<IActionResult> GetStatistics([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+    public async Task<IActionResult> GetStatistics()
     {
-        var start = startDate ?? DateTime.UtcNow.AddMonths(-1);
-        var end = endDate ?? DateTime.UtcNow;
+        var users = await _userRepository.GetAllAsync();
+        var carpools = await _carpoolRepository.GetAllAsync();
 
-        var carpoolsCount = await _carpoolRepository.GetCarpoolsCountByDateAsync(start, end);
-        var platformCredits = await _carpoolRepository.GetPlatformCreditsEarnedByDateAsync(start, end);
+        var totalUsers = users.Count;
+        var activeUsers = users.Count(u => u.IsActive);
+        var totalCarpools = carpools.Count;
+        var activeCarpools = carpools.Count(c => c.Status == CarpoolStatus.Pending || c.Status == CarpoolStatus.InProgress);
+        var totalCreditsCirculating = users.Sum(u => u.Credits);
 
-        var totalCredits = platformCredits.Values.Sum();
+        // Platform earns 2 credits per validated participation
+        var validatedParticipations = await _carpoolRepository.GetTotalValidatedParticipationsCountAsync();
+        var platformCreditsEarned = validatedParticipations * 2;
 
         return Ok(new
         {
-            carpoolsPerDay = carpoolsCount,
-            creditsPerDay = platformCredits,
-            totalCreditsEarned = totalCredits
+            totalUsers,
+            activeUsers,
+            totalCarpools,
+            activeCarpools,
+            totalCreditsCirculating,
+            platformCreditsEarned
         });
     }
 

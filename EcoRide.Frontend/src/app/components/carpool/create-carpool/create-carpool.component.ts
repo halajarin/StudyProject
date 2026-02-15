@@ -114,7 +114,18 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary" [disabled]="loading()">
+          <div class="confirmations">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="insuranceConfirmed" name="insuranceConfirmed">
+              {{ 'carpool.confirm_insurance' | translate }}
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="licenseConfirmed" name="licenseConfirmed">
+              {{ 'carpool.confirm_license' | translate }}
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary" [disabled]="loading() || !insuranceConfirmed || !licenseConfirmed">
             {{ loading() ? ('carpool.creating' | translate) : ('common.add' | translate) }}
           </button>
         </form>
@@ -131,6 +142,28 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       display: block;
       color: var(--gray);
       margin-top: 0.3rem;
+    }
+
+    .confirmations {
+      margin: 1.5rem 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
     }
   `]
 })
@@ -154,6 +187,8 @@ export class CreateCarpoolComponent implements OnInit {
   error = signal('');
   success = signal('');
   loading = signal(false);
+  insuranceConfirmed = false;
+  licenseConfirmed = false;
 
   constructor(
     private carpoolService: CarpoolService,

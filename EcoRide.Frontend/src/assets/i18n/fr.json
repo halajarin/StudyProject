@@ -248,7 +248,9 @@
     "show_all": "Voir tous les covoiturages",
     "cancel_participation": "Annuler ma participation",
     "cancel_participation_confirm": "Êtes-vous sûr de vouloir annuler votre participation ? Vos crédits seront remboursés.",
-    "participation_cancelled_success": "Participation annulée. Vos crédits ont été remboursés."
+    "participation_cancelled_success": "Participation annulée. Vos crédits ont été remboursés.",
+    "confirm_insurance": "Je confirme que mon assurance véhicule est valide",
+    "confirm_license": "Je confirme que mon permis de conduire est valide"
   },
   "user": {
     "profile": "Profil",
@@ -309,7 +311,12 @@
     "users": "Utilisateurs",
     "pending_reviews": "Avis en attente",
     "statistics": "Statistiques",
-    "total_credits": "Total des crédits gagnés",
+    "total_users": "Utilisateurs total",
+    "active_users": "Utilisateurs actifs",
+    "total_carpools": "Covoiturages total",
+    "active_carpools": "Covoiturages actifs",
+    "credits_circulating": "Crédits en circulation",
+    "total_credits": "Crédits plateforme gagnés",
     "user_active": "Actif",
     "user_suspended": "Suspendu",
     "activate_user": "Activer",

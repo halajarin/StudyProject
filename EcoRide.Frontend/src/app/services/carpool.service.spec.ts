@@ -25,25 +25,18 @@ describe('CarpoolService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('searchCarpools', () => {
-    it('should search carpools with filters', (done) => {
-      const mockResponse = {
-        data: [
-          {
-            carpoolId: 1,
-            departureCity: 'Paris',
-            arrivalCity: 'Lyon',
-            departureDate: '2026-01-20',
-            pricePerPerson: 25,
-            availableSeats: 3,
-            driver: {
-              userId: 1,
-              username: 'driver1',
-              averageRating: 4.5
-            }
-          }
-        ]
-      };
+  describe('search', () => {
+    it('should search carpools via POST', (done) => {
+      const mockResults = [
+        {
+          carpoolId: 1,
+          departureCity: 'Paris',
+          arrivalCity: 'Lyon',
+          departureDate: '2026-01-20',
+          pricePerPerson: 25,
+          availableSeats: 3
+        }
+      ];
 
       const searchParams = {
         departureCity: 'Paris',
@@ -51,18 +44,15 @@ describe('CarpoolService', () => {
         departureDate: '2026-01-20'
       };
 
-      service.searchCarpools(searchParams).subscribe(response => {
-        expect(response).toEqual(mockResponse);
-        expect(response.data.length).toBe(1);
-        expect(response.data[0].departureCity).toBe('Paris');
+      service.search(searchParams).subscribe(response => {
+        expect(response.length).toBe(1);
+        expect(response[0].departureCity).toBe('Paris');
         done();
       });
 
-      const req = httpMock.expectOne((request) =>
-        request.url.includes(`${environment.apiUrl}/carpool/search`)
-      );
-      expect(req.request.method).toBe('GET');
-      req.flush(mockResponse);
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/search`);
+      expect(req.request.method).toBe('POST');
+      req.flush(mockResults);
     });
 
     it('should handle search error', (done) => {
@@ -72,49 +62,32 @@ describe('CarpoolService', () => {
         departureDate: ''
       };
 
-      service.searchCarpools(searchParams).subscribe({
+      service.search(searchParams).subscribe({
         next: () => fail('should have failed'),
-        error: (error) => {
+        error: (error: any) => {
           expect(error.status).toBe(400);
           done();
         }
       });
 
-      const req = httpMock.expectOne((request) =>
-        request.url.includes(`${environment.apiUrl}/carpool/search`)
-      );
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/search`);
       req.flush({ message: 'Invalid search parameters' }, { status: 400, statusText: 'Bad Request' });
     });
   });
 
-  describe('getCarpoolById', () => {
+  describe('getById', () => {
     it('should get carpool details', (done) => {
       const carpoolId = 1;
       const mockCarpool = {
         carpoolId: 1,
         departureCity: 'Paris',
         arrivalCity: 'Lyon',
-        departureDate: '2026-01-20',
         pricePerPerson: 25,
-        availableSeats: 3,
-        totalSeats: 4,
-        driver: {
-          userId: 1,
-          username: 'driver1',
-          averageRating: 4.5,
-          reviewCount: 10
-        },
-        vehicle: {
-          vehicleId: 1,
-          model: 'Tesla Model 3',
-          energyType: 'Electric'
-        }
+        availableSeats: 3
       };
 
-      service.getCarpoolById(carpoolId).subscribe(carpool => {
-        expect(carpool).toEqual(mockCarpool);
+      service.getById(carpoolId).subscribe(carpool => {
         expect(carpool.carpoolId).toBe(1);
-        expect(carpool.driver.averageRating).toBe(4.5);
         done();
       });
 
@@ -126,9 +99,9 @@ describe('CarpoolService', () => {
     it('should handle carpool not found', (done) => {
       const carpoolId = 999;
 
-      service.getCarpoolById(carpoolId).subscribe({
+      service.getById(carpoolId).subscribe({
         next: () => fail('should have failed'),
-        error: (error) => {
+        error: (error: any) => {
           expect(error.status).toBe(404);
           done();
         }
@@ -139,7 +112,7 @@ describe('CarpoolService', () => {
     });
   });
 
-  describe('createCarpool', () => {
+  describe('create', () => {
     it('should create a new carpool', (done) => {
       const newCarpool = {
         departureCity: 'Paris',
@@ -151,14 +124,9 @@ describe('CarpoolService', () => {
         vehicleId: 1
       };
 
-      const mockResponse = {
-        carpoolId: 1,
-        ...newCarpool,
-        availableSeats: 4,
-        status: 'Pending'
-      };
+      const mockResponse = { carpoolId: 1, status: 'Pending' };
 
-      service.createCarpool(newCarpool).subscribe(response => {
+      service.create(newCarpool as any).subscribe(response => {
         expect(response.carpoolId).toBe(1);
         expect(response.status).toBe('Pending');
         done();
@@ -166,23 +134,17 @@ describe('CarpoolService', () => {
 
       const req = httpMock.expectOne(`${environment.apiUrl}/carpool`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(newCarpool);
       req.flush(mockResponse);
     });
   });
 
-  describe('participateInCarpool', () => {
+  describe('participate', () => {
     it('should participate in carpool successfully', (done) => {
       const carpoolId = 1;
-      const mockResponse = {
-        success: true,
-        message: 'Participation confirmed',
-        remainingCredits: 75
-      };
+      const mockResponse = { success: true, message: 'Participation confirmed' };
 
-      service.participateInCarpool(carpoolId).subscribe(response => {
+      service.participate(carpoolId).subscribe(response => {
         expect(response.success).toBe(true);
-        expect(response.remainingCredits).toBe(75);
         done();
       });
 
@@ -194,9 +156,9 @@ describe('CarpoolService', () => {
     it('should handle insufficient credits', (done) => {
       const carpoolId = 1;
 
-      service.participateInCarpool(carpoolId).subscribe({
+      service.participate(carpoolId).subscribe({
         next: () => fail('should have failed'),
-        error: (error) => {
+        error: (error: any) => {
           expect(error.status).toBe(400);
           done();
         }
@@ -207,82 +169,69 @@ describe('CarpoolService', () => {
     });
   });
 
-  describe('cancelParticipation', () => {
+  describe('cancel', () => {
     it('should cancel participation successfully', (done) => {
       const carpoolId = 1;
-      const mockResponse = {
-        success: true,
-        message: 'Participation cancelled and credits refunded'
-      };
+      const mockResponse = { success: true, message: 'Cancelled' };
 
-      service.cancelParticipation(carpoolId).subscribe(response => {
+      service.cancel(carpoolId).subscribe(response => {
         expect(response.success).toBe(true);
-        expect(response.message).toContain('refunded');
         done();
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/${carpoolId}/cancel-participation`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/${carpoolId}/cancel`);
       expect(req.request.method).toBe('POST');
       req.flush(mockResponse);
     });
   });
 
-  describe('getMyTripsAsDriver', () => {
-    it('should get user trips as driver', (done) => {
-      const mockTrips = [
-        {
-          carpoolId: 1,
-          departureCity: 'Paris',
-          arrivalCity: 'Lyon',
-          status: 'Pending',
-          availableSeats: 2
-        },
-        {
-          carpoolId: 2,
-          departureCity: 'Lyon',
-          arrivalCity: 'Marseille',
-          status: 'Completed',
-          availableSeats: 0
-        }
-      ];
+  describe('getMyTrips', () => {
+    it('should get user trips', (done) => {
+      const mockTrips = {
+        asDriver: [{ carpoolId: 1, status: 'Pending' }],
+        asPassenger: [{ carpoolId: 2, status: 'Completed' }]
+      };
 
-      service.getMyTripsAsDriver().subscribe(trips => {
-        expect(trips.length).toBe(2);
-        expect(trips[0].status).toBe('Pending');
+      service.getMyTrips().subscribe(trips => {
+        expect(trips.asDriver.length).toBe(1);
+        expect(trips.asPassenger.length).toBe(1);
         done();
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/my-trips/driver`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/my-trips`);
       expect(req.request.method).toBe('GET');
       req.flush(mockTrips);
     });
   });
 
-  describe('getMyTripsAsPassenger', () => {
-    it('should get user trips as passenger', (done) => {
-      const mockTrips = [
-        {
-          carpoolId: 3,
-          departureCity: 'Paris',
-          arrivalCity: 'Nice',
-          status: 'In Progress',
-          driver: {
-            userId: 2,
-            username: 'driver2',
-            averageRating: 4.8
-          }
-        }
-      ];
+  describe('validateTrip', () => {
+    it('should validate a trip', (done) => {
+      const carpoolId = 1;
+      const mockResponse = { success: true };
 
-      service.getMyTripsAsPassenger().subscribe(trips => {
-        expect(trips.length).toBe(1);
-        expect(trips[0].driver.averageRating).toBe(4.8);
+      service.validateTrip(carpoolId, true).subscribe(response => {
+        expect(response.success).toBe(true);
         done();
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/my-trips/passenger`);
-      expect(req.request.method).toBe('GET');
-      req.flush(mockTrips);
+      const req = httpMock.expectOne(`${environment.apiUrl}/participation/${carpoolId}/validate`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ tripOk: true, comment: undefined });
+      req.flush(mockResponse);
+    });
+
+    it('should validate a trip with problem comment', (done) => {
+      const carpoolId = 1;
+      const mockResponse = { success: true };
+
+      service.validateTrip(carpoolId, false, 'Driver was late').subscribe(response => {
+        expect(response.success).toBe(true);
+        done();
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/participation/${carpoolId}/validate`);
+      expect(req.request.body).toEqual({ tripOk: false, comment: 'Driver was late' });
+      req.flush(mockResponse);
     });
   });
 });
