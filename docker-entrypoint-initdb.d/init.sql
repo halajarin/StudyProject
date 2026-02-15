@@ -39,6 +39,7 @@ CREATE TABLE "user" (
     credit INTEGER DEFAULT 20,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
+    deactivated_at TIMESTAMP,
     preferred_language VARCHAR(5) DEFAULT 'en'
 );
 

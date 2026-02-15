@@ -76,6 +76,7 @@ public class AdminController : ControllerBase
         }
 
         user.IsActive = false;
+        user.DeactivatedAt = DateTime.UtcNow;
         await _userRepository.UpdateAsync(user);
 
         _logger.LogInformation($"User {userId} suspended");
@@ -93,6 +94,7 @@ public class AdminController : ControllerBase
         }
 
         user.IsActive = true;
+        user.DeactivatedAt = null;
         await _userRepository.UpdateAsync(user);
 
         _logger.LogInformation($"User {userId} activated");
@@ -134,6 +136,7 @@ public class AdminController : ControllerBase
             u.IsActive,
             u.Credits,
             u.CreatedAt,
+            u.DeactivatedAt,
             Roles = u.UserRoles.Select(ur => ur.Role.Label).ToList()
         }).ToList();
 

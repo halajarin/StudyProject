@@ -68,6 +68,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 <th>{{ 'auth.email' | translate }}</th>
                 <th>{{ 'user.roles' | translate }}</th>
                 <th>{{ 'user.credits' | translate }}</th>
+                <th>{{ 'admin.created_at' | translate }}</th>
+                <th>{{ 'admin.deactivated_at' | translate }}</th>
                 <th>{{ 'admin.status_label' | translate }}</th>
                 <th>{{ 'common.edit' | translate }}</th>
               </tr>
@@ -87,6 +89,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                     }
                   </td>
                   <td>{{ user.credits }}</td>
+                  <td class="td-date">{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
+                  <td class="td-date">{{ user.deactivatedAt ? (user.deactivatedAt | date:'dd/MM/yyyy') : '-' }}</td>
                   <td>
                     <span [class]="user.isActive ? 'badge-success' : 'badge-danger'">
                       {{ user.isActive ? ('admin.user_active' | translate) : ('admin.user_suspended' | translate) }}
@@ -106,7 +110,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 </tr>
                 @if (isExpanded(user.userId)) {
                   <tr class="stats-row">
-                    <td colspan="8">
+                    <td colspan="10">
                       @if (isLoading(user.userId)) {
                         <div class="stats-loading">{{ 'common.loading' | translate }}</div>
                       } @else if (getStats(user.userId); as stats) {
@@ -285,6 +289,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       font-size: 0.78rem;
       background-color: #e8f5e9;
       color: #2e7d32;
+    }
+
+    .td-date {
+      white-space: nowrap;
+      font-size: 0.85rem;
+      color: var(--gray);
     }
 
     .stats-row td {

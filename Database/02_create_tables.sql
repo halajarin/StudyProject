@@ -41,7 +41,8 @@ CREATE TABLE user (
     pseudo VARCHAR(80) NOT NULL UNIQUE,
     credit INTEGER DEFAULT 20,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE,
+    deactivated_at TIMESTAMP
 );
 
 -- User role association table

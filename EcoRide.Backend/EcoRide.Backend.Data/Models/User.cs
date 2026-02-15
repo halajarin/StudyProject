@@ -54,6 +54,9 @@ public class User
     [Column("is_active")]
     public bool IsActive { get; set; } = true;
 
+    [Column("deactivated_at")]
+    public DateTime? DeactivatedAt { get; set; }
+
     // Relationships
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();

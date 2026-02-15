@@ -13,6 +13,8 @@ export interface User {
   averageRating: number;
   reviewCount: number;
   isActive?: boolean;
+  createdAt?: string;
+  deactivatedAt?: string | null;
 }
 
 export interface RegisterRequest {
