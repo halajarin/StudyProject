@@ -55,9 +55,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             <div class="vehicle-info">
               <p><strong>{{ carpool()?.vehicleBrand }} {{ carpool()?.vehicleModel }}</strong></p>
               <p>{{ 'vehicle.color' | translate }}: {{ carpool()?.vehicleColor }}</p>
-              <p>{{ 'vehicle.energy_type' | translate }}: {{ carpool()?.vehicleEnergyType }}
+              <p>{{ 'vehicle.energy_type' | translate }}: {{ carpool()?.vehicleEnergyType === 'Electric' ? '⚡' : carpool()?.vehicleEnergyType === 'Hybrid' ? '🔋' : '🌿' }} {{ carpool()?.vehicleEnergyType }}
                 @if (carpool()?.isEcological) {
-                  <span class="badge badge-eco">🔋 {{ 'carpool.electric' | translate }}</span>
+                  <span class="badge badge-eco">{{ 'carpool.ecological' | translate }}</span>
                 }
               </p>
             </div>

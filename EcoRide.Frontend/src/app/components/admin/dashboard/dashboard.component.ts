@@ -183,7 +183,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                     <td class="td-vehicles">
                       @if (user.vehicles && user.vehicles.length > 0) {
                         @for (v of user.vehicles; track v.vehicleId) {
-                          <span class="vehicle-tag" [class.vehicle-electric]="v.energyType === 'Electric'">
+                          <span class="vehicle-tag vehicle-green">
+                            {{ v.energyType === 'Electric' ? '⚡' : v.energyType === 'Hybrid' ? '🔋' : '🌿' }}
                             {{ v.brand }} {{ v.model }}
                             <small>{{ v.registrationNumber }}</small>
                           </span>
@@ -599,7 +600,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       font-size: 0.65rem;
     }
 
-    .vehicle-electric {
+    .vehicle-green {
       background: #e8f5e9;
       border-color: #a5d6a7;
     }

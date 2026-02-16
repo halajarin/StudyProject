@@ -94,7 +94,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                   <div class="car-info">
                     {{ carpool.vehicleBrand }} {{ carpool.vehicleModel }} - {{ carpool.vehicleColor }}
                     @if (carpool.isEcological) {
-                      <span class="badge badge-eco">🔋 {{ 'carpool.electric' | translate }}</span>
+                      <span class="badge badge-eco">{{ carpool.vehicleEnergyType === 'Electric' ? '⚡' : carpool.vehicleEnergyType === 'Hybrid' ? '🔋' : '🌿' }} {{ 'carpool.ecological' | translate }}</span>
                     }
                   </div>
                 </div>

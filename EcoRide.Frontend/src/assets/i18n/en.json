@@ -285,12 +285,9 @@
     "first_registration_date": "First registration date",
     "seat_count": "Number of seats",
     "types": {
-      "gasoline": "Gasoline",
-      "diesel": "Diesel",
       "electric": "Electric",
       "hybrid": "Hybrid",
-      "lpg": "LPG",
-      "cng": "CNG"
+      "lpg": "LPG"
     }
   },
   "review": {

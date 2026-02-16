@@ -1,21 +1,18 @@
--- Fix energy type values from French to English
--- This script converts French energy type values to match the EnergyType enum
+-- Fix energy type values — green energy only: Electric, Hybrid, LPG
+-- Converts all legacy/French values and removes non-green types
 
 \c ecoride
 
--- Update French values to English enum values
+-- Convert all non-green types to Electric, standardize French values
 UPDATE vehicle
 SET energy_type = CASE
-    WHEN energy_type = 'Essence' THEN 'Gasoline'
-    WHEN energy_type = 'Diesel' THEN 'Diesel'
-    WHEN energy_type = 'Électrique' THEN 'Electric'
-    WHEN energy_type = 'Electrique' THEN 'Electric'
-    WHEN energy_type = 'Hybride' THEN 'Hybrid'
-    WHEN energy_type = 'GPL' THEN 'LPG'
-    WHEN energy_type = 'GNC' THEN 'CNG'
+    WHEN energy_type IN ('Électrique', 'Electrique', 'electric', 'ELECTRIC') THEN 'Electric'
+    WHEN energy_type IN ('Hybride', 'hybrid', 'HYBRID') THEN 'Hybrid'
+    WHEN energy_type IN ('GPL', 'gpl') THEN 'LPG'
+    WHEN energy_type IN ('Essence', 'Gasoline', 'Diesel', 'Gasoil', 'CNG', 'GNV', 'GNC') THEN 'Electric'
     ELSE energy_type
 END
-WHERE energy_type IN ('Essence', 'Électrique', 'Electrique', 'Hybride', 'GPL', 'GNC');
+WHERE energy_type NOT IN ('Electric', 'Hybrid', 'LPG');
 
 -- Display the results
 SELECT energy_type, COUNT(*) as count

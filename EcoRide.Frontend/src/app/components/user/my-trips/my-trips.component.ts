@@ -196,7 +196,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                                 }
                               </div>
                               <div class="stat-breakdown">
-                                <span class="stat-item">{{ trip.vehicleEnergyType }}</span>
+                                <span class="stat-item">{{ trip.vehicleEnergyType === 'Electric' ? '⚡' : trip.vehicleEnergyType === 'Hybrid' ? '🔋' : '🌿' }} {{ trip.vehicleEnergyType }}</span>
                                 <span class="stat-item">{{ trip.vehicleColor }}</span>
                               </div>
                             </div>

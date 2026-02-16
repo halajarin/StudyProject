@@ -20,7 +20,7 @@ public class Vehicle
     public string RegistrationNumber { get; set; } = string.Empty;
 
     [Column("energy_type")]
-    public EnergyType EnergyType { get; set; } = EnergyType.Gasoline;
+    public EnergyType EnergyType { get; set; } = EnergyType.Electric;
 
     [Column("color")]
     [MaxLength(80)]

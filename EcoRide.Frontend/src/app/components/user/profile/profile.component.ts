@@ -60,7 +60,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               @for (vehicle of vehicles(); track vehicle.vehicleId) {
                 <div class="vehicle-card">
                   <h4>{{ vehicle.brandLabel }} {{ vehicle.model }}</h4>
-                  <p>{{ vehicle.registrationNumber }} - {{ vehicle.energyType }}</p>
+                  <p>{{ vehicle.registrationNumber }} - {{ vehicle.energyType === 'Electric' ? '⚡' : vehicle.energyType === 'Hybrid' ? '🔋' : '🌿' }} {{ vehicle.energyType }}</p>
                   <p>{{ vehicle.seatCount }} {{ 'carpool.seats_available' | translate }} - {{ vehicle.color }}</p>
                 </div>
               }
@@ -96,12 +96,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 <div class="form-group">
                   <label>{{ 'vehicle.energy_type' | translate }}</label>
                   <select [(ngModel)]="newVehicle.energyType" name="energyType" required>
-                    <option value="Gasoline">{{ 'vehicle.types.gasoline' | translate }}</option>
-                    <option value="Diesel">{{ 'vehicle.types.diesel' | translate }}</option>
-                    <option value="Electric">{{ 'vehicle.types.electric' | translate }}</option>
-                    <option value="Hybrid">{{ 'vehicle.types.hybrid' | translate }}</option>
-                    <option value="LPG">{{ 'vehicle.types.lpg' | translate }}</option>
-                    <option value="CNG">{{ 'vehicle.types.cng' | translate }}</option>
+                    <option value="Electric">⚡ {{ 'vehicle.types.electric' | translate }}</option>
+                    <option value="Hybrid">🔋 {{ 'vehicle.types.hybrid' | translate }}</option>
+                    <option value="LPG">🌿 {{ 'vehicle.types.lpg' | translate }}</option>
                   </select>
                 </div>
                 <div class="form-group">

@@ -285,12 +285,9 @@
     "first_registration_date": "Date de première immatriculation",
     "seat_count": "Nombre de places",
     "types": {
-      "gasoline": "Essence",
-      "diesel": "Diesel",
       "electric": "Électrique",
       "hybrid": "Hybride",
-      "lpg": "GPL",
-      "cng": "GNC"
+      "lpg": "GPL"
     }
   },
   "review": {

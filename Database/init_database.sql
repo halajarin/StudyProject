@@ -211,12 +211,12 @@ BEGIN
         (6, 3)
         ON CONFLICT (user_id, role_id) DO NOTHING;
 
-        -- Insert vehicles
+        -- Insert vehicles (green energy only: Electric, Hybrid, LPG)
         INSERT INTO vehicle (vehicle_id, model, registration_number, energy_type, color, first_registration_date, brand_id, user_id, seat_count) VALUES
         (1, 'Zoé', 'AB-123-CD', 'Electric', 'White', '2021-03-15', 1, 1, 4),
-        (2, '308', 'EF-456-GH', 'Diesel', 'Black', '2020-06-20', 2, 2, 4),
+        (2, 'e-308', 'EF-456-GH', 'Electric', 'Black', '2020-06-20', 2, 2, 4),
         (3, 'Model 3', 'IJ-789-KL', 'Electric', 'Red', '2022-01-10', 4, 3, 4),
-        (4, 'C3', 'MN-012-OP', 'Gasoline', 'Blue', '2019-09-05', 3, 1, 4)
+        (4, 'ë-C3', 'MN-012-OP', 'Electric', 'Blue', '2019-09-05', 3, 1, 4)
         ON CONFLICT (registration_number) DO NOTHING;
 
         -- Insert carpools
@@ -292,15 +292,12 @@ END $$;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM schema_migrations WHERE version = 3) THEN
-        -- Update standardized energy type values
-        UPDATE vehicle SET energy_type = 'Gasoline' WHERE energy_type IN ('Essence', 'essence', 'ESSENCE');
-        UPDATE vehicle SET energy_type = 'Diesel' WHERE energy_type IN ('diesel', 'DIESEL', 'Gasoil');
-        UPDATE vehicle SET energy_type = 'Electric' WHERE energy_type IN ('Électrique', 'electric', 'ELECTRIC', 'Electrique');
+        -- Standardize energy type values (green only: Electric, Hybrid, LPG)
+        UPDATE vehicle SET energy_type = 'Electric' WHERE energy_type IN ('Électrique', 'electric', 'ELECTRIC', 'Electrique', 'Gasoline', 'Essence', 'essence', 'ESSENCE', 'Diesel', 'diesel', 'DIESEL', 'Gasoil', 'CNG', 'GNV', 'gnv');
         UPDATE vehicle SET energy_type = 'Hybrid' WHERE energy_type IN ('Hybride', 'hybrid', 'HYBRID');
         UPDATE vehicle SET energy_type = 'LPG' WHERE energy_type IN ('GPL', 'gpl');
-        UPDATE vehicle SET energy_type = 'CNG' WHERE energy_type IN ('GNV', 'gnv');
 
-        INSERT INTO schema_migrations (version, description) VALUES (3, 'Standardize energy type values');
+        INSERT INTO schema_migrations (version, description) VALUES (3, 'Standardize energy type values (green only)');
         RAISE NOTICE 'Migration v3: Fix energy types - EXECUTED';
     ELSE
         RAISE NOTICE 'Migration v3: Fix energy types - ALREADY EXECUTED, SKIPPED';
@@ -355,21 +352,21 @@ BEGIN
         INSERT INTO vehicle (model, registration_number, energy_type, color, first_registration_date, brand_id, user_id, seat_count)
         SELECT model, registration, energy, color, reg_date::date, brand_id, user_id, seats
         FROM (VALUES
-            ('Clio', 'QR-567-ST', 'Gasoline', 'Red', '2020-05-10', 1, 7, 4),
-            ('2008', 'UV-890-WX', 'Diesel', 'Grey', '2021-02-15', 2, 8, 4),
-            ('Golf', 'YZ-234-AB', 'Gasoline', 'Blue', '2019-11-20', 5, 9, 5),
-            ('Corolla', 'CD-678-EF', 'Hybrid', 'White', '2022-04-05', 6, 10, 4),
-            ('X3', 'GH-012-IJ', 'Diesel', 'Black', '2021-08-12', 7, 11, 5),
-            ('Classe A', 'KL-345-MN', 'Gasoline', 'Silver', '2020-10-25', 8, 12, 4),
-            ('Mégane', 'OP-789-QR', 'Electric', 'Green', '2022-01-30', 1, 13, 4),
-            ('3008', 'ST-123-UV', 'Diesel', 'Red', '2019-07-18', 2, 14, 5),
-            ('C4', 'WX-456-YZ', 'Gasoline', 'White', '2021-03-22', 3, 15, 4),
-            ('Captur', 'AB-890-CD', 'Hybrid', 'Orange', '2022-06-14', 1, 16, 4),
+            ('Clio E-Tech', 'QR-567-ST', 'Hybrid', 'Red', '2020-05-10', 1, 7, 4),
+            ('e-2008', 'UV-890-WX', 'Electric', 'Grey', '2021-02-15', 2, 8, 4),
+            ('ID.3', 'YZ-234-AB', 'Electric', 'Blue', '2019-11-20', 5, 9, 5),
+            ('Corolla Hybrid', 'CD-678-EF', 'Hybrid', 'White', '2022-04-05', 6, 10, 4),
+            ('iX3', 'GH-012-IJ', 'Electric', 'Black', '2021-08-12', 7, 11, 5),
+            ('EQA', 'KL-345-MN', 'Electric', 'Silver', '2020-10-25', 8, 12, 4),
+            ('Mégane E-Tech', 'OP-789-QR', 'Electric', 'Green', '2022-01-30', 1, 13, 4),
+            ('e-3008', 'ST-123-UV', 'Electric', 'Red', '2019-07-18', 2, 14, 5),
+            ('ë-C4', 'WX-456-YZ', 'Electric', 'White', '2021-03-22', 3, 15, 4),
+            ('Captur E-Tech', 'AB-890-CD', 'Hybrid', 'Orange', '2022-06-14', 1, 16, 4),
             ('Model S', 'EF-234-GH', 'Electric', 'Black', '2021-12-08', 4, 17, 5),
-            ('Tiguan', 'IJ-567-KL', 'Diesel', 'Grey', '2020-09-03', 5, 18, 5),
-            ('Yaris', 'MN-901-OP', 'Hybrid', 'Blue', '2022-02-19', 6, 19, 4),
-            ('Série 1', 'QR-345-ST', 'Gasoline', 'White', '2019-12-27', 7, 20, 4),
-            ('Classe B', 'UV-678-WX', 'Electric', 'Silver', '2021-05-11', 8, 21, 5)
+            ('ID.4', 'IJ-567-KL', 'Electric', 'Grey', '2020-09-03', 5, 18, 5),
+            ('Yaris Hybrid', 'MN-901-OP', 'Hybrid', 'Blue', '2022-02-19', 6, 19, 4),
+            ('i4', 'QR-345-ST', 'Electric', 'White', '2019-12-27', 7, 20, 4),
+            ('EQB', 'UV-678-WX', 'Electric', 'Silver', '2021-05-11', 8, 21, 5)
         ) AS v(model, registration, energy, color, reg_date, brand_id, user_id, seats)
         WHERE NOT EXISTS (SELECT 1 FROM vehicle WHERE registration_number = v.registration)
         ON CONFLICT (registration_number) DO NOTHING;

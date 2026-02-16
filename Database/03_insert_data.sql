@@ -41,12 +41,12 @@ INSERT INTO user_role (user_id, role_id) VALUES
 (5, 4),
 (6, 3);
 
--- Insert vehicles
+-- Insert vehicles (green energy only: Electric, Hybrid, LPG)
 INSERT INTO vehicle (vehicle_id, model, registration_number, energy_type, color, first_registration_date, brand_id, user_id, seat_count) VALUES
 (1, 'Zoé', 'AB-123-CD', 'Electric', 'White', '2021-03-15', 1, 1, 4),
-(2, '308', 'EF-456-GH', 'Diesel', 'Black', '2020-06-20', 2, 2, 4),
+(2, 'e-308', 'EF-456-GH', 'Electric', 'Black', '2020-06-20', 2, 2, 4),
 (3, 'Model 3', 'IJ-789-KL', 'Electric', 'Red', '2022-01-10', 4, 3, 4),
-(4, 'C3', 'MN-012-OP', 'Gasoline', 'Blue', '2019-09-05', 3, 1, 4);
+(4, 'ë-C3', 'MN-012-OP', 'Electric', 'Blue', '2019-09-05', 3, 1, 4);
 
 -- Insert carpools
 INSERT INTO carpool (carpool_id, departure_date, departure_time, departure_location, departure_city, arrival_date, arrival_time, arrival_location, arrival_city, status, total_seats, available_seats, price_per_person, vehicle_id, user_id, estimated_duration_minutes) VALUES
