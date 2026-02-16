@@ -108,7 +108,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               }
               @for (r of filteredReviews(); track r.reviewId) {
                 <tr>
-                  <td>{{ r.authorUsername }} → {{ r.targetUsername }}</td>
+                  <td>{{ r.authorUsername }}</td>
                   <td>{{ r.carpoolId || '-' }}</td>
                   <td class="td-date">{{ r.departureDate ? (r.departureDate | date:'dd/MM/yyyy') : '-' }}</td>
                   <td class="td-driver-vehicle">
@@ -433,7 +433,7 @@ export class EmployeeDashboardComponent implements OnInit {
       const lower = value.toLowerCase();
       result = result.filter(r => {
         if (key === 'authorUsername') {
-          return `${r.authorUsername} ${r.targetUsername}`.toLowerCase().includes(lower);
+          return r.authorUsername.toLowerCase().includes(lower);
         }
         if (key === 'driverUsername') {
           return `${r.driverUsername} ${r.vehicleBrand} ${r.vehicleModel}`.toLowerCase().includes(lower);

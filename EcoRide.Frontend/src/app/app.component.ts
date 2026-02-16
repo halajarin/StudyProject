@@ -38,11 +38,9 @@ import { filter } from 'rxjs';
               <a routerLink="/profile" routerLinkActive="active">{{ 'navigation.my_profile' | translate }}</a>
             </li>
 
-            @if (authService.hasRole(UserRole.Employee) || authService.hasRole(UserRole.Administrator)) {
-              <li class="nav-links">
-                <a routerLink="/employee" routerLinkActive="active">{{ 'navigation.employee_dashboard' | translate }}</a>
-              </li>
-            }
+            <li class="nav-links">
+              <a routerLink="/reviews" routerLinkActive="active">{{ 'navigation.reviews' | translate }}</a>
+            </li>
 
             @if (authService.hasRole(UserRole.Administrator)) {
               <li class="nav-links">

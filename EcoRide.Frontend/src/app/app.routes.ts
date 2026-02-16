@@ -39,11 +39,6 @@ export const routes: Routes = [
     canActivate: [roleGuard([UserRole.Administrator])]
   },
   {
-    path: 'employee',
-    loadComponent: () => import('./components/employee/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent),
-    canActivate: [roleGuard([UserRole.Employee, UserRole.Administrator])]
-  },
-  {
     path: 'reviews',
     loadComponent: () => import('./components/employee/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent),
     canActivate: [authGuard]
