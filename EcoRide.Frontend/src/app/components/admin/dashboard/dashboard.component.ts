@@ -933,11 +933,13 @@ export class DashboardComponent implements OnInit {
       const lower = value.toLowerCase();
       result = result.filter(u => {
         if (key === 'roles') {
-          return (u.roles || []).join(' ').toLowerCase().includes(lower);
+          const raw = (u.roles || []).join(' ').toLowerCase();
+          const translated = (u.roles || []).map(r => this.translate.instant('admin.roles.' + r)).join(' ').toLowerCase();
+          return raw.includes(lower) || translated.includes(lower);
         }
         if (key === 'vehicles') {
           return (u.vehicles || []).some(v =>
-            `${v.brand} ${v.model} ${v.registrationNumber}`.toLowerCase().includes(lower)
+            `${v.brand} ${v.model} ${v.registrationNumber} ${v.color}`.toLowerCase().includes(lower)
           );
         }
         const val = (u as any)[key];
@@ -968,10 +970,15 @@ export class DashboardComponent implements OnInit {
       const lower = value.toLowerCase();
       result = result.filter(c => {
         if (key === 'vehicle') {
-          return `${c.vehicleBrand} ${c.vehicleModel}`.toLowerCase().includes(lower);
+          return `${c.vehicleBrand} ${c.vehicleModel} ${c.vehicleRegistration} ${c.vehicleColor}`.toLowerCase().includes(lower);
         }
         if (key === 'departureCity') {
           return `${c.departureCity} ${c.arrivalCity}`.toLowerCase().includes(lower);
+        }
+        if (key === 'status') {
+          const statusKey = c.status === 'InProgress' ? 'in_progress' : c.status.toLowerCase();
+          const translated = this.translate.instant('carpool.status.' + statusKey);
+          return translated.toLowerCase().includes(lower) || c.status.toLowerCase().includes(lower);
         }
         const val = (c as any)[key];
         return String(val ?? '').toLowerCase().includes(lower);
