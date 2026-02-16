@@ -44,8 +44,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             <div class="stat-card-content">
               <span class="stat-label">{{ 'admin.passenger_count' | translate }}</span>
               <span class="stat-value">{{ stats.passengerCount }}</span>
-              <span class="stat-sub-label">{{ 'admin.of_which_drivers' | translate:{ count: stats.driverAndPassengerCount } }}</span>
             </div>
+            <span class="stat-sub-label">{{ 'admin.of_which_drivers' | translate:{ count: stats.driverAndPassengerCount } }}</span>
           </div>
           <div class="stat-card stat-card--completed">
             <div class="stat-card-icon">
@@ -63,8 +63,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             <div class="stat-card-content">
               <span class="stat-label">{{ 'admin.in_progress_carpools' | translate }}</span>
               <span class="stat-value">{{ stats.inProgressCarpools }}</span>
-              <span class="stat-sub-label">{{ 'admin.of_which_pending' | translate:{ count: stats.pendingCarpools } }}</span>
             </div>
+            <span class="stat-sub-label">{{ 'admin.of_which_pending' | translate:{ count: stats.pendingCarpools } }}</span>
           </div>
         </div>
       }
@@ -382,6 +382,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       background: white;
       border: 1px solid var(--light-gray);
       transition: transform 0.2s, box-shadow 0.2s;
+      flex-wrap: wrap;
     }
 
     .stat-card:hover {
@@ -428,10 +429,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .stat-sub-label {
+      width: 100%;
       font-size: 0.7rem;
       color: var(--gray);
       font-style: italic;
-      margin-top: 0.2rem;
       line-height: 1.2;
     }
 
