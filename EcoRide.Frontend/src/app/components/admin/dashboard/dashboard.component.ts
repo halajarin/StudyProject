@@ -997,6 +997,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.loadStats();
     this.loadUsers();
+    this.loadCarpools();
   }
 
   // --- Sort helpers ---
