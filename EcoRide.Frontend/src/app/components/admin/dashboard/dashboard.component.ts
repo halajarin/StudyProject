@@ -374,15 +374,16 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .stat-card {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      gap: 0 0.75rem;
       align-items: center;
-      gap: 0.75rem;
       padding: 1rem;
       border-radius: 12px;
       background: white;
       border: 1px solid var(--light-gray);
       transition: transform 0.2s, box-shadow 0.2s;
-      flex-wrap: wrap;
     }
 
     .stat-card:hover {
@@ -429,11 +430,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .stat-sub-label {
-      width: 100%;
+      grid-column: 1 / -1;
       font-size: 0.7rem;
       color: var(--gray);
       font-style: italic;
       line-height: 1.2;
+      margin-top: 0.25rem;
     }
 
     .employee-section {
