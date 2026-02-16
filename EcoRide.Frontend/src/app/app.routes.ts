@@ -44,6 +44,11 @@ export const routes: Routes = [
     canActivate: [roleGuard([UserRole.Employee, UserRole.Administrator])]
   },
   {
+    path: 'reviews',
+    loadComponent: () => import('./components/employee/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'legal-notice',
     loadComponent: () => import('./components/legal-notice/legal-notice.component').then(m => m.LegalNoticeComponent)
   },

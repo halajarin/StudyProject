@@ -387,6 +387,21 @@
     "contact_title": "Contact",
     "contact_content": "For any questions regarding the legal notice, you can contact us by email at contact@ecoride.fr."
   },
+  "employee": {
+    "reviews_title": "Reviews",
+    "total_reviews": "Total reviews",
+    "validated_reviews": "Validated",
+    "rejected_reviews": "Rejected",
+    "average_rating": "Average rating",
+    "min_max_notes": "min {{min}} — max {{max}}",
+    "column_passenger": "Passenger",
+    "column_trip_id": "Trip ID",
+    "column_trip_date": "Trip date",
+    "column_driver_vehicle": "Driver / Vehicle",
+    "column_rating": "Rating",
+    "column_comment": "Comment",
+    "no_reviews": "No reviews found"
+  },
   "messages": {
     "operation_successful": "Operation completed successfully",
     "operation_failed": "Operation failed",

@@ -5,9 +5,10 @@ namespace EcoRide.Backend.Data.Repositories.Interfaces;
 public interface IReviewRepository
 {
     Task<Review?> GetByIdAsync(int id);
+    Task<List<Review>> GetAllAsync();
+    Task<List<Review>> GetByUserAsync(int userId);
     Task<List<Review>> GetByTargetUserAsync(int userId, string? status = null);
     Task<List<Review>> GetByAuthorUserAsync(int userId);
-    Task<List<Review>> GetPendingReviewsAsync();
     Task<Review> CreateAsync(Review review);
     Task<Review> UpdateAsync(Review review);
     Task DeleteAsync(int id);

@@ -24,6 +24,29 @@ public class ReviewRepository : IReviewRepository
             .FirstOrDefaultAsync(a => a.ReviewId == id);
     }
 
+    public async Task<List<Review>> GetAllAsync()
+    {
+        return await _context.Reviews
+            .Include(r => r.Author)
+            .Include(r => r.Target)
+            .Include(r => r.Carpool).ThenInclude(c => c!.Driver)
+            .Include(r => r.Carpool).ThenInclude(c => c!.Vehicle).ThenInclude(v => v.Brand)
+            .OrderByDescending(r => r.ReviewId)
+            .ToListAsync();
+    }
+
+    public async Task<List<Review>> GetByUserAsync(int userId)
+    {
+        return await _context.Reviews
+            .Include(r => r.Author)
+            .Include(r => r.Target)
+            .Include(r => r.Carpool).ThenInclude(c => c!.Driver)
+            .Include(r => r.Carpool).ThenInclude(c => c!.Vehicle).ThenInclude(v => v.Brand)
+            .Where(r => r.AuthorUserId == userId || r.TargetUserId == userId)
+            .OrderByDescending(r => r.ReviewId)
+            .ToListAsync();
+    }
+
     public async Task<List<Review>> GetByTargetUserAsync(int userId, string? status = null)
     {
         var query = _context.Reviews
@@ -47,17 +70,6 @@ public class ReviewRepository : IReviewRepository
             .Include(a => a.Carpool)
             .Where(a => a.AuthorUserId == userId)
             .OrderByDescending(a => a.CreatedAt)
-            .ToListAsync();
-    }
-
-    public async Task<List<Review>> GetPendingReviewsAsync()
-    {
-        return await _context.Reviews
-            .Include(a => a.Author)
-            .Include(a => a.Target)
-            .Include(a => a.Carpool)
-            .Where(a => a.Status == ReviewStatus.Pending)
-            .OrderBy(a => a.CreatedAt)
             .ToListAsync();
     }
 

@@ -103,12 +103,36 @@ public class ReviewController(
         return CreatedAtAction(nameof(GetByUser), new { userId = createDto.TargetUserId }, dto);
     }
 
-    [Authorize(Roles = "Employee,Administrator")]
-    [HttpGet("pending")]
-    public async Task<IActionResult> GetPending()
+    [HttpGet("dashboard")]
+    public async Task<IActionResult> GetDashboard()
     {
-        var reviews = await _reviewRepository.GetPendingReviewsAsync();
-        var result = reviews.Select(MapToReviewDTO).ToList();
+        List<Review> reviews;
+        if (User.IsInRole("Employee") || User.IsInRole("Administrator"))
+        {
+            reviews = await _reviewRepository.GetAllAsync();
+        }
+        else
+        {
+            reviews = await _reviewRepository.GetByUserAsync(GetCurrentUserId());
+        }
+
+        var result = reviews.Select(r => new
+        {
+            r.ReviewId,
+            r.Comment,
+            r.Note,
+            Status = r.Status.ToString(),
+            r.CreatedAt,
+            AuthorUsername = r.Author.Username,
+            TargetUsername = r.Target.Username,
+            CarpoolId = r.CarpoolId,
+            DepartureCity = r.Carpool?.DepartureCity ?? "",
+            ArrivalCity = r.Carpool?.ArrivalCity ?? "",
+            DepartureDate = r.Carpool?.DepartureDate,
+            DriverUsername = r.Carpool?.Driver?.Username ?? "",
+            VehicleBrand = r.Carpool?.Vehicle?.Brand?.Label ?? "",
+            VehicleModel = r.Carpool?.Vehicle?.Model ?? "",
+        }).ToList();
 
         return Ok(result);
     }

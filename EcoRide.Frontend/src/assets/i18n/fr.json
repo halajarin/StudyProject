@@ -387,6 +387,21 @@
     "contact_title": "Contact",
     "contact_content": "Pour toute question concernant les mentions légales, vous pouvez nous contacter par email à contact@ecoride.fr."
   },
+  "employee": {
+    "reviews_title": "Avis",
+    "total_reviews": "Total avis",
+    "validated_reviews": "Validés",
+    "rejected_reviews": "Rejetés",
+    "average_rating": "Note moyenne",
+    "min_max_notes": "min {{min}} — max {{max}}",
+    "column_passenger": "Passager",
+    "column_trip_id": "ID trajet",
+    "column_trip_date": "Date trajet",
+    "column_driver_vehicle": "Conducteur / Véhicule",
+    "column_rating": "Note",
+    "column_comment": "Commentaire",
+    "no_reviews": "Aucun avis trouvé"
+  },
   "messages": {
     "operation_successful": "Opération réussie",
     "operation_failed": "L'opération a échoué",
