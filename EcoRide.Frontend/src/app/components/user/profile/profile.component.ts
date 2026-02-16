@@ -74,9 +74,14 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             }
 
             @if (hasRole(UserRole.Driver)) {
-              <button (click)="showAddVehicle.set(!showAddVehicle())" class="btn btn-secondary mt-2">
-                {{ showAddVehicle() ? ('common.cancel' | translate) : ('user.add_vehicle' | translate) }}
-              </button>
+              <div class="vehicle-actions">
+                <button (click)="showAddVehicle.set(!showAddVehicle())" class="btn btn-secondary">
+                  {{ showAddVehicle() ? ('common.cancel' | translate) : ('user.add_vehicle' | translate) }}
+                </button>
+                <a routerLink="/create-carpool" class="btn btn-primary">
+                  ➕ {{ 'navigation.create_carpool' | translate }}
+                </a>
+              </div>
 
               @if (showAddVehicle()) {
                 <form (ngSubmit)="addVehicle()" class="mt-2">
@@ -120,10 +125,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                   <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
                 </form>
               }
-
-              <a routerLink="/create-carpool" class="btn btn-primary mt-2">
-                ➕ {{ 'navigation.create_carpool' | translate }}
-              </a>
             }
           </div>
         </div>
@@ -229,6 +230,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                           }
                           @if (trip.status === CarpoolStatus.Completed) {
                             <span class="badge badge-success">{{ 'carpool.status.completed' | translate }}</span>
+                            @if (reviews().length > 0) {
+                              <a routerLink="/reviews" class="btn-sm btn-outline-primary">
+                                {{ 'profile.view_reviews' | translate }}
+                              </a>
+                            }
                           }
                           @if (trip.status === CarpoolStatus.Cancelled) {
                             <span class="badge badge-danger">{{ 'carpool.status.cancelled' | translate }}</span>
@@ -345,48 +351,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                               </div>
                             }
 
-                            <!-- Review form -->
-                            @if (showReviewForm() === trip.carpoolId) {
-                              <form (ngSubmit)="submitReview()" class="review-form mt-2">
-                                <div class="form-group">
-                                  <label>{{ 'review.rating' | translate }}</label>
-                                  <div class="star-rating">
-                                    @for (star of [5, 4, 3, 2, 1]; track star) {
-                                      <label>
-                                        <input type="radio"
-                                               name="rating"
-                                               [(ngModel)]="reviewForm.note"
-                                               [value]="star"
-                                               required>
-                                        <span>{{ getStars(star) }}</span>
-                                      </label>
-                                    }
-                                  </div>
-                                </div>
-                                <div class="form-group">
-                                  <label>{{ 'review.comment' | translate }}</label>
-                                  <textarea [(ngModel)]="reviewForm.comment"
-                                            name="comment"
-                                            rows="3"
-                                            minlength="10"
-                                            maxlength="500"
-                                            required></textarea>
-                                  <small>{{ reviewForm.comment.length }}/500</small>
-                                </div>
-                                <div class="button-group">
-                                  <button type="submit"
-                                          class="btn btn-primary"
-                                          [disabled]="reviewLoading()">
-                                    {{ reviewLoading() ? ('common.loading' | translate) : ('common.submit' | translate) }}
-                                  </button>
-                                  <button type="button"
-                                          (click)="cancelReview()"
-                                          class="btn btn-secondary">
-                                    {{ 'common.cancel' | translate }}
-                                  </button>
-                                </div>
-                              </form>
-                            }
                           </div>
                         </td>
                       </tr>
@@ -398,27 +362,41 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           </div>
         }
 
-        <div class="card mt-3">
-          <h2>{{ 'review.reviews' | translate }}</h2>
-          @if (reviews().length > 0) {
-            <div class="reviews-list">
-              @for (review of reviews(); track review.reviewId) {
-                <div class="review-card">
-                  <div class="review-header">
-                    <div class="review-author">
-                      <strong>{{ review.authorUsername }}</strong>
-                      <span class="review-rating">{{ getStars(review.rating) }}</span>
-                    </div>
-                    <span class="review-date">{{ review.createdAt | date:'dd/MM/yyyy' }}</span>
+        <!-- Review modal -->
+        @if (showReviewForm() !== null) {
+          <div class="modal-overlay" (click)="cancelReview()">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+              <h3>⭐ {{ 'review.leave_review' | translate }}</h3>
+              <form (ngSubmit)="submitReview()">
+                <div class="form-group">
+                  <label>{{ 'review.rating' | translate }}</label>
+                  <div class="star-rating">
+                    @for (star of [5, 4, 3, 2, 1]; track star) {
+                      <label>
+                        <input type="radio" name="rating" [(ngModel)]="reviewForm.note" [value]="star" required>
+                        <span>{{ getStars(star) }}</span>
+                      </label>
+                    }
                   </div>
-                  <p class="review-comment">{{ review.comment }}</p>
                 </div>
-              }
+                <div class="form-group">
+                  <label>{{ 'review.comment' | translate }}</label>
+                  <textarea [(ngModel)]="reviewForm.comment" name="comment" rows="3"
+                            minlength="10" maxlength="500" required></textarea>
+                  <small>{{ reviewForm.comment.length }}/500</small>
+                </div>
+                <div class="button-group">
+                  <button type="submit" class="btn btn-primary" [disabled]="reviewLoading()">
+                    {{ reviewLoading() ? ('common.loading' | translate) : ('common.submit' | translate) }}
+                  </button>
+                  <button type="button" (click)="cancelReview()" class="btn btn-secondary">
+                    {{ 'common.cancel' | translate }}
+                  </button>
+                </div>
+              </form>
             </div>
-          } @else {
-            <p>{{ 'review.no_reviews' | translate }}</p>
-          }
-        </div>
+          </div>
+        }
       }
     </div>
   `,
@@ -893,14 +871,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       color: #856404;
     }
 
-    .review-form {
-      background-color: var(--very-light-green);
-      padding: 1rem;
-      margin-top: 1rem;
-      border-radius: 5px;
-      border: 1px solid var(--primary-green);
-    }
-
     .star-rating {
       display: flex;
       gap: 0.5rem;
@@ -931,47 +901,63 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       margin-top: 1rem;
     }
 
-    /* --- Reviews list --- */
+    /* --- Vehicle actions --- */
 
-    .reviews-list {
+    .vehicle-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
       margin-top: 1rem;
     }
 
-    .review-card {
-      background-color: var(--light-gray);
-      padding: 1.5rem;
-      margin: 1rem 0;
-      border-radius: 8px;
-      border-left: 4px solid var(--primary-green);
+    /* --- Outline button --- */
+
+    .btn-outline-primary {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.85rem;
+      border: 1px solid var(--primary-green);
+      border-radius: 5px;
+      color: var(--primary-green);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
     }
 
-    .review-header {
+    .btn-outline-primary:hover {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    /* --- Review modal --- */
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
       margin-bottom: 1rem;
-    }
-
-    .review-author {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .review-rating {
-      font-size: 1.2rem;
-      color: gold;
-    }
-
-    .review-date {
       color: var(--dark-green);
-      font-size: 0.9rem;
-    }
-
-    .review-comment {
-      margin: 0;
-      line-height: 1.6;
-      color: var(--text-dark);
     }
   `]
 })
@@ -1360,14 +1346,6 @@ export class ProfileComponent implements OnInit {
   }
 
   openReviewForm(trip: Carpool) {
-    const currentUserId = this.user()?.userId || 0;
-    const isPassenger = trip.userId !== currentUserId;
-
-    if (!isPassenger) {
-      alert(this.translate.instant('review.driver_review_coming_soon'));
-      return;
-    }
-
     this.showReviewForm.set(trip.carpoolId);
     this.reviewForm = {
       comment: '',
@@ -1375,10 +1353,6 @@ export class ProfileComponent implements OnInit {
       targetUserId: trip.userId,
       carpoolId: trip.carpoolId
     };
-
-    const expanded = new Set(this.expandedTripIds());
-    expanded.add(trip.carpoolId);
-    this.expandedTripIds.set(expanded);
   }
 
   submitReview() {
@@ -1392,6 +1366,7 @@ export class ProfileComponent implements OnInit {
         this.showReviewForm.set(null);
         this.reviewLoading.set(false);
         this.loadProfile();
+        this.loadReviews();
       },
       error: (err) => {
         alert(err.error?.message || this.translate.instant('messages.error_occurred'));

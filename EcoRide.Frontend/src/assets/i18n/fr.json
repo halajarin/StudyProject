@@ -416,7 +416,8 @@
     "no_trips": "Aucun trajet",
     "seats_info": "{{available}} / {{total}} places",
     "price_info": "{{price}} crédits/personne",
-    "duration_info": "{{duration}} min"
+    "duration_info": "{{duration}} min",
+    "view_reviews": "Voir les avis"
   },
   "messages": {
     "operation_successful": "Opération réussie",
