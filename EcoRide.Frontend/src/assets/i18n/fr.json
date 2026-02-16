@@ -402,6 +402,22 @@
     "column_comment": "Commentaire",
     "no_reviews": "Aucun avis trouvé"
   },
+  "profile": {
+    "tab_driver": "Conducteur",
+    "tab_passenger": "Passager",
+    "column_route": "Trajet",
+    "column_date": "Date de départ",
+    "column_actions": "Actions",
+    "trip_detail_departure": "Départ",
+    "trip_detail_arrival": "Arrivée",
+    "trip_detail_vehicle": "Véhicule",
+    "trip_detail_trip": "Trajet",
+    "trip_detail_driver": "Conducteur",
+    "no_trips": "Aucun trajet",
+    "seats_info": "{{available}} / {{total}} places",
+    "price_info": "{{price}} crédits/personne",
+    "duration_info": "{{duration}} min"
+  },
   "messages": {
     "operation_successful": "Opération réussie",
     "operation_failed": "L'opération a échoué",

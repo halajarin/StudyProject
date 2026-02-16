@@ -402,6 +402,22 @@
     "column_comment": "Comment",
     "no_reviews": "No reviews found"
   },
+  "profile": {
+    "tab_driver": "Driver",
+    "tab_passenger": "Passenger",
+    "column_route": "Route",
+    "column_date": "Departure date",
+    "column_actions": "Actions",
+    "trip_detail_departure": "Departure",
+    "trip_detail_arrival": "Arrival",
+    "trip_detail_vehicle": "Vehicle",
+    "trip_detail_trip": "Trip",
+    "trip_detail_driver": "Driver",
+    "no_trips": "No trips",
+    "seats_info": "{{available}} / {{total}} seats",
+    "price_info": "{{price}} credits/person",
+    "duration_info": "{{duration}} min"
+  },
   "messages": {
     "operation_successful": "Operation completed successfully",
     "operation_failed": "Operation failed",
