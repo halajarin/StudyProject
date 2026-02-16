@@ -59,29 +59,30 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </div>
           </div>
 
-          <div class="card">
-            <h2>{{ 'user.my_vehicles' | translate }}</h2>
-            @if (vehicles().length > 0) {
-              @for (vehicle of vehicles(); track vehicle.vehicleId) {
-                <div class="vehicle-card">
-                  <h4>{{ vehicle.brandLabel }} {{ vehicle.model }}</h4>
-                  <p>{{ vehicle.registrationNumber }} - {{ vehicle.energyType }}</p>
-                  <p>{{ vehicle.seatCount }} {{ 'carpool.seats_available' | translate }} - {{ vehicle.color }}</p>
-                </div>
-              }
-            } @else {
-              <p>{{ 'user.no_vehicles' | translate }}</p>
-            }
-
+          <div class="right-column">
             @if (hasRole(UserRole.Driver)) {
-              <div class="vehicle-actions">
-                <button (click)="showAddVehicle.set(!showAddVehicle())" class="btn btn-secondary">
+              <a routerLink="/create-carpool" class="btn btn-primary create-carpool-btn">
+                ➕ {{ 'navigation.create_carpool' | translate }}
+              </a>
+            }
+            <div class="card">
+              <h2>{{ 'user.my_vehicles' | translate }}</h2>
+              @if (vehicles().length > 0) {
+                @for (vehicle of vehicles(); track vehicle.vehicleId) {
+                  <div class="vehicle-card">
+                    <h4>{{ vehicle.brandLabel }} {{ vehicle.model }}</h4>
+                    <p>{{ vehicle.registrationNumber }} - {{ vehicle.energyType }}</p>
+                    <p>{{ vehicle.seatCount }} {{ 'carpool.seats_available' | translate }} - {{ vehicle.color }}</p>
+                  </div>
+                }
+              } @else {
+                <p>{{ 'user.no_vehicles' | translate }}</p>
+              }
+
+              @if (hasRole(UserRole.Driver)) {
+                <button (click)="showAddVehicle.set(!showAddVehicle())" class="btn btn-secondary mt-2">
                   {{ showAddVehicle() ? ('common.cancel' | translate) : ('user.add_vehicle' | translate) }}
                 </button>
-                <a routerLink="/create-carpool" class="btn btn-primary">
-                  ➕ {{ 'navigation.create_carpool' | translate }}
-                </a>
-              </div>
 
               @if (showAddVehicle()) {
                 <form (ngSubmit)="addVehicle()" class="mt-2">
@@ -126,6 +127,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 </form>
               }
             }
+            </div>
           </div>
         </div>
 
@@ -901,13 +903,17 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       margin-top: 1rem;
     }
 
-    /* --- Vehicle actions --- */
+    /* --- Right column (create carpool + vehicles) --- */
 
-    .vehicle-actions {
+    .right-column {
       display: flex;
+      flex-direction: column;
       gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
+    }
+
+    .create-carpool-btn {
+      align-self: flex-start;
+      text-decoration: none;
     }
 
     /* --- Outline button --- */
