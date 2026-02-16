@@ -1,8 +1,8 @@
 export interface AdminStats {
-  totalUsers: number;
   activeUsers: number;
-  totalCarpools: number;
-  activeCarpools: number;
-  totalCreditsCirculating: number;
-  platformCreditsEarned: number;
+  driverCount: number;
+  passengerCount: number;
+  driverAndPassengerCount: number;
+  completedCarpools: number;
+  inProgressCarpools: number;
 }

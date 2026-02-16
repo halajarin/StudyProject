@@ -33,7 +33,7 @@ public class CarpoolRepository : ICarpoolRepository
             .Include(c => c.Vehicle)
                 .ThenInclude(v => v.Brand)
             .Include(c => c.Driver)
-            .OrderByDescending(c => c.CreatedAt)
+            .OrderByDescending(c => c.CarpoolId)
             .ToListAsync();
     }
 
@@ -223,10 +223,4 @@ public class CarpoolRepository : ICarpoolRepository
         return counts.ToDictionary(x => x.Status, x => x.Count);
     }
 
-    public async Task<int> GetTotalValidatedParticipationsCountAsync()
-    {
-        return await _context.CarpoolParticipations
-            .Where(p => p.Status == ParticipationStatus.Validated)
-            .CountAsync();
-    }
 }

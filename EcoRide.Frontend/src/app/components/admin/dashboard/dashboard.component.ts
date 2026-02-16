@@ -19,15 +19,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
       @if (stats) {
         <div class="admin-stats-grid">
-          <div class="stat-card stat-card--users">
-            <div class="stat-card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <div class="stat-card-content">
-              <span class="stat-label">{{ 'admin.total_users' | translate }}</span>
-              <span class="stat-value">{{ stats.totalUsers }}</span>
-            </div>
-          </div>
           <div class="stat-card stat-card--active">
             <div class="stat-card-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -37,40 +28,41 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <span class="stat-value">{{ stats.activeUsers }}</span>
             </div>
           </div>
-          <div class="stat-card stat-card--carpools">
+          <div class="stat-card stat-card--drivers">
             <div class="stat-card-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-6l2-4h9l4 4h3v6h-2"/><path d="M5 11l2-4h9l4 4"/></svg>
             </div>
             <div class="stat-card-content">
-              <span class="stat-label">{{ 'admin.total_carpools' | translate }}</span>
-              <span class="stat-value">{{ stats.totalCarpools }}</span>
+              <span class="stat-label">{{ 'admin.driver_count' | translate }}</span>
+              <span class="stat-value">{{ stats.driverCount }}</span>
             </div>
           </div>
-          <div class="stat-card stat-card--active-carpools">
+          <div class="stat-card stat-card--passengers">
             <div class="stat-card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             </div>
             <div class="stat-card-content">
-              <span class="stat-label">{{ 'admin.active_carpools' | translate }}</span>
-              <span class="stat-value">{{ stats.activeCarpools }}</span>
+              <span class="stat-label">{{ 'admin.passenger_count' | translate }}</span>
+              <span class="stat-value">{{ stats.passengerCount }}</span>
+              <span class="stat-sub-label">{{ 'admin.of_which_drivers' | translate:{ count: stats.driverAndPassengerCount } }}</span>
             </div>
           </div>
-          <div class="stat-card stat-card--credits">
+          <div class="stat-card stat-card--completed">
             <div class="stat-card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div class="stat-card-content">
-              <span class="stat-label">{{ 'admin.credits_circulating' | translate }}</span>
-              <span class="stat-value">{{ stats.totalCreditsCirculating }}</span>
+              <span class="stat-label">{{ 'admin.completed_carpools' | translate }}</span>
+              <span class="stat-value">{{ stats.completedCarpools }}</span>
             </div>
           </div>
-          <div class="stat-card stat-card--platform">
+          <div class="stat-card stat-card--inprogress">
             <div class="stat-card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             </div>
             <div class="stat-card-content">
-              <span class="stat-label">{{ 'admin.total_credits' | translate }}</span>
-              <span class="stat-value">{{ stats.platformCreditsEarned }}</span>
+              <span class="stat-label">{{ 'admin.in_progress_carpools' | translate }}</span>
+              <span class="stat-value">{{ stats.inProgressCarpools }}</span>
             </div>
           </div>
         </div>
@@ -146,16 +138,29 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <thead>
                 <tr>
                   <th class="th-expand"></th>
-                  <th>ID</th>
-                  <th>{{ 'auth.username' | translate }}</th>
-                  <th>{{ 'auth.email' | translate }}</th>
+                  <th class="sortable" (click)="toggleUserSort('userId')">ID {{ getUserSortArrow('userId') }}</th>
+                  <th class="sortable" (click)="toggleUserSort('username')">{{ 'auth.username' | translate }} {{ getUserSortArrow('username') }}</th>
+                  <th class="sortable" (click)="toggleUserSort('email')">{{ 'auth.email' | translate }} {{ getUserSortArrow('email') }}</th>
                   <th>{{ 'user.roles' | translate }}</th>
                   <th>{{ 'user.my_vehicles' | translate }}</th>
-                  <th>{{ 'user.credits' | translate }}</th>
-                  <th>{{ 'admin.created_at' | translate }}</th>
+                  <th class="sortable" (click)="toggleUserSort('credits')">{{ 'user.credits' | translate }} {{ getUserSortArrow('credits') }}</th>
+                  <th class="sortable" (click)="toggleUserSort('createdAt')">{{ 'admin.created_at' | translate }} {{ getUserSortArrow('createdAt') }}</th>
                   <th>{{ 'admin.deactivated_at' | translate }}</th>
-                  <th>{{ 'admin.status_label' | translate }}</th>
+                  <th class="sortable" (click)="toggleUserSort('isActive')">{{ 'admin.status_label' | translate }} {{ getUserSortArrow('isActive') }}</th>
                   <th>{{ 'common.edit' | translate }}</th>
+                </tr>
+                <tr class="filter-row">
+                  <th></th>
+                  <th><input class="column-filter" (input)="setUserFilter('userId', $event)" (click)="$event.stopPropagation()" placeholder="ID"></th>
+                  <th><input class="column-filter" (input)="setUserFilter('username', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setUserFilter('email', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setUserFilter('roles', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setUserFilter('vehicles', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setUserFilter('credits', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setUserFilter('createdAt', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -301,15 +306,26 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>{{ 'admin.carpools_route' | translate }}</th>
-                  <th>{{ 'carpool.departure_date' | translate }}</th>
-                  <th>{{ 'admin.carpools_driver' | translate }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('carpoolId')">ID {{ getCarpoolSortArrow('carpoolId') }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('departureCity')">{{ 'admin.carpools_route' | translate }} {{ getCarpoolSortArrow('departureCity') }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('departureDate')">{{ 'carpool.departure_date' | translate }} {{ getCarpoolSortArrow('departureDate') }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('driverUsername')">{{ 'admin.carpools_driver' | translate }} {{ getCarpoolSortArrow('driverUsername') }}</th>
                   <th>{{ 'admin.carpools_vehicle' | translate }}</th>
-                  <th>{{ 'admin.carpools_seats' | translate }}</th>
-                  <th>{{ 'admin.carpools_price' | translate }}</th>
-                  <th>{{ 'admin.status_label' | translate }}</th>
-                  <th>{{ 'admin.created_at' | translate }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('availableSeats')">{{ 'admin.carpools_seats' | translate }} {{ getCarpoolSortArrow('availableSeats') }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('pricePerPerson')">{{ 'admin.carpools_price' | translate }} {{ getCarpoolSortArrow('pricePerPerson') }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('status')">{{ 'admin.status_label' | translate }} {{ getCarpoolSortArrow('status') }}</th>
+                  <th class="sortable" (click)="toggleCarpoolSort('createdAt')">{{ 'admin.created_at' | translate }} {{ getCarpoolSortArrow('createdAt') }}</th>
+                </tr>
+                <tr class="filter-row">
+                  <th><input class="column-filter" (input)="setCarpoolFilter('carpoolId', $event)" (click)="$event.stopPropagation()" placeholder="ID"></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('departureCity', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('departureDate', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('driverUsername', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('vehicle', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('availableSeats', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('pricePerPerson', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('status', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
+                  <th><input class="column-filter" (input)="setCarpoolFilter('createdAt', $event)" (click)="$event.stopPropagation()" placeholder="..."></th>
                 </tr>
               </thead>
               <tbody>
@@ -351,16 +367,16 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styles: [`
     .admin-stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
     }
 
     .stat-card {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1.25rem;
+      gap: 0.75rem;
+      padding: 1rem;
       border-radius: 12px;
       background: white;
       border: 1px solid var(--light-gray);
@@ -382,12 +398,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       flex-shrink: 0;
     }
 
-    .stat-card--users .stat-card-icon { background: #e3f2fd; color: #1565c0; }
     .stat-card--active .stat-card-icon { background: #e8f5e9; color: #2e7d32; }
-    .stat-card--carpools .stat-card-icon { background: #fff3e0; color: #e65100; }
-    .stat-card--active-carpools .stat-card-icon { background: #f3e5f5; color: #7b1fa2; }
-    .stat-card--credits .stat-card-icon { background: #e0f7fa; color: #00838f; }
-    .stat-card--platform .stat-card-icon { background: #fce4ec; color: #c62828; }
+    .stat-card--drivers .stat-card-icon { background: #e3f2fd; color: #1565c0; }
+    .stat-card--passengers .stat-card-icon { background: #f3e5f5; color: #7b1fa2; }
+    .stat-card--completed .stat-card-icon { background: #e8f5e9; color: #2e7d32; }
+    .stat-card--inprogress .stat-card-icon { background: #fff3e0; color: #e65100; }
 
     .stat-card-content {
       display: flex;
@@ -411,6 +426,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       line-height: 1.2;
     }
 
+    .stat-sub-label {
+      font-size: 0.72rem;
+      color: var(--gray);
+      margin-top: 0.15rem;
+    }
+
     .employee-section {
       background: white;
       border: 1px solid var(--light-gray);
@@ -427,7 +448,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     .employee-form {
       display: flex;
       gap: 1rem;
-      align-items: end;
+      align-items: flex-end;
       flex-wrap: wrap;
     }
 
@@ -446,7 +467,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .employee-form .btn {
-      height: 42px;
+      height: 38px;
+      align-self: flex-end;
       white-space: nowrap;
     }
 
@@ -595,11 +617,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       min-width: 900px;
       border-collapse: collapse;
       margin-top: 0;
+      font-size: 0.85rem;
     }
 
     .data-table th,
     .data-table td {
-      padding: 0.8rem;
+      padding: 0.55rem 0.6rem;
       text-align: left;
       border-bottom: 1px solid var(--light-gray);
     }
@@ -607,6 +630,41 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     .data-table th {
       background-color: var(--dark-green);
       color: var(--white);
+    }
+
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .sortable:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .filter-row th {
+      background-color: var(--dark-green);
+      padding: 0.2rem 0.3rem;
+    }
+
+    .column-filter {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.75rem;
+      padding: 0.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+
+    .column-filter::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .column-filter:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .th-expand {
@@ -644,17 +702,17 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
     .role-tag {
       display: inline-block;
-      padding: 0.15rem 0.5rem;
-      margin: 0.1rem 0.2rem;
+      padding: 0.1rem 0.4rem;
+      margin: 0.1rem 0.15rem;
       border-radius: 12px;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       background-color: #e8f5e9;
       color: #2e7d32;
     }
 
     .td-date {
       white-space: nowrap;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--gray);
     }
 
@@ -670,13 +728,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .user-detail-stats {
-      padding: 1.5rem;
+      padding: 1rem;
     }
 
     .role-badges {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .role-badge {
@@ -698,15 +756,15 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
     .stats-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
     }
 
     .detail-stat-card {
       background: white;
       border: 1px solid var(--light-gray);
       border-radius: 10px;
-      padding: 1rem;
+      padding: 0.75rem;
       text-align: center;
     }
 
@@ -796,10 +854,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
-      padding: 0.15rem 0.5rem;
-      margin: 0.1rem 0.15rem;
+      padding: 0.1rem 0.4rem;
+      margin: 0.1rem 0.1rem;
       border-radius: 6px;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       background: #f5f5f5;
       border: 1px solid var(--light-gray);
       white-space: nowrap;
@@ -807,7 +865,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
     .vehicle-tag small {
       color: var(--gray);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
     }
 
     .vehicle-electric {
@@ -838,25 +896,93 @@ export class DashboardComponent implements OnInit {
   userStatsMap = signal<Record<number, AdminUserDetailStats>>({});
   loadingStatsIds = signal<Set<number>>(new Set());
 
+  // Sorting — Users
+  userSortColumn = signal<string>('');
+  userSortDirection = signal<'asc' | 'desc'>('asc');
+
+  // Column filters — Users
+  userColumnFilters = signal<Record<string, string>>({});
+
   carpools = signal<AdminCarpool[]>([]);
   carpoolStatusFilter = signal<string>('all');
   carpoolsLoaded = false;
 
+  // Sorting — Carpools
+  carpoolSortColumn = signal<string>('');
+  carpoolSortDirection = signal<'asc' | 'desc'>('asc');
+
+  // Column filters — Carpools
+  carpoolColumnFilters = signal<Record<string, string>>({});
+
   filteredUsers = computed(() => {
     const status = this.statusFilter();
     const role = this.roleFilter();
+    const filters = this.userColumnFilters();
+    const sortCol = this.userSortColumn();
+    const sortDir = this.userSortDirection();
+
     let result = this.users();
     if (status === 'active') result = result.filter(u => u.isActive);
     if (status === 'suspended') result = result.filter(u => !u.isActive);
     if (role !== 'all') result = result.filter(u => u.roles.includes(role));
+
+    // Column filters
+    for (const [key, value] of Object.entries(filters)) {
+      if (!value) continue;
+      const lower = value.toLowerCase();
+      result = result.filter(u => {
+        if (key === 'roles') {
+          return (u.roles || []).join(' ').toLowerCase().includes(lower);
+        }
+        if (key === 'vehicles') {
+          return (u.vehicles || []).some(v =>
+            `${v.brand} ${v.model} ${v.registrationNumber}`.toLowerCase().includes(lower)
+          );
+        }
+        const val = (u as any)[key];
+        return String(val ?? '').toLowerCase().includes(lower);
+      });
+    }
+
+    // Sorting
+    if (sortCol) {
+      result = this.sortData([...result], sortCol, sortDir);
+    }
+
     return result;
   });
 
   filteredCarpools = computed(() => {
     const status = this.carpoolStatusFilter();
-    const all = this.carpools();
-    if (status === 'all') return all;
-    return all.filter(c => c.status === status);
+    const filters = this.carpoolColumnFilters();
+    const sortCol = this.carpoolSortColumn();
+    const sortDir = this.carpoolSortDirection();
+
+    let result = this.carpools();
+    if (status !== 'all') result = result.filter(c => c.status === status);
+
+    // Column filters
+    for (const [key, value] of Object.entries(filters)) {
+      if (!value) continue;
+      const lower = value.toLowerCase();
+      result = result.filter(c => {
+        if (key === 'vehicle') {
+          return `${c.vehicleBrand} ${c.vehicleModel}`.toLowerCase().includes(lower);
+        }
+        if (key === 'departureCity') {
+          return `${c.departureCity} ${c.arrivalCity}`.toLowerCase().includes(lower);
+        }
+        const val = (c as any)[key];
+        return String(val ?? '').toLowerCase().includes(lower);
+      });
+    }
+
+    // Sorting
+    if (sortCol) {
+      result = this.sortData([...result], sortCol, sortDir);
+    }
+
+    return result;
   });
 
   allExpanded = computed(() => {
@@ -873,6 +999,72 @@ export class DashboardComponent implements OnInit {
     this.loadStats();
     this.loadUsers();
   }
+
+  // --- Sort helpers ---
+
+  toggleUserSort(column: string) {
+    if (this.userSortColumn() === column) {
+      this.userSortDirection.set(this.userSortDirection() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.userSortColumn.set(column);
+      this.userSortDirection.set('asc');
+    }
+  }
+
+  toggleCarpoolSort(column: string) {
+    if (this.carpoolSortColumn() === column) {
+      this.carpoolSortDirection.set(this.carpoolSortDirection() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.carpoolSortColumn.set(column);
+      this.carpoolSortDirection.set('asc');
+    }
+  }
+
+  getUserSortArrow(column: string): string {
+    if (this.userSortColumn() !== column) return '';
+    return this.userSortDirection() === 'asc' ? '▲' : '▼';
+  }
+
+  getCarpoolSortArrow(column: string): string {
+    if (this.carpoolSortColumn() !== column) return '';
+    return this.carpoolSortDirection() === 'asc' ? '▲' : '▼';
+  }
+
+  private sortData<T>(data: T[], column: string, direction: 'asc' | 'desc'): T[] {
+    return data.sort((a, b) => {
+      const valA = (a as any)[column];
+      const valB = (b as any)[column];
+
+      if (valA == null && valB == null) return 0;
+      if (valA == null) return 1;
+      if (valB == null) return -1;
+
+      let comparison: number;
+      if (typeof valA === 'number' && typeof valB === 'number') {
+        comparison = valA - valB;
+      } else if (typeof valA === 'boolean' && typeof valB === 'boolean') {
+        comparison = (valA === valB) ? 0 : (valA ? -1 : 1);
+      } else {
+        comparison = String(valA).localeCompare(String(valB), undefined, { numeric: true, sensitivity: 'base' });
+      }
+
+      return direction === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  // --- Column filter helpers ---
+
+  setUserFilter(column: string, event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.userColumnFilters.set({ ...this.userColumnFilters(), [column]: value });
+  }
+
+  setCarpoolFilter(column: string, event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.carpoolColumnFilters.set({ ...this.carpoolColumnFilters(), [column]: value });
+  }
+
+  // --- Existing methods ---
 
   isExpanded(userId: number): boolean {
     return this.expandedUserIds().has(userId);

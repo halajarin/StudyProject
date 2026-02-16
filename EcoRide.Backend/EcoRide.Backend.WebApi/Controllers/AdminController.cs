@@ -109,24 +109,23 @@ public class AdminController : ControllerBase
         var users = await _userRepository.GetAllAsync();
         var carpools = await _carpoolRepository.GetAllAsync();
 
-        var totalUsers = users.Count;
         var activeUsers = users.Count(u => u.IsActive);
-        var totalCarpools = carpools.Count;
-        var activeCarpools = carpools.Count(c => c.Status == CarpoolStatus.Pending || c.Status == CarpoolStatus.InProgress);
-        var totalCreditsCirculating = users.Sum(u => u.Credits);
-
-        // Platform earns 2 credits per validated participation
-        var validatedParticipations = await _carpoolRepository.GetTotalValidatedParticipationsCountAsync();
-        var platformCreditsEarned = validatedParticipations * 2;
+        var driverCount = users.Count(u => u.UserRoles.Any(ur => ur.RoleId == RoleConstants.DRIVER));
+        var passengerCount = users.Count(u => u.UserRoles.Any(ur => ur.RoleId == RoleConstants.PASSENGER));
+        var driverAndPassengerCount = users.Count(u =>
+            u.UserRoles.Any(ur => ur.RoleId == RoleConstants.DRIVER) &&
+            u.UserRoles.Any(ur => ur.RoleId == RoleConstants.PASSENGER));
+        var completedCarpools = carpools.Count(c => c.Status == CarpoolStatus.Completed);
+        var inProgressCarpools = carpools.Count(c => c.Status == CarpoolStatus.InProgress);
 
         return Ok(new
         {
-            totalUsers,
             activeUsers,
-            totalCarpools,
-            activeCarpools,
-            totalCreditsCirculating,
-            platformCreditsEarned
+            driverCount,
+            passengerCount,
+            driverAndPassengerCount,
+            completedCarpools,
+            inProgressCarpools
         });
     }
 
