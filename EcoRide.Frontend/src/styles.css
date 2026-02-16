@@ -422,8 +422,8 @@ label {
   user-select: none;
 }
 
-.sortable:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+.data-table th.sortable:hover {
+  background-color: #2d9e56;
 }
 
 .filter-row th {
