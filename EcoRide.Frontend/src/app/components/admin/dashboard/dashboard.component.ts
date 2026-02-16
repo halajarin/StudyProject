@@ -450,9 +450,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
     .employee-form {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr auto;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 1rem;
-      align-items: end;
     }
 
     .employee-form .form-group label {
@@ -465,6 +464,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .employee-form .btn {
+      grid-column: 3;
+      justify-self: end;
       height: 38px;
       white-space: nowrap;
     }
