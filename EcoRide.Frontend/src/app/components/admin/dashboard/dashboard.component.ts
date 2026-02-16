@@ -132,8 +132,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </div>
             <span class="result-count">{{ filteredUsers().length }} / {{ users().length }}</span>
           </div>
-          @if (filteredUsers().length > 0) {
-            <div class="table-scroll">
+          <div class="table-scroll">
             <table class="data-table">
               <thead>
                 <tr>
@@ -164,6 +163,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 </tr>
               </thead>
               <tbody>
+                @if (filteredUsers().length === 0) {
+                  <tr><td colspan="11" class="no-results">{{ 'admin.carpools_no_results' | translate }}</td></tr>
+                }
                 @for (user of filteredUsers(); track user.userId) {
                   <tr class="clickable-row" [class.expanded]="isExpanded(user.userId)" (click)="toggleUserStats(user.userId)">
                     <td class="td-expand">
@@ -278,8 +280,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 }
               </tbody>
             </table>
-            </div>
-          }
+          </div>
         </div>
       }
 
@@ -301,8 +302,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </div>
             <span class="result-count">{{ filteredCarpools().length }} / {{ carpools().length }}</span>
           </div>
-          @if (filteredCarpools().length > 0) {
-            <div class="table-scroll">
+          <div class="table-scroll">
             <table class="data-table">
               <thead>
                 <tr>
@@ -329,6 +329,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 </tr>
               </thead>
               <tbody>
+                @if (filteredCarpools().length === 0) {
+                  <tr><td colspan="9" class="no-results">{{ 'admin.carpools_no_results' | translate }}</td></tr>
+                }
                 @for (c of filteredCarpools(); track c.carpoolId) {
                   <tr>
                     <td>{{ c.carpoolId }}</td>
@@ -356,10 +359,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                 }
               </tbody>
             </table>
-            </div>
-          } @else {
-            <p class="no-results">{{ 'admin.carpools_no_results' | translate }}</p>
-          }
+          </div>
         </div>
       }
     </div>
@@ -367,7 +367,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styles: [`
     .admin-stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 0.75rem;
       margin-bottom: 1.5rem;
     }
@@ -756,7 +756,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
     .stats-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 0.75rem;
     }
 
