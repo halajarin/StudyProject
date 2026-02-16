@@ -18,7 +18,7 @@ public class CreateVehicleDTOValidator : AbstractValidator<CreateVehicleDTO>
             .Matches(@"^[A-Z0-9-]+$").WithMessage("Registration number must contain only uppercase letters, numbers, and hyphens");
 
         RuleFor(x => x.EnergyType)
-            .IsInEnum().WithMessage("Energy type must be one of: Gasoline, Diesel, Electric, Hybrid, LPG, CNG");
+            .IsInEnum().WithMessage("Energy type must be one of: Electric, Hybrid, LPG");
 
         RuleFor(x => x.Color)
             .NotEmpty().WithMessage("Color is required")
