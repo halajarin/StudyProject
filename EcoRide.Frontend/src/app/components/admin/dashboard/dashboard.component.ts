@@ -64,7 +64,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <span class="stat-label">{{ 'admin.in_progress_carpools' | translate }}</span>
               <span class="stat-value">{{ stats.inProgressCarpools }}</span>
             </div>
-            <span class="stat-sub-label">{{ 'admin.of_which_pending' | translate:{ count: stats.pendingCarpools } }}</span>
+            <span class="stat-sub-label">{{ (stats.inProgressCarpools > 0 ? 'admin.of_which_pending' : 'admin.pending_trips') | translate:{ count: stats.pendingCarpools } }}</span>
           </div>
         </div>
       }
