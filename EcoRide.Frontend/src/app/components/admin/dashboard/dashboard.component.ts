@@ -63,6 +63,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             <div class="stat-card-content">
               <span class="stat-label">{{ 'admin.in_progress_carpools' | translate }}</span>
               <span class="stat-value">{{ stats.inProgressCarpools }}</span>
+              <span class="stat-sub-label">{{ 'admin.of_which_pending' | translate:{ count: stats.pendingCarpools } }}</span>
             </div>
           </div>
         </div>
@@ -427,9 +428,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .stat-sub-label {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--gray);
-      margin-top: 0.15rem;
+      font-style: italic;
+      margin-top: 0.2rem;
+      line-height: 1.2;
     }
 
     .employee-section {
@@ -446,15 +449,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .employee-form {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
       gap: 1rem;
-      align-items: flex-end;
-      flex-wrap: wrap;
-    }
-
-    .employee-form .form-group {
-      flex: 1;
-      min-width: 160px;
+      align-items: end;
     }
 
     .employee-form .form-group label {
@@ -468,7 +466,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
     .employee-form .btn {
       height: 38px;
-      align-self: flex-end;
       white-space: nowrap;
     }
 

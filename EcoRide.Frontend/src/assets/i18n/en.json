@@ -318,6 +318,7 @@
     "of_which_drivers": "(of which {{count}} are also drivers)",
     "completed_carpools": "Completed trips",
     "in_progress_carpools": "In-progress trips",
+    "of_which_pending": "(of which {{count}} pending)",
     "user_active": "Active",
     "user_suspended": "Suspended",
     "activate_user": "Activate",

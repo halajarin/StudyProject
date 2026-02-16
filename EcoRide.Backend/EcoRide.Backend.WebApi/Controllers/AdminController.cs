@@ -117,6 +117,7 @@ public class AdminController : ControllerBase
             u.UserRoles.Any(ur => ur.RoleId == RoleConstants.PASSENGER));
         var completedCarpools = carpools.Count(c => c.Status == CarpoolStatus.Completed);
         var inProgressCarpools = carpools.Count(c => c.Status == CarpoolStatus.InProgress);
+        var pendingCarpools = carpools.Count(c => c.Status == CarpoolStatus.Pending);
 
         return Ok(new
         {
@@ -125,7 +126,8 @@ public class AdminController : ControllerBase
             passengerCount,
             driverAndPassengerCount,
             completedCarpools,
-            inProgressCarpools
+            inProgressCarpools,
+            pendingCarpools
         });
     }
 

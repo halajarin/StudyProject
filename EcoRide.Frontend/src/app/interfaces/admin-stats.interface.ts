@@ -5,4 +5,5 @@ export interface AdminStats {
   driverAndPassengerCount: number;
   completedCarpools: number;
   inProgressCarpools: number;
+  pendingCarpools: number;
 }
