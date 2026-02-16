@@ -473,111 +473,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       white-space: nowrap;
     }
 
-    .tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 0;
-    }
-
-    .tab {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border: 1px solid var(--light-gray);
-      border-bottom: none;
-      border-radius: 10px 10px 0 0;
-      background: white;
-      color: var(--gray);
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    .tab:hover {
-      color: var(--dark-green);
-      background: var(--very-light-green);
-    }
-
-    .tab.active {
-      color: var(--dark-green);
-      background: white;
-      border-color: var(--light-gray);
-      position: relative;
-    }
-
-    .tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: white;
-    }
-
-    .tab-count {
-      background: var(--light-gray);
-      color: var(--gray);
-      padding: 0.1rem 0.5rem;
-      border-radius: 10px;
-      font-size: 0.78rem;
-      font-weight: 600;
-    }
-
-    .tab.active .tab-count {
-      background: var(--primary-green);
-      color: white;
-    }
-
-    .tab-content {
-      border-radius: 0 10px 10px 10px;
-      margin-top: 0;
-    }
-
-    .table-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .table-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .result-count {
-      font-size: 0.85rem;
-      color: var(--gray);
-    }
-
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .filter-group label {
-      font-size: 0.85rem;
-      color: var(--gray);
-      white-space: nowrap;
-    }
-
-    .filter-group select {
-      padding: 0.3rem 0.5rem;
-      border: 1px solid var(--light-gray);
-      border-radius: 6px;
-      font-size: 0.85rem;
-      background: white;
-      cursor: pointer;
-    }
-
     .btn-outline {
       background: transparent;
       border: 1px solid var(--primary-green);
@@ -592,114 +487,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       color: white;
     }
 
-    .table-scroll {
-      overflow-x: auto;
-      margin: 1rem -0.5rem 0;
-      padding: 0 0.5rem;
-      scrollbar-width: thin;
-      scrollbar-color: var(--primary-green) transparent;
-    }
-
-    .table-scroll::-webkit-scrollbar {
-      height: 6px;
-    }
-
-    .table-scroll::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .table-scroll::-webkit-scrollbar-thumb {
-      background: var(--primary-green);
-      border-radius: 3px;
-    }
-
-    .data-table {
-      width: 100%;
-      min-width: 900px;
-      border-collapse: collapse;
-      margin-top: 0;
-      font-size: 0.85rem;
-    }
-
-    .data-table th,
-    .data-table td {
-      padding: 0.55rem 0.6rem;
-      text-align: left;
-      border-bottom: 1px solid var(--light-gray);
-    }
-
-    .data-table th {
-      background-color: var(--dark-green);
-      color: var(--white);
-    }
-
-    .sortable {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .sortable:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .filter-row th {
-      background-color: var(--dark-green);
-      padding: 0.2rem 0.3rem;
-    }
-
-    .column-filter {
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 0.75rem;
-      padding: 0.25rem;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
-    }
-
-    .column-filter::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .column-filter:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.6);
-      background: rgba(255, 255, 255, 0.25);
-    }
-
-    .th-expand {
-      width: 2rem;
-    }
-
-    .td-expand {
-      width: 2rem;
-      text-align: center;
-    }
-
-    .expand-icon {
-      display: inline-block;
-      font-size: 0.9rem;
-      color: var(--primary-green);
-      transition: transform 0.2s ease;
-    }
-
-    .expand-icon.rotated {
-      transform: rotate(90deg);
-    }
-
-    .clickable-row {
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .clickable-row:hover {
-      background-color: var(--very-light-green);
-    }
-
-    .clickable-row.expanded {
-      background-color: var(--very-light-green);
-    }
+    .data-table { min-width: 900px; }
 
     .role-tag {
       display: inline-block;
@@ -715,11 +503,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       white-space: nowrap;
       font-size: 0.82rem;
       color: var(--gray);
-    }
-
-    .stats-row td {
-      padding: 0 !important;
-      background-color: #f8faf8;
     }
 
     .stats-loading {
@@ -756,24 +539,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .stats-cards-grid {
-      display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.75rem;
-    }
-
-    .detail-stat-card {
-      background: white;
-      border: 1px solid var(--light-gray);
-      border-radius: 10px;
-      padding: 0.75rem;
-      text-align: center;
-    }
-
-    .detail-stat-card h4 {
-      margin: 0 0 0.5rem 0;
-      font-size: 0.85rem;
-      color: var(--medium-gray);
-      text-transform: uppercase;
     }
 
     .stat-main-value {
@@ -783,28 +549,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       margin-bottom: 0.5rem;
     }
 
-    .stat-breakdown {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    .stat-item {
-      font-size: 0.8rem;
-      color: var(--dark-gray);
-    }
-
     .stat-item.pending { color: #f57c00; }
     .stat-item.in-progress { color: #1976d2; }
     .stat-item.completed { color: #388e3c; }
     .stat-item.confirmed { color: #1976d2; }
     .stat-item.validated { color: #388e3c; }
     .stat-item.cancelled { color: #d32f2f; }
-
-    .btn-sm {
-      padding: 0.3rem 0.8rem;
-      font-size: 0.85rem;
-    }
 
     .td-route {
       font-weight: 600;
@@ -825,26 +575,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       font-weight: 700;
       background: #e8f5e9;
       color: #2e7d32;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .status-pending { background: #fff3e0; color: #e65100; }
-    .status-inprogress { background: #e3f2fd; color: #1565c0; }
-    .status-completed { background: #e8f5e9; color: #2e7d32; }
-    .status-cancelled { background: #fce4ec; color: #c62828; }
-
-    .no-results {
-      text-align: center;
-      color: var(--gray);
-      padding: 2rem;
     }
 
     .td-vehicles {
@@ -872,11 +602,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     .vehicle-electric {
       background: #e8f5e9;
       border-color: #a5d6a7;
-    }
-
-    .text-muted {
-      color: var(--gray);
-      font-size: 0.85rem;
     }
   `]
 })

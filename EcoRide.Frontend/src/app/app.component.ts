@@ -5,12 +5,13 @@ import { AuthService } from './services/auth.service';
 import { UserRole } from './models/role.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from './components/language-selector/language-selector.component';
+import { IconComponent } from './components/shared/icon/icon.component';
 import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, TranslateModule, LanguageSelectorComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, TranslateModule, LanguageSelectorComponent, IconComponent],
   template: `
     <nav class="navbar">
       <div class="container nav-container">
@@ -27,24 +28,46 @@ import { filter } from 'rxjs';
         <div class="nav-overlay" [class.visible]="menuOpen()" (click)="closeMenu()"></div>
         <ul class="nav-menu" [class.show]="menuOpen()" (click)="$event.stopPropagation()">
           <li class="nav-links">
-            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'common.home' | translate }}</a>
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              <app-icon name="home" class="nav-icon" />
+              {{ 'common.home' | translate }}
+            </a>
           </li>
           <li class="nav-links">
-            <a routerLink="/carpools" routerLinkActive="active">{{ 'navigation.carpools' | translate }}</a>
+            <a routerLink="/carpools" routerLinkActive="active">
+              <app-icon name="route" class="nav-icon" />
+              {{ 'navigation.carpools' | translate }}
+            </a>
           </li>
 
           @if (authService.isLoggedIn()) {
             <li class="nav-links">
-              <a routerLink="/profile" routerLinkActive="active">{{ 'navigation.my_profile' | translate }}</a>
+              <a routerLink="/my-trips" routerLinkActive="active">
+                <app-icon name="car" class="nav-icon" />
+                {{ 'navigation.my_trips' | translate }}
+              </a>
             </li>
 
             <li class="nav-links">
-              <a routerLink="/reviews" routerLinkActive="active">{{ 'navigation.reviews' | translate }}</a>
+              <a routerLink="/profile" routerLinkActive="active">
+                <app-icon name="user" class="nav-icon" />
+                {{ 'navigation.my_profile' | translate }}
+              </a>
+            </li>
+
+            <li class="nav-links">
+              <a routerLink="/reviews" routerLinkActive="active">
+                <app-icon name="star" class="nav-icon" />
+                {{ 'navigation.reviews' | translate }}
+              </a>
             </li>
 
             @if (authService.hasRole(UserRole.Administrator)) {
               <li class="nav-links">
-                <a routerLink="/admin" routerLinkActive="active">{{ 'navigation.admin' | translate }}</a>
+                <a routerLink="/admin" routerLinkActive="active">
+                  <app-icon name="settings" class="nav-icon" />
+                  {{ 'navigation.admin' | translate }}
+                </a>
               </li>
             }
 
@@ -52,6 +75,7 @@ import { filter } from 'rxjs';
 
             <li class="nav-actions">
               <span class="credit-badge">
+                <app-icon name="coin" [size]="14" class="nav-icon" />
                 {{ authService.currentUserValue?.credits }} {{ 'common.credits' | translate }}
               </span>
             </li>
@@ -112,6 +136,12 @@ import { filter } from 'rxjs';
     .eco { color: var(--light-green); }
     .ride { color: var(--white); }
 
+    /* ===== NAV ICONS ===== */
+    .nav-icon {
+      vertical-align: -2px;
+      flex-shrink: 0;
+    }
+
     /* ===== HAMBURGER ===== */
     .hamburger {
       display: none;
@@ -155,15 +185,23 @@ import { filter } from 'rxjs';
     /* ===== NAV MENU (desktop) ===== */
     .nav-menu {
       display: flex;
+      flex: 1;
       list-style: none;
-      gap: 0.4rem;
+      gap: 0.3rem;
       align-items: center;
+      justify-content: flex-end;
       margin: 0;
       padding: 0;
     }
 
     .nav-separator {
       display: none;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
     }
 
     .nav-menu a {
@@ -210,6 +248,9 @@ import { filter } from 'rxjs';
     }
 
     .credit-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
       background-color: var(--primary-green);
       color: var(--white);
       padding: 0.4rem 0.8rem;
@@ -272,6 +313,7 @@ import { filter } from 'rxjs';
         height: 100vh;
         flex-direction: column;
         align-items: stretch;
+        justify-content: flex-start;
         background-color: var(--dark-green);
         padding: 5rem 1.5rem 2rem;
         gap: 0;
@@ -294,6 +336,12 @@ import { filter } from 'rxjs';
 
       .nav-menu li {
         width: 100%;
+      }
+
+      .nav-links a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
 
       .nav-menu a {
@@ -322,8 +370,8 @@ import { filter } from 'rxjs';
       }
 
       .credit-badge {
-        display: block;
-        text-align: center;
+        display: flex;
+        justify-content: center;
         padding: 0.6rem 1rem;
         font-size: 0.95rem;
         border-radius: 8px;

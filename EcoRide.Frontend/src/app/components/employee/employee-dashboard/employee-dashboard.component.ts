@@ -217,110 +217,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       margin-top: 0.25rem;
     }
 
-    .table-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .table-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .result-count {
-      font-size: 0.85rem;
-      color: var(--gray);
-    }
-
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .filter-group label {
-      font-size: 0.85rem;
-      color: var(--gray);
-      white-space: nowrap;
-    }
-
-    .filter-group select {
-      padding: 0.3rem 0.5rem;
-      border: 1px solid var(--light-gray);
-      border-radius: 6px;
-      font-size: 0.85rem;
-      background: white;
-      cursor: pointer;
-    }
-
-    .table-scroll {
-      overflow-x: auto;
-      margin: 1rem -0.5rem 0;
-      padding: 0 0.5rem;
-      scrollbar-width: thin;
-      scrollbar-color: var(--primary-green) transparent;
-    }
-
-    .table-scroll::-webkit-scrollbar { height: 6px; }
-    .table-scroll::-webkit-scrollbar-track { background: transparent; }
-    .table-scroll::-webkit-scrollbar-thumb { background: var(--primary-green); border-radius: 3px; }
-
-    .data-table {
-      width: 100%;
-      min-width: 900px;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
-    .data-table th,
-    .data-table td {
-      padding: 0.55rem 0.6rem;
-      text-align: left;
-      border-bottom: 1px solid var(--light-gray);
-    }
-
-    .data-table th {
-      background-color: var(--dark-green);
-      color: var(--white);
-    }
-
-    .sortable {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .sortable:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .filter-row th {
-      background-color: var(--dark-green);
-      padding: 0.2rem 0.3rem;
-    }
-
-    .column-filter {
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 0.75rem;
-      padding: 0.25rem;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
-    }
-
-    .column-filter::placeholder { color: rgba(255, 255, 255, 0.5); }
-    .column-filter:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.6);
-      background: rgba(255, 255, 255, 0.25);
-    }
+    .data-table { min-width: 900px; }
 
     .td-date {
       white-space: nowrap;
@@ -346,7 +243,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
 
     .text-muted {
-      color: var(--gray);
       font-size: 0.78rem;
     }
 
@@ -358,30 +254,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       font-size: 0.82rem;
       background: #fff8e1;
       color: #f57f17;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .status-pending { background: #fff3e0; color: #e65100; }
-    .status-validated { background: #e8f5e9; color: #2e7d32; }
-    .status-rejected { background: #fce4ec; color: #c62828; }
-
-    .no-results {
-      text-align: center;
-      color: var(--gray);
-      padding: 2rem;
-    }
-
-    .btn-sm {
-      padding: 0.3rem 0.8rem;
-      font-size: 0.85rem;
     }
   `]
 })
