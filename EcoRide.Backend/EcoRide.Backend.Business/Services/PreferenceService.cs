@@ -15,12 +15,19 @@ public class PreferenceService : IPreferenceService
         _preferencesCollection = mongoDatabase.GetCollection<BsonDocument>(collectionName!);
     }
 
-    public async Task<BsonDocument?> GetPreferencesAsync(int userId)
+    public async Task<Dictionary<string, object?>?> GetPreferencesAsync(int userId)
     {
         var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", userId);
         var doc = await _preferencesCollection.Find(filter).FirstOrDefaultAsync();
-        doc?.Remove("_id");
-        return doc;
+        if (doc == null) return null;
+
+        doc.Remove("_id");
+        var dict = new Dictionary<string, object?>();
+        foreach (var element in doc)
+        {
+            dict[element.Name] = BsonTypeMapper.MapToDotNetValue(element.Value);
+        }
+        return dict;
     }
 
     public async Task CreateOrUpdatePreferencesAsync(int userId, Dictionary<string, object> preferences)
