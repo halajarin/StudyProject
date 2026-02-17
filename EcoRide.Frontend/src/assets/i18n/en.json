@@ -617,7 +617,19 @@
     "publish": "Publish carpool",
     "duration_fill_times": "Fill in the times to calculate",
     "duration_error": "Arrival must be after departure",
-    "seats_option": "{{count}} seat(s)"
+    "seats_option": "{{count}} seat(s)",
+    "step_stops": "Stops & recharge",
+    "stops_title": "Stops & recharge",
+    "stops_subtitle": "For electric or hybrid rechargeable vehicles, indicate the number of stops and total planned time (recharge, break...). This information will be visible to passengers.",
+    "stops_count_label": "Number of planned stops",
+    "stops_duration_label": "Total stop duration (minutes)",
+    "stops_duration_hint": "Cumulative time of all planned stops on the trip",
+    "stops_option_0": "No stop",
+    "stops_option_1": "1 stop",
+    "stops_option_2": "2 stops",
+    "stops_option_3": "3 stops",
+    "stops_summary": "{{count}} planned stop(s) · Total stop time: ~{{duration}} min",
+    "stops_summary_hint": "These breaks will be added to the trip duration shown to passengers."
   },
   "messages": {
     "operation_successful": "Operation completed successfully",

@@ -50,7 +50,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
           <div class="section-header">
             <div class="section-icon route">&#128205;</div>
             <div class="section-title">{{ 'create_carpool.route_title' | translate }}</div>
-            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 1, total: 4} }}</div>
+            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 1, total: 5} }}</div>
           </div>
           <div class="section-body">
             <div class="field-row">
@@ -99,7 +99,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
           <div class="section-header">
             <div class="section-icon time">&#128336;</div>
             <div class="section-title">{{ 'create_carpool.schedule_title' | translate }}</div>
-            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 2, total: 4} }}</div>
+            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 2, total: 5} }}</div>
           </div>
           <div class="section-body">
             <div class="field-row">
@@ -167,7 +167,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
           <div class="section-header">
             <div class="section-icon vehicle">&#128663;</div>
             <div class="section-title">{{ 'create_carpool.vehicle_title' | translate }}</div>
-            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 3, total: 4} }}</div>
+            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 3, total: 5} }}</div>
           </div>
           <div class="section-body">
             <label class="field-label vehicle-select-label">
@@ -208,12 +208,55 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
           </div>
         </div>
 
-        <!-- ── 4. CONFIRMATION ── -->
+        <!-- ── 4. ARRÊTS & RECHARGE ── -->
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-icon stops">&#128268;</div>
+            <div class="section-title">{{ 'create_carpool.stops_title' | translate }}</div>
+            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 4, total: 5} }} · Optionnel</div>
+          </div>
+          <div class="section-body">
+            <p class="stops-description">{{ 'create_carpool.stops_subtitle' | translate }}</p>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">{{ 'create_carpool.stops_count_label' | translate }}</label>
+                <select class="field-input" [(ngModel)]="trip.pausesCount" name="pausesCount"
+                        (ngModelChange)="onPausesCountChange()">
+                  <option [ngValue]="0">{{ 'create_carpool.stops_option_0' | translate }}</option>
+                  <option [ngValue]="1">{{ 'create_carpool.stops_option_1' | translate }}</option>
+                  <option [ngValue]="2">{{ 'create_carpool.stops_option_2' | translate }}</option>
+                  <option [ngValue]="3">{{ 'create_carpool.stops_option_3' | translate }}</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">{{ 'create_carpool.stops_duration_label' | translate }}</label>
+                <div class="field-input-wrap">
+                  <span class="field-input-icon">&#9201;</span>
+                  <input class="field-input has-icon" type="number" min="0" max="180"
+                         [(ngModel)]="trip.pausesDurationMinutes" name="pausesDurationMinutes"
+                         [disabled]="!trip.pausesCount || trip.pausesCount === 0">
+                </div>
+                <span class="field-hint">{{ 'create_carpool.stops_duration_hint' | translate }}</span>
+              </div>
+            </div>
+            @if (trip.pausesCount && trip.pausesCount > 0) {
+              <div class="stops-summary">
+                <span class="stops-summary-icon">&#128268;</span>
+                <div class="stops-summary-text">
+                  <strong>{{ 'create_carpool.stops_summary' | translate:{count: trip.pausesCount, duration: trip.pausesDurationMinutes || 0} }}</strong>
+                  <span>{{ 'create_carpool.stops_summary_hint' | translate }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- ── 5. CONFIRMATION ── -->
         <div class="form-section">
           <div class="section-header">
             <div class="section-icon confirm">&#9989;</div>
             <div class="section-title">{{ 'create_carpool.confirm_title' | translate }}</div>
-            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 4, total: 4} }}</div>
+            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 5, total: 5} }}</div>
           </div>
           <div class="section-body">
             <div class="confirm-box">
@@ -384,6 +427,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     .form-section:nth-child(3) { animation-delay: 0.12s; }
     .form-section:nth-child(4) { animation-delay: 0.18s; }
     .form-section:nth-child(5) { animation-delay: 0.24s; }
+    .form-section:nth-child(6) { animation-delay: 0.30s; }
 
     .section-header {
       padding: 20px 24px 0;
@@ -404,6 +448,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     .section-icon.route { background: #e8f5e9; }
     .section-icon.time { background: #e3f2fd; }
     .section-icon.vehicle { background: #e0f7fa; }
+    .section-icon.stops { background: #FFF3E0; }
     .section-icon.confirm { background: #ffebee; }
     .section-title { font-weight: 700; font-size: 1.05rem; }
     .section-subtitle { font-size: 0.82rem; color: var(--gray); margin-left: auto; }
@@ -564,6 +609,42 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     }
     .vehicle-manage-text a:hover { text-decoration: underline; }
 
+    /* ===== STOPS & RECHARGE ===== */
+    .stops-description {
+      font-size: 0.88rem;
+      color: var(--gray);
+      margin: 0 0 16px;
+      line-height: 1.5;
+    }
+    .stops-summary {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #FFF8E1;
+      border: 1.5px solid #FFE082;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-top: 16px;
+    }
+    .stops-summary-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .stops-summary-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stops-summary-text strong {
+      font-size: 0.9rem;
+      color: var(--dark-green);
+    }
+    .stops-summary-text span {
+      font-size: 0.82rem;
+      color: #8D6E63;
+    }
+
     /* ===== CONFIRMATION ===== */
     .confirm-box {
       background: #fff8e1;
@@ -684,7 +765,9 @@ export class CreateCarpoolComponent implements OnInit {
     totalSeats: 3,
     pricePerPerson: 20,
     vehicleId: 0,
-    estimatedDurationMinutes: undefined
+    estimatedDurationMinutes: undefined,
+    pausesCount: 0,
+    pausesDurationMinutes: 0
   };
 
   vehicles = signal<Vehicle[]>([]);
@@ -699,7 +782,8 @@ export class CreateCarpoolComponent implements OnInit {
     { num: 1, labelKey: 'create_carpool.step_route' },
     { num: 2, labelKey: 'create_carpool.step_schedule' },
     { num: 3, labelKey: 'create_carpool.step_vehicle' },
-    { num: 4, labelKey: 'create_carpool.step_confirm' },
+    { num: 4, labelKey: 'create_carpool.step_stops' },
+    { num: 5, labelKey: 'create_carpool.step_confirm' },
   ];
 
   // Duration display
@@ -760,10 +844,16 @@ export class CreateCarpoolComponent implements OnInit {
     }
   }
 
+  onPausesCountChange() {
+    if (!this.trip.pausesCount || this.trip.pausesCount === 0) {
+      this.trip.pausesDurationMinutes = 0;
+    }
+  }
+
   updateStepper() {
     const t = this.trip;
-    if (this.confirmed) { this.currentStep.set(4); return; }
-    if (t.vehicleId > 0) { this.currentStep.set(3); return; }
+    if (this.confirmed) { this.currentStep.set(5); return; }
+    if (t.vehicleId > 0) { this.currentStep.set(4); return; }
     if (t.departureDate && t.departureTime && t.arrivalDate && t.arrivalTime && t.pricePerPerson >= 2) {
       this.currentStep.set(3); return;
     }

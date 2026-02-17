@@ -11,4 +11,6 @@ export interface CreateCarpoolForm {
   pricePerPerson: number;
   vehicleId: number;
   estimatedDurationMinutes?: number;
+  pausesCount?: number;
+  pausesDurationMinutes?: number;
 }
