@@ -5,13 +5,13 @@ export interface User {
   lastName?: string;
   firstName?: string;
   phone?: string;
-  address?: string;
-  birthDate?: Date;
   photo?: Uint8Array;
   credits: number;
   roles: string[];
   averageRating: number;
   reviewCount: number;
+  hasDriverLicense?: boolean;
+  hasInsurance?: boolean;
   isActive?: boolean;
   createdAt?: string;
   deactivatedAt?: string | null;

@@ -56,13 +56,13 @@ public class UserController : BaseController
             LastName = user.LastName,
             FirstName = user.FirstName,
             Phone = user.Phone,
-            Address = user.Address,
-            BirthDate = user.BirthDate,
             Photo = user.Photo,
             Credits = user.Credits,
             Roles = roles,
             AverageRating = averageRating,
             ReviewCount = reviewCount,
+            HasDriverLicense = user.HasDriverLicense,
+            HasInsurance = user.HasInsurance,
         };
 
         return Ok(profile);
@@ -82,9 +82,9 @@ public class UserController : BaseController
         user.LastName = updateDto.LastName ?? user.LastName;
         user.FirstName = updateDto.FirstName ?? user.FirstName;
         user.Phone = updateDto.Phone ?? user.Phone;
-        user.Address = updateDto.Address ?? user.Address;
-        user.BirthDate = updateDto.BirthDate ?? user.BirthDate;
         user.Photo = updateDto.Photo ?? user.Photo;
+        user.HasDriverLicense = updateDto.HasDriverLicense ?? user.HasDriverLicense;
+        user.HasInsurance = updateDto.HasInsurance ?? user.HasInsurance;
 
         await _userRepository.UpdateAsync(user);
 
@@ -104,6 +104,19 @@ public class UserController : BaseController
         }
 
         await _userRepository.AddUserRoleAsync(userId, roleId);
+
+        // When becoming a driver, set license and insurance to true (user confirmed via checkboxes)
+        if (roleId == RoleConstants.DRIVER)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user != null)
+            {
+                user.HasDriverLicense = true;
+                user.HasInsurance = true;
+                await _userRepository.UpdateAsync(user);
+            }
+        }
+
         _logger.LogInformation($"Role {roleId} added to user {userId}");
 
         // Generate new token with updated roles

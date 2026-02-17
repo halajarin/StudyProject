@@ -117,14 +117,16 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   <div class="driver-status-sub">{{ 'profile.driver_confirmed_sub' | translate }}</div>
                 </div>
               </div>
-              <div class="info-rows" style="margin-top: 12px;">
-                <div class="info-row">
-                  <span class="info-row-label">🪪 {{ 'profile.driver_license' | translate }}</span>
-                  <span class="info-row-value green">✅ {{ 'profile.confirmed_m' | translate }}</span>
+              <div class="driver-toggles">
+                <div class="toggle-row">
+                  <div class="toggle-text">🪪 {{ 'profile.driver_license' | translate }}</div>
+                  <div class="toggle-switch" [class.on]="user()?.hasDriverLicense"
+                       (click)="toggleDriverField('hasDriverLicense')"></div>
                 </div>
-                <div class="info-row">
-                  <span class="info-row-label">🛡️ {{ 'profile.driver_insurance' | translate }}</span>
-                  <span class="info-row-value green">✅ {{ 'profile.confirmed_f' | translate }}</span>
+                <div class="toggle-row">
+                  <div class="toggle-text">🛡️ {{ 'profile.driver_insurance' | translate }}</div>
+                  <div class="toggle-switch" [class.on]="user()?.hasInsurance"
+                       (click)="toggleDriverField('hasInsurance')"></div>
                 </div>
               </div>
             } @else {
@@ -429,15 +431,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                 <input type="tel" [(ngModel)]="profileForm.phone" class="m-input" />
               </div>
 
-              <div class="m-field">
-                <label class="m-label">{{ 'user.address' | translate }}</label>
-                <input type="text" [(ngModel)]="profileForm.address" class="m-input" />
-              </div>
 
-              <div class="m-field">
-                <label class="m-label">{{ 'user.birth_date' | translate }}</label>
-                <input type="date" [(ngModel)]="profileForm.birthDate" class="m-input" />
-              </div>
             </div>
             <div class="modal-footer">
               <button class="btn-modal secondary" (click)="closeEditProfileModal()">{{ 'common.cancel' | translate }}</button>
@@ -849,6 +843,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     }
     .btn-driver.green { background: var(--eco-primary); color: #fff; }
     .btn-driver.green:hover { background: var(--eco-primary-dark); }
+    .driver-toggles { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
 
     /* ===== VEHICLES ===== */
     .vehicles-list { display: flex; flex-direction: column; gap: 12px; }
@@ -1500,7 +1495,7 @@ export class ProfileComponent implements OnInit {
 
   formData: CreateVehicle = this.emptyVehicle();
 
-  profileForm = { firstName: '', lastName: '', phone: '', address: '', birthDate: '' };
+  profileForm = { firstName: '', lastName: '', phone: '' };
   passwordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
   preferences: UserPreferences = { smokingAllowed: false, petsAllowed: false, musicAllowed: false, conversationLevel: 'moderate' };
 
@@ -1569,8 +1564,6 @@ export class ProfileComponent implements OnInit {
           firstName: data.firstName ?? '',
           lastName: data.lastName ?? '',
           phone: data.phone ?? '',
-          address: data.address ?? '',
-          birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split('T')[0] : '',
         };
       },
     });
@@ -1712,6 +1705,18 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  // ========== DRIVER FIELDS ==========
+
+  toggleDriverField(field: 'hasDriverLicense' | 'hasInsurance') {
+    const currentUser = this.user();
+    if (!currentUser) return;
+    const newValue = !(currentUser as any)[field];
+    this.userService.updateProfile({ [field]: newValue }).subscribe({
+      next: () => this.loadProfile(),
+      error: (err) => alert(err.error?.message || this.translate.instant('messages.error_occurred')),
+    });
+  }
+
   // ========== DRIVER MODAL ==========
 
   openDriverModal() {
@@ -1758,8 +1763,6 @@ export class ProfileComponent implements OnInit {
       firstName: this.profileForm.firstName || undefined,
       lastName: this.profileForm.lastName || undefined,
       phone: this.profileForm.phone || undefined,
-      address: this.profileForm.address || undefined,
-      birthDate: this.profileForm.birthDate ? new Date(this.profileForm.birthDate) : undefined,
     };
     this.userService.updateProfile(data).subscribe({
       next: () => {

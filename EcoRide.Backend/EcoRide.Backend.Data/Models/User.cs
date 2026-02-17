@@ -31,13 +31,6 @@ public class User
     [MaxLength(80)]
     public string? Phone { get; set; }
 
-    [Column("address")]
-    [MaxLength(80)]
-    public string? Address { get; set; }
-
-    [Column("birth_date")]
-    public DateTime? BirthDate { get; set; }
-
     [Column("photo")]
     public byte[]? Photo { get; set; }
 
@@ -56,6 +49,12 @@ public class User
 
     [Column("deactivated_at")]
     public DateTime? DeactivatedAt { get; set; }
+
+    [Column("has_driver_license")]
+    public bool HasDriverLicense { get; set; } = false;
+
+    [Column("has_insurance")]
+    public bool HasInsurance { get; set; } = false;
 
     // Relationships
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

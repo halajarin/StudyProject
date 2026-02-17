@@ -15,8 +15,6 @@ public static class UserMapper
             LastName = user.LastName,
             FirstName = user.FirstName,
             Phone = user.Phone,
-            Address = user.Address,
-            BirthDate = user.BirthDate,
             Photo = user.Photo,
             Credits = user.Credits,
             Roles = roles,
