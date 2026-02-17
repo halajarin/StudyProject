@@ -20,7 +20,7 @@ public interface ICarpoolService
     Task<(bool Success, string Message)> CancelCarpoolAsync(int carpoolId, int userId);
 
     // Participation management
-    Task<(bool Success, string Message, int? RemainingCredit)> ParticipateAsync(int carpoolId, int userId);
+    Task<(bool Success, string Message, int? RemainingCredit)> ParticipateAsync(int carpoolId, int userId, int passengerCount = 1);
     Task<(bool Success, string Message)> CancelParticipationAsync(int carpoolId, int userId);
     Task<(bool Success, string Message)> ValidateTripAsync(int carpoolId, int userId, bool tripOk, string? problemComment);
 }

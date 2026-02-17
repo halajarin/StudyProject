@@ -26,6 +26,9 @@ public class CarpoolParticipation
     [Column("credits_used")]
     public int CreditsUsed { get; set; }
 
+    [Column("seats_reserved")]
+    public int SeatsReserved { get; set; } = 1;
+
     [Column("trip_validated")]
     public bool? TripValidated { get; set; }
 

@@ -1,5 +1,6 @@
 using EcoRide.Backend.Business.Helpers;
 using EcoRide.Backend.Business.Services;
+using EcoRide.Backend.Business.Services.Interfaces;
 using EcoRide.Backend.Data.Enums;
 using EcoRide.Backend.Data.Models;
 using EcoRide.Backend.Data.Repositories.Interfaces;
@@ -14,6 +15,7 @@ public class CarpoolServiceTests
 {
     private readonly Mock<ICarpoolRepository> _carpoolRepositoryMock;
     private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IPreferenceService> _preferenceServiceMock;
     private readonly Mock<IEmailHelper> _emailHelperMock;
     private readonly Mock<ILogger<CarpoolService>> _loggerMock;
     private readonly CarpoolService _carpoolService;
@@ -22,12 +24,14 @@ public class CarpoolServiceTests
     {
         _carpoolRepositoryMock = new Mock<ICarpoolRepository>();
         _userRepositoryMock = new Mock<IUserRepository>();
+        _preferenceServiceMock = new Mock<IPreferenceService>();
         _emailHelperMock = new Mock<IEmailHelper>();
         _loggerMock = new Mock<ILogger<CarpoolService>>();
 
         _carpoolService = new CarpoolService(
             _carpoolRepositoryMock.Object,
             _userRepositoryMock.Object,
+            _preferenceServiceMock.Object,
             _emailHelperMock.Object,
             _loggerMock.Object
         );

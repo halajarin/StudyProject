@@ -62,12 +62,14 @@ public class CarpoolController : BaseController
 
     [Authorize]
     [HttpPost("{id}/participate")]
-    public async Task<IActionResult> Participate(int id)
+    public async Task<IActionResult> Participate(int id, [FromBody] ParticipateRequest? request = null)
     {
         var userId = GetCurrentUserId();
+        var passengerCount = request?.PassengerCount ?? 1;
         var (success, message, remainingCredit) = await _carpoolService.ParticipateAsync(
             id,
-            userId
+            userId,
+            passengerCount
         );
 
         if (!success)

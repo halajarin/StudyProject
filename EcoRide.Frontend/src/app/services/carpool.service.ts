@@ -36,8 +36,8 @@ export class CarpoolService {
     return this.http.post(this.apiUrl, carpool);
   }
 
-  participate(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/participate`, {});
+  participate(id: number, passengerCount: number = 1): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/participate`, { passengerCount });
   }
 
   cancel(id: number): Observable<any> {
