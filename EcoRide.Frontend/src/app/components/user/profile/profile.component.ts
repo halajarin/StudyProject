@@ -24,7 +24,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
           <p class="hero-email">{{ user()?.email }}</p>
           <div class="hero-badges">
             @for (role of user()?.roles ?? []; track role) {
-              <span class="badge badge-success">{{ role }}</span>
+              <span class="hero-badge">{{ 'admin.roles.' + role | translate }}</span>
             }
           </div>
         </div>
@@ -479,10 +479,16 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       font-size: 2.2rem; font-weight: 700;
       flex-shrink: 0;
     }
-    .hero-info { flex: 1; }
-    .hero-info h1 { margin: 0; font-size: 1.8rem; }
-    .hero-email { opacity: 0.85; margin: 0.25rem 0 0.5rem; }
+    .hero-info { flex: 1; color: white; }
+    .hero-info h1 { margin: 0; font-size: 1.8rem; color: white; }
+    .hero-email { opacity: 0.85; margin: 0.25rem 0 0.5rem; color: white; }
     .hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .hero-badge {
+      background: rgba(255,255,255,0.2); color: white;
+      padding: 0.3rem 0.75rem; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
     .btn-hero-edit {
       background: rgba(255,255,255,0.15);
       color: white; border: 1px solid rgba(255,255,255,0.3);
