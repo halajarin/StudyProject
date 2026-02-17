@@ -94,6 +94,12 @@ CREATE TABLE carpool (
     user_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estimated_duration_minutes INTEGER,
+    pauses_count INTEGER DEFAULT 0,
+    pauses_duration_minutes INTEGER DEFAULT 0,
+    way_before VARCHAR(100),
+    way_after VARCHAR(100),
+    distance_km FLOAT,
+    co2_saved_kg FLOAT,
     FOREIGN KEY (vehicle_id) REFERENCES vehicle(vehicle_id) ON DELETE RESTRICT,
     FOREIGN KEY (user_id) REFERENCES "user"(user_id) ON DELETE RESTRICT
 );
@@ -106,6 +112,7 @@ CREATE TABLE carpool_participation (
     participation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50) DEFAULT 'Confirmed',
     credits_used INTEGER NOT NULL,
+    seats_reserved INTEGER NOT NULL DEFAULT 1,
     trip_validated BOOLEAN,
     problem_comment TEXT,
     FOREIGN KEY (carpool_id) REFERENCES carpool(carpool_id) ON DELETE CASCADE,

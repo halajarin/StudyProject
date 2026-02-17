@@ -16,6 +16,12 @@ public class CarpoolDTO
     public int AvailableSeats { get; set; }
     public float PricePerPerson { get; set; }
     public int? EstimatedDurationMinutes { get; set; }
+    public int PausesCount { get; set; }
+    public int PausesDurationMinutes { get; set; }
+    public string? WayBefore { get; set; }
+    public string? WayAfter { get; set; }
+    public float? DistanceKm { get; set; }
+    public float? Co2SavedKg { get; set; }
     public bool IsEcological { get; set; }
 
     // Driver information
@@ -29,4 +35,10 @@ public class CarpoolDTO
     public string VehicleBrand { get; set; } = string.Empty;
     public string VehicleEnergyType { get; set; } = string.Empty;
     public string VehicleColor { get; set; } = string.Empty;
+
+    // Driver preferences (from MongoDB)
+    public bool? SmokingAllowed { get; set; }
+    public bool? PetsAllowed { get; set; }
+    public bool? MusicAllowed { get; set; }
+    public string? ConversationLevel { get; set; }
 }

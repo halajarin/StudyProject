@@ -49,6 +49,19 @@ public class CreateCarpoolDTOValidator : AbstractValidator<CreateCarpoolDTO>
         RuleFor(x => x.EstimatedDurationMinutes)
             .GreaterThan(0).WithMessage("Estimated duration must be greater than 0")
             .When(x => x.EstimatedDurationMinutes.HasValue);
+
+        RuleFor(x => x.PausesCount)
+            .InclusiveBetween(0, 10).When(x => x.PausesCount.HasValue);
+        RuleFor(x => x.PausesDurationMinutes)
+            .InclusiveBetween(0, 180).When(x => x.PausesDurationMinutes.HasValue);
+        RuleFor(x => x.WayBefore)
+            .MaximumLength(100).When(x => !string.IsNullOrEmpty(x.WayBefore));
+        RuleFor(x => x.WayAfter)
+            .MaximumLength(100).When(x => !string.IsNullOrEmpty(x.WayAfter));
+        RuleFor(x => x.DistanceKm)
+            .GreaterThan(0).When(x => x.DistanceKm.HasValue);
+        RuleFor(x => x.Co2SavedKg)
+            .GreaterThanOrEqualTo(0).When(x => x.Co2SavedKg.HasValue);
     }
 
     private bool BeInFuture(DateTime date)

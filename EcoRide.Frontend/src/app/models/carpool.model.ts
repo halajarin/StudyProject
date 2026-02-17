@@ -21,6 +21,12 @@ export interface Carpool {
   availableSeats: number;
   pricePerPerson: number;
   estimatedDurationMinutes?: number;
+  pausesCount?: number;
+  pausesDurationMinutes?: number;
+  wayBefore?: string;
+  wayAfter?: string;
+  distanceKm?: number;
+  co2SavedKg?: number;
   isEcological: boolean;
   driverUsername: string;
   driverPhoto?: Uint8Array;
@@ -29,6 +35,11 @@ export interface Carpool {
   vehicleBrand: string;
   vehicleEnergyType: string;
   vehicleColor: string;
+  // Driver preferences
+  smokingAllowed?: boolean;
+  petsAllowed?: boolean;
+  musicAllowed?: boolean;
+  conversationLevel?: string;
 }
 
 export interface SearchCarpool {
@@ -54,4 +65,10 @@ export interface CreateCarpool {
   pricePerPerson: number;
   vehicleId: number;
   estimatedDurationMinutes?: number;
+  pausesCount?: number;
+  pausesDurationMinutes?: number;
+  wayBefore?: string;
+  wayAfter?: string;
+  distanceKm?: number;
+  co2SavedKg?: number;
 }

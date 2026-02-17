@@ -14,18 +14,21 @@ public class CarpoolService : ICarpoolService
 {
     private readonly ICarpoolRepository _carpoolRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IPreferenceService _preferenceService;
     private readonly IEmailHelper _emailHelper;
     private readonly ILogger<CarpoolService> _logger;
 
     public CarpoolService(
         ICarpoolRepository carpoolRepository,
         IUserRepository userRepository,
+        IPreferenceService preferenceService,
         IEmailHelper emailHelper,
         ILogger<CarpoolService> logger
     )
     {
         _carpoolRepository = carpoolRepository;
         _userRepository = userRepository;
+        _preferenceService = preferenceService;
         _emailHelper = emailHelper;
         _logger = logger;
     }
@@ -46,6 +49,37 @@ public class CarpoolService : ICarpoolService
         }
     }
 
+    private async Task PopulateDriverPreferencesAsync(List<CarpoolDTO> carpoolDtos)
+    {
+        if (carpoolDtos.Count == 0)
+            return;
+
+        var driverIds = carpoolDtos.Select(c => c.UserId).Distinct().ToList();
+        var preferencesMap = new Dictionary<int, Dictionary<string, object?>>();
+
+        foreach (var driverId in driverIds)
+        {
+            var prefs = await _preferenceService.GetPreferencesAsync(driverId);
+            if (prefs != null)
+                preferencesMap[driverId] = prefs;
+        }
+
+        foreach (var dto in carpoolDtos)
+        {
+            if (!preferencesMap.TryGetValue(dto.UserId, out var prefs))
+                continue;
+
+            if (prefs.TryGetValue("smokingAllowed", out var smoking) && smoking is bool s)
+                dto.SmokingAllowed = s;
+            if (prefs.TryGetValue("petsAllowed", out var pets) && pets is bool p)
+                dto.PetsAllowed = p;
+            if (prefs.TryGetValue("musicAllowed", out var music) && music is bool m)
+                dto.MusicAllowed = m;
+            if (prefs.TryGetValue("conversationLevel", out var conv) && conv is string c)
+                dto.ConversationLevel = c;
+        }
+    }
+
     #endregion
 
     #region CRUD Operations
@@ -57,6 +91,7 @@ public class CarpoolService : ICarpoolService
 
         var dto = carpool.ToDTO();
         dto.DriverAverageRating = await _userRepository.GetAverageRatingAsync(carpool.UserId);
+        await PopulateDriverPreferencesAsync(new List<CarpoolDTO> { dto });
         return dto;
     }
 
@@ -65,6 +100,7 @@ public class CarpoolService : ICarpoolService
         var carpools = await _carpoolRepository.GetAllAsync();
         var dtos = carpools.Select(c => c.ToDTO()).ToList();
         await PopulateDriverRatingsAsync(dtos);
+        await PopulateDriverPreferencesAsync(dtos);
 
         return dtos;
     }
@@ -78,6 +114,7 @@ public class CarpoolService : ICarpoolService
             .ToList();
         var dtos = available.Select(c => c.ToDTO()).ToList();
         await PopulateDriverRatingsAsync(dtos);
+        await PopulateDriverPreferencesAsync(dtos);
 
         return dtos;
     }
@@ -100,6 +137,12 @@ public class CarpoolService : ICarpoolService
             AvailableSeats = createDto.TotalSeats,
             PricePerPerson = createDto.PricePerPerson,
             EstimatedDurationMinutes = createDto.EstimatedDurationMinutes,
+            PausesCount = createDto.PausesCount ?? 0,
+            PausesDurationMinutes = createDto.PausesDurationMinutes ?? 0,
+            WayBefore = createDto.WayBefore,
+            WayAfter = createDto.WayAfter,
+            DistanceKm = createDto.DistanceKm,
+            Co2SavedKg = createDto.Co2SavedKg,
             Status = CarpoolStatus.Pending,
             CreatedAt = DateTime.UtcNow,
         };
@@ -134,6 +177,7 @@ public class CarpoolService : ICarpoolService
 
         var dtos = carpools.Select(c => c.ToDTO()).ToList();
         await PopulateDriverRatingsAsync(dtos);
+        await PopulateDriverPreferencesAsync(dtos);
 
         return dtos;
     }
@@ -162,21 +206,27 @@ public class CarpoolService : ICarpoolService
 
     public async Task<(bool Success, string Message, int? RemainingCredit)> ParticipateAsync(
         int carpoolId,
-        int userId
+        int userId,
+        int passengerCount = 1
     )
     {
+        if (passengerCount < 1)
+            return (false, "Passenger count must be at least 1", null);
+
         var carpool = await _carpoolRepository.GetByIdAsync(carpoolId);
         if (carpool == null)
             return (false, "Carpool not found", null);
 
-        if (carpool.AvailableSeats <= 0)
-            return (false, "No seats available", null);
+        if (carpool.AvailableSeats < passengerCount)
+            return (false, "Not enough seats available", null);
 
         if (carpool.UserId == userId)
             return (false, "You cannot join your own carpool", null);
 
+        var totalCost = (int)carpool.PricePerPerson * passengerCount;
+
         var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null || user.Credits < carpool.PricePerPerson)
+        if (user == null || user.Credits < totalCost)
             return (false, "Insufficient credits", null);
 
         var existingParticipation = await _carpoolRepository.GetParticipationAsync(
@@ -193,22 +243,24 @@ public class CarpoolService : ICarpoolService
             UserId = userId,
             ParticipationDate = DateTime.UtcNow,
             Status = ParticipationStatus.Confirmed,
-            CreditsUsed = (int)carpool.PricePerPerson,
+            CreditsUsed = totalCost,
+            SeatsReserved = passengerCount,
         };
 
         await _carpoolRepository.AddParticipationAsync(participation);
 
         // Update credits and seats
-        user.Credits -= (int)carpool.PricePerPerson;
+        user.Credits -= totalCost;
         await _userRepository.UpdateAsync(user);
 
-        carpool.AvailableSeats--;
+        carpool.AvailableSeats -= passengerCount;
         await _carpoolRepository.UpdateAsync(carpool);
 
         _logger.LogInformation(
-            "Participation added: User {UserId} for carpool {CarpoolId}",
+            "Participation added: User {UserId} for carpool {CarpoolId} ({SeatsReserved} seats)",
             userId,
-            carpoolId
+            carpoolId,
+            passengerCount
         );
 
         return (true, "Participation confirmed", user.Credits);
@@ -234,11 +286,11 @@ public class CarpoolService : ICarpoolService
             await _userRepository.UpdateAsync(user);
         }
 
-        // Free up seat
+        // Free up seats
         var carpool = await _carpoolRepository.GetByIdAsync(carpoolId);
         if (carpool != null)
         {
-            carpool.AvailableSeats++;
+            carpool.AvailableSeats += participation.SeatsReserved;
             await _carpoolRepository.UpdateAsync(carpool);
         }
 

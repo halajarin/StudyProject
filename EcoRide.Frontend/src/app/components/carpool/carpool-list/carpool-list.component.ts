@@ -131,6 +131,50 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                 <button class="seat-btn" [class.active]="minSeats() === 3" (click)="minSeats.set(3)">3+</button>
               </div>
             </div>
+
+            <!-- Driver preferences -->
+            <div class="filter-section">
+              <h4>{{ 'carpools.driver_preferences' | translate }}</h4>
+              <div class="pref-toggles">
+                <div class="pref-toggle" (click)="prefSmoking.set(!prefSmoking())">
+                  <span>&#128684; {{ 'carpools.smoking_allowed' | translate }}</span>
+                  <div class="pref-mini-switch" [class.on]="prefSmoking()">
+                    <div class="pref-mini-switch-knob"></div>
+                  </div>
+                </div>
+                <div class="pref-toggle" (click)="prefPets.set(!prefPets())">
+                  <span>&#128062; {{ 'carpools.pets_allowed' | translate }}</span>
+                  <div class="pref-mini-switch" [class.on]="prefPets()">
+                    <div class="pref-mini-switch-knob"></div>
+                  </div>
+                </div>
+                <div class="pref-toggle" (click)="prefMusic.set(!prefMusic())">
+                  <span>&#127925; {{ 'carpools.music_allowed' | translate }}</span>
+                  <div class="pref-mini-switch" [class.on]="prefMusic()">
+                    <div class="pref-mini-switch-knob"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Conversation level -->
+            <div class="filter-section">
+              <h4>{{ 'carpools.conversation_level' | translate }}</h4>
+              <div class="conv-buttons">
+                <button class="conv-btn" [class.active]="!prefConversation()" (click)="prefConversation.set(null)">
+                  {{ 'carpools.conv_all' | translate }}
+                </button>
+                <button class="conv-btn" [class.active]="prefConversation() === 'quiet'" (click)="prefConversation.set('quiet')">
+                  &#129296; {{ 'carpools.conv_quiet' | translate }}
+                </button>
+                <button class="conv-btn" [class.active]="prefConversation() === 'moderate'" (click)="prefConversation.set('moderate')">
+                  &#128172; {{ 'carpools.conv_moderate' | translate }}
+                </button>
+                <button class="conv-btn" [class.active]="prefConversation() === 'chatty'" (click)="prefConversation.set('chatty')">
+                  &#128483; {{ 'carpools.conv_chatty' | translate }}
+                </button>
+              </div>
+            </div>
           </div>
           <div class="filter-apply-bar">
             <button class="btn-apply" (click)="search()">&#128269; {{ 'carpools.apply_filters' | translate }}</button>
@@ -193,6 +237,37 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                 </div>
               </div>
 
+              <!-- Pause info -->
+              @if (carpool.pausesCount && carpool.pausesCount > 0) {
+                <div class="ride-pause">&#128268; {{ carpool.pausesCount }} pause(s) · ~{{ carpool.pausesDurationMinutes }} min</div>
+              }
+
+              <!-- Preferences labels -->
+              @if (carpool.smokingAllowed !== undefined || carpool.petsAllowed !== undefined || carpool.musicAllowed !== undefined || carpool.conversationLevel) {
+                <div class="ride-prefs">
+                  @if (carpool.smokingAllowed !== undefined) {
+                    <span class="pref-label" [class.on]="!carpool.smokingAllowed" [class.off]="carpool.smokingAllowed">
+                      {{ carpool.smokingAllowed ? ('carpools.pref_smoker_ok' | translate) : ('carpools.pref_non_smoker' | translate) }}
+                    </span>
+                  }
+                  @if (carpool.petsAllowed !== undefined) {
+                    <span class="pref-label" [class.on]="carpool.petsAllowed" [class.off]="!carpool.petsAllowed">
+                      {{ carpool.petsAllowed ? ('carpools.pref_pets_ok' | translate) : ('carpools.pref_no_pets' | translate) }}
+                    </span>
+                  }
+                  @if (carpool.musicAllowed !== undefined) {
+                    <span class="pref-label" [class.on]="carpool.musicAllowed" [class.off]="!carpool.musicAllowed">
+                      {{ carpool.musicAllowed ? ('carpools.pref_music_ok' | translate) : ('carpools.pref_no_music' | translate) }}
+                    </span>
+                  }
+                  @if (carpool.conversationLevel) {
+                    <span class="pref-label on">
+                      {{ 'carpools.conv_' + carpool.conversationLevel | translate }}
+                    </span>
+                  }
+                </div>
+              }
+
               <!-- Footer -->
               <div class="ride-footer">
                 <div class="ride-info">
@@ -229,6 +304,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     <div class="detail-panel" [class.open]="detailPanelOpen()">
       @if (selectedCarpool(); as c) {
         <div class="detail-header">
+          <button class="btn-back-panel" (click)="closeDetail()">&larr;</button>
           <div>
             <h2>{{ c.departureCity }} &rarr; {{ c.arrivalCity }}</h2>
             <span class="status-badge"
@@ -236,7 +312,6 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
               {{ 'carpool.status.' + getStatusKey(c.status) | translate }}
             </span>
           </div>
-          <button class="btn-close-panel" (click)="closeDetail()">&times;</button>
         </div>
 
         <div class="detail-inner">
@@ -244,8 +319,20 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
           <div class="detail-left">
             <!-- Itinerary card -->
             <div class="detail-card">
-              <h3>{{ 'carpools.itinerary' | translate }}</h3>
+              <div class="card-header">
+                <span class="card-title-icon route-icon">&#128205;</span>
+                <h3>{{ 'carpools.itinerary_title' | translate }}</h3>
+              </div>
               <div class="detail-timeline">
+                @if (c.wayBefore) {
+                  <div class="dt-point waypoint">
+                    <div class="dt-dot waypoint-dot"></div>
+                    <div class="dt-info">
+                      <span class="dt-main">{{ c.wayBefore }}</span>
+                    </div>
+                  </div>
+                  <div class="dt-line short"></div>
+                }
                 <div class="dt-point">
                   <div class="dt-dot"></div>
                   <div class="dt-info">
@@ -261,6 +348,9 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   @if (c.estimatedDurationMinutes) {
                     <span class="dt-duration">{{ 'carpools.travel_time' | translate:{duration: formatDuration(c.estimatedDurationMinutes)} }}</span>
                   }
+                  @if (c.pausesCount && c.pausesCount > 0) {
+                    <span class="dt-pause-label">&#128268; {{ 'carpools.recharge_stop' | translate }}</span>
+                  }
                 </div>
                 <div class="dt-point">
                   <div class="dt-dot arrival"></div>
@@ -273,12 +363,24 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                     <span class="dt-time">{{ c.arrivalDate | date:'dd/MM/yyyy' }} &middot; {{ c.arrivalTime }}</span>
                   </div>
                 </div>
+                @if (c.wayAfter) {
+                  <div class="dt-line short"></div>
+                  <div class="dt-point waypoint">
+                    <div class="dt-dot waypoint-dot"></div>
+                    <div class="dt-info">
+                      <span class="dt-main">{{ c.wayAfter }}</span>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
 
             <!-- Driver card -->
             <div class="detail-card">
-              <h3>{{ 'carpool.driver' | translate }}</h3>
+              <div class="card-header">
+                <span class="card-title-icon driver-icon">&#128100;</span>
+                <h3>{{ 'carpools.driver_title' | translate }}</h3>
+              </div>
               <div class="driver-row">
                 <div class="driver-avatar-large">{{ c.driverUsername.charAt(0).toUpperCase() }}</div>
                 <div class="driver-details">
@@ -289,18 +391,26 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                     }
                     <span class="rating-number">{{ c.driverAverageRating.toFixed(1) }}</span>
                   </div>
-                  <span class="green-badge">&#127807; {{ 'carpools.green_driver' | translate }}</span>
+                  <div class="driver-badges">
+                    <span class="driver-badge verified">&#9989; {{ 'carpools.verified_driver' | translate }}</span>
+                    <span class="driver-badge green">&#127807; {{ 'carpools.green_driver_badge' | translate }}</span>
+                  </div>
                 </div>
               </div>
+              <button class="btn-contact">&#9993; {{ 'carpools.contact_driver' | translate }}</button>
             </div>
 
             <!-- Vehicle card -->
             <div class="detail-card">
-              <h3>{{ 'carpool.vehicle' | translate }}</h3>
+              <div class="card-header">
+                <span class="card-title-icon vehicle-icon">&#128663;</span>
+                <h3>{{ 'carpools.vehicle_title' | translate }}</h3>
+              </div>
               <div class="vehicle-info-row">
-                <span class="energy-badge-lg" [ngClass]="getEnergyClass(c.vehicleEnergyType)">
-                  {{ getEnergyIcon(c.vehicleEnergyType) }} {{ c.vehicleEnergyType }}
-                </span>
+                <div class="vehicle-energy-badge" [ngClass]="getEnergyClass(c.vehicleEnergyType)">
+                  <span class="vehicle-energy-icon">{{ getEnergyIcon(c.vehicleEnergyType) }}</span>
+                  <span class="vehicle-energy-label">{{ c.vehicleEnergyType }}</span>
+                </div>
                 <div class="vehicle-details">
                   <span class="vehicle-name">{{ c.vehicleBrand }} {{ c.vehicleModel }}</span>
                   <span class="vehicle-color">{{ c.vehicleColor }}</span>
@@ -317,29 +427,81 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
 
             <!-- Info grid card -->
             <div class="detail-card">
-              <div class="info-grid">
-                <div class="info-item">
+              <div class="card-header">
+                <span class="card-title-icon info-icon-title">&#8505;</span>
+                <h3>{{ 'carpools.info_title' | translate }}</h3>
+              </div>
+              <div class="info-grid-h">
+                <div class="info-item-h">
+                  <span class="info-icon">&#128197;</span>
+                  <span class="info-label">{{ 'carpools.date_info' | translate }}</span>
+                  <span class="info-value">{{ c.departureDate | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="info-item-h">
                   <span class="info-icon">&#128186;</span>
                   <span class="info-label">{{ 'carpools.seats_info' | translate }}</span>
                   <span class="info-value">{{ c.availableSeats }} / {{ c.totalSeats }}</span>
                 </div>
-                <div class="info-item">
+                <div class="info-item-h">
                   <span class="info-icon">&#9200;</span>
                   <span class="info-label">{{ 'carpools.estimated_duration' | translate }}</span>
                   <span class="info-value">{{ c.estimatedDurationMinutes ? formatDuration(c.estimatedDurationMinutes) : '—' }}</span>
                 </div>
-                <div class="info-item">
-                  <span class="info-icon">&#9889;</span>
-                  <span class="info-label">{{ 'carpools.energy' | translate }}</span>
-                  <span class="info-value">{{ c.vehicleEnergyType }}</span>
+                <div class="info-item-h">
+                  <span class="info-icon">&#9209;</span>
+                  <span class="info-label">{{ 'carpools.pauses_info' | translate }}</span>
+                  <span class="info-value">
+                    @if (c.pausesCount && c.pausesCount > 0) {
+                      {{ 'carpools.pause_label' | translate:{count: c.pausesCount, duration: c.pausesDurationMinutes} }}
+                    } @else {
+                      {{ 'carpools.no_pauses' | translate }}
+                    }
+                  </span>
                 </div>
-                <div class="info-item">
+                @if (c.distanceKm) {
+                  <div class="info-item-h">
+                    <span class="info-icon">&#128663;</span>
+                    <span class="info-label">{{ 'carpools.distance_info' | translate }}</span>
+                    <span class="info-value">~{{ c.distanceKm | number:'1.0-0' }} km</span>
+                  </div>
+                }
+                @if (c.co2SavedKg) {
+                  <div class="info-item-h">
+                    <span class="info-icon">&#127807;</span>
+                    <span class="info-label">{{ 'carpools.co2_saved' | translate }}</span>
+                    <span class="info-value">~{{ c.co2SavedKg | number:'1.0-1' }} kg</span>
+                  </div>
+                }
+                <div class="info-item-h">
                   <span class="info-icon">&#128200;</span>
                   <span class="info-label">{{ 'admin.status_label' | translate }}</span>
                   <span class="info-value status-text" [ngClass]="'status-' + c.status.toLowerCase()">
                     {{ 'carpool.status.' + getStatusKey(c.status) | translate }}
                   </span>
                 </div>
+                @if (c.smokingAllowed !== undefined || c.petsAllowed !== undefined || c.musicAllowed !== undefined) {
+                  <div class="info-item-h">
+                    <span class="info-icon">&#9881;</span>
+                    <span class="info-label">{{ 'carpools.driver_preferences' | translate }}</span>
+                    <span class="info-value info-prefs">
+                      @if (c.smokingAllowed !== undefined) {
+                        <span class="pref-label mini" [class.on]="!c.smokingAllowed" [class.off]="c.smokingAllowed">
+                          {{ c.smokingAllowed ? ('carpools.pref_smoker_ok' | translate) : ('carpools.pref_non_smoker' | translate) }}
+                        </span>
+                      }
+                      @if (c.petsAllowed !== undefined) {
+                        <span class="pref-label mini" [class.on]="c.petsAllowed" [class.off]="!c.petsAllowed">
+                          {{ c.petsAllowed ? ('carpools.pref_pets_ok' | translate) : ('carpools.pref_no_pets' | translate) }}
+                        </span>
+                      }
+                      @if (c.musicAllowed !== undefined) {
+                        <span class="pref-label mini" [class.on]="c.musicAllowed" [class.off]="!c.musicAllowed">
+                          {{ c.musicAllowed ? ('carpools.pref_music_ok' | translate) : ('carpools.pref_no_music' | translate) }}
+                        </span>
+                      }
+                    </span>
+                  </div>
+                }
               </div>
             </div>
           </div>
@@ -347,8 +509,20 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
           <!-- RIGHT COLUMN (sticky booking) -->
           <div class="detail-right">
             <div class="booking-card">
+              <!-- Date header -->
+              <div class="booking-date-header">
+                &#128197; {{ c.departureDate | date:'EEEE d MMMM yyyy' }}
+              </div>
+
               <!-- Mini timeline -->
               <div class="booking-route">
+                @if (c.wayBefore) {
+                  <div class="booking-point waypoint">
+                    <span class="booking-dot waypoint-dot"></span>
+                    <span>{{ c.wayBefore }}</span>
+                  </div>
+                  <div class="booking-line"></div>
+                }
                 <div class="booking-point">
                   <span class="booking-dot"></span>
                   <span>{{ c.departureCity }}</span>
@@ -360,6 +534,13 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   <span>{{ c.arrivalCity }}</span>
                   <span class="booking-time">{{ c.arrivalTime }}</span>
                 </div>
+                @if (c.wayAfter) {
+                  <div class="booking-line"></div>
+                  <div class="booking-point waypoint">
+                    <span class="booking-dot waypoint-dot"></span>
+                    <span>{{ c.wayAfter }}</span>
+                  </div>
+                }
               </div>
 
               <div class="booking-driver">
@@ -368,14 +549,37 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                 <span class="booking-rating">&#11088; {{ c.driverAverageRating.toFixed(1) }}</span>
               </div>
 
+              <!-- Passenger selector -->
+              <div class="passenger-selector">
+                <span class="passenger-selector-label">{{ 'carpools.passengers_count' | translate }}</span>
+                <div class="passenger-selector-controls">
+                  <button class="passenger-btn" (click)="decrementPassengers()" [disabled]="passengerCount() <= 1">&minus;</button>
+                  <span class="passenger-count-value">{{ passengerCount() }}</span>
+                  <button class="passenger-btn" (click)="incrementPassengers()" [disabled]="passengerCount() >= c.availableSeats">&plus;</button>
+                </div>
+              </div>
+              <div class="passenger-dots">
+                @for (i of seatsArray(c.availableSeats); track i) {
+                  <span class="spot-dot" [class.selected]="i < passengerCount()"></span>
+                }
+              </div>
+
               <div class="booking-pricing">
                 <div class="booking-price-row">
-                  <span>{{ 'carpools.passenger' | translate }}</span>
+                  <span>{{ 'carpools.price_per_passenger' | translate }}</span>
                   <span>{{ c.pricePerPerson }} {{ 'common.credits' | translate }}</span>
+                </div>
+                <div class="booking-price-row">
+                  <span>{{ 'carpools.passengers_count' | translate }} &times; {{ passengerCount() }}</span>
+                  <span>{{ c.pricePerPerson * passengerCount() }} {{ 'common.credits' | translate }}</span>
+                </div>
+                <div class="booking-price-row remaining-row">
+                  <span>{{ 'carpools.remaining_spots_after' | translate }}</span>
+                  <span class="remaining-value">{{ c.availableSeats - passengerCount() }} / {{ c.totalSeats }}</span>
                 </div>
                 <div class="booking-total">
                   <span>{{ 'common.total' | translate }}</span>
-                  <span class="booking-total-amount">{{ c.pricePerPerson }} {{ 'common.credits' | translate }}</span>
+                  <span class="booking-total-amount">{{ c.pricePerPerson * passengerCount() }} {{ 'common.credits' | translate }}</span>
                 </div>
               </div>
 
@@ -807,6 +1011,77 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     }
     .note-star { color: #f39c12; font-size: 0.75rem; }
 
+    /* Preference toggles */
+    .pref-toggles {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .pref-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.85rem;
+    }
+    .pref-toggle:hover { background: var(--very-light-green); }
+    .pref-mini-switch {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      background: var(--light-gray);
+      position: relative;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .pref-mini-switch.on {
+      background: var(--primary-green);
+    }
+    .pref-mini-switch-knob {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: white;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .pref-mini-switch.on .pref-mini-switch-knob {
+      left: 18px;
+    }
+
+    /* Conversation buttons */
+    .conv-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .conv-btn {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--light-gray);
+      background: white;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--gray);
+    }
+    .conv-btn.active {
+      border-color: var(--primary-green);
+      background: #e8f5e9;
+      color: var(--dark-green);
+      font-weight: 600;
+    }
+    .conv-btn:hover {
+      border-color: var(--primary-green);
+    }
+
     /* ===== RESULTS AREA ===== */
     .results-area {
       display: flex;
@@ -1056,6 +1331,33 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       transform: translateY(-1px);
     }
 
+    /* Ride preferences labels */
+    .ride-prefs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 24px 4px;
+      flex-wrap: wrap;
+    }
+    .pref-label {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .pref-label.on {
+      background: #e8f5e9;
+      color: var(--dark-green);
+    }
+    .pref-label.off {
+      background: #f5f5f5;
+      color: var(--gray);
+    }
+    .pref-label.mini {
+      padding: 2px 8px;
+      font-size: 0.72rem;
+    }
+
     /* Empty state */
     .empty-state {
       text-align: center;
@@ -1101,8 +1403,8 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     }
     .detail-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 1rem;
       padding: 1.5rem 2rem;
       background: white;
       border-bottom: 1px solid var(--light-gray);
@@ -1114,7 +1416,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       margin: 0 0 0.25rem;
       font-size: 1.3rem;
     }
-    .btn-close-panel {
+    .btn-back-panel {
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -1128,8 +1430,9 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       padding: 0;
       color: var(--gray);
       transition: all 0.2s;
+      flex-shrink: 0;
     }
-    .btn-close-panel:hover {
+    .btn-back-panel:hover {
       background: var(--light-gray);
       color: var(--black);
     }
@@ -1171,6 +1474,133 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     .detail-card:nth-child(2) { animation-delay: 0.05s; }
     .detail-card:nth-child(3) { animation-delay: 0.1s; }
     .detail-card:nth-child(4) { animation-delay: 0.15s; }
+
+    /* Card headers */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .card-header h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    .card-title-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .route-icon { background: #E3F2FD; }
+    .driver-icon { background: #FFF3E0; }
+    .vehicle-icon { background: #E8F5E9; }
+    .info-icon-title { background: #F3E5F5; }
+
+    /* Driver badges */
+    .driver-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .driver-badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .driver-badge.verified {
+      background: #E3F2FD;
+      color: #1565C0;
+    }
+    .driver-badge.green {
+      background: var(--very-light-green);
+      color: var(--dark-green);
+    }
+    .btn-contact {
+      margin-top: 0.75rem;
+      width: 100%;
+      padding: 8px;
+      border: 1.5px solid var(--primary-green);
+      background: white;
+      color: var(--primary-green);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-contact:hover {
+      background: var(--very-light-green);
+    }
+
+    /* Vehicle energy badge (square) */
+    .vehicle-energy-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .vehicle-energy-icon {
+      font-size: 1.2rem;
+    }
+    .vehicle-energy-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Info grid horizontal */
+    .info-grid-h {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .info-item-h {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .info-item-h:last-child {
+      border-bottom: none;
+    }
+    .info-item-h .info-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
+    .info-item-h .info-label {
+      font-size: 0.82rem;
+      color: var(--gray);
+      flex: 1;
+      margin: 0;
+    }
+    .info-item-h .info-value {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--black);
+      text-align: right;
+    }
+    .info-prefs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
 
     /* Detail timeline */
     .detail-timeline {
@@ -1295,13 +1725,6 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       align-items: center;
       gap: 1rem;
     }
-    .energy-badge-lg {
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      white-space: nowrap;
-    }
     .vehicle-details {
       display: flex;
       flex-direction: column;
@@ -1316,35 +1739,6 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       color: var(--gray);
     }
 
-    /* Info grid in detail */
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .info-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 0.75rem;
-      background: #f8faf8;
-      border-radius: 10px;
-    }
-    .info-icon {
-      font-size: 1.3rem;
-      margin-bottom: 0.25rem;
-    }
-    .info-label {
-      font-size: 0.75rem;
-      color: var(--gray);
-      margin-bottom: 0.25rem;
-    }
-    .info-value {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--black);
-    }
     .status-text.status-pending { color: #e65100; }
     .status-text.status-inprogress { color: #1565c0; }
     .status-text.status-completed { color: #2e7d32; }
@@ -1357,6 +1751,63 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       padding: 1.25rem;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       border: 2px solid var(--primary-green);
+    }
+    .booking-date-header {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--dark-green);
+      background: var(--very-light-green);
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+    .passenger-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--light-gray);
+      margin-bottom: 0.75rem;
+    }
+    .passenger-selector-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--gray);
+    }
+    .passenger-selector-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .passenger-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--light-gray);
+      background: white;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      color: var(--dark-green);
+      padding: 0;
+    }
+    .passenger-btn:hover:not(:disabled) {
+      border-color: var(--primary-green);
+      background: var(--very-light-green);
+    }
+    .passenger-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .passenger-count-value {
+      font-weight: 700;
+      font-size: 1rem;
+      min-width: 20px;
+      text-align: center;
     }
     .booking-route {
       margin-bottom: 1rem;
@@ -1541,6 +1992,71 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       color: var(--gray);
     }
 
+    /* ===== RIDE PAUSE LABEL ===== */
+    .ride-pause {
+      font-size: 0.8rem;
+      color: #E65100;
+      padding: 4px 24px 2px;
+      font-weight: 600;
+    }
+
+    /* ===== WAYPOINT STYLES ===== */
+    .dt-point.waypoint {
+      opacity: 0.5;
+    }
+    .dt-dot.waypoint-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--gray);
+      border: 2px solid var(--gray);
+    }
+    .dt-line.short {
+      margin: 0.25rem 0 0.25rem 6px;
+      padding: 0.25rem 0 0.25rem 1.5rem;
+      border-left: 2px dashed var(--light-gray);
+    }
+    .dt-pause-label {
+      display: inline-block;
+      background: #FFF3E0;
+      color: #E65100;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* Booking waypoints */
+    .booking-point.waypoint {
+      opacity: 0.5;
+    }
+    .booking-dot.waypoint-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--gray);
+    }
+
+    /* Passenger dots */
+    .passenger-dots {
+      display: flex;
+      gap: 6px;
+      padding: 0 0 0.75rem;
+      justify-content: center;
+    }
+    .spot-dot.selected {
+      background: #FF9800;
+      box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.3);
+    }
+
+    /* Remaining row */
+    .remaining-row {
+      font-style: italic;
+    }
+    .remaining-value {
+      font-weight: 600;
+      color: var(--dark-green);
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1000px) {
       .main-content {
@@ -1653,6 +2169,10 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
   sortBy = signal<'price' | 'time' | 'duration' | 'rating'>('price');
   energyFilters = signal<Set<string>>(new Set(['Electric', 'Hybrid', 'LPG']));
   minSeats = signal(1);
+  prefSmoking = signal(false);
+  prefPets = signal(false);
+  prefMusic = signal(false);
+  prefConversation = signal<string | null>(null);
 
   // Detail panel
   selectedCarpool = signal<Carpool | null>(null);
@@ -1660,6 +2180,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
   participating = signal(false);
   participationMessage = signal('');
   participationMessageType = signal('');
+  passengerCount = signal(1);
 
   // Filtered + sorted results
   filteredCarpools = computed(() => {
@@ -1672,6 +2193,21 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     // Filter by minimum seats
     const seats = this.minSeats();
     results = results.filter(c => c.availableSeats >= seats);
+
+    // Filter by driver preferences
+    if (this.prefSmoking()) {
+      results = results.filter(c => c.smokingAllowed === true);
+    }
+    if (this.prefPets()) {
+      results = results.filter(c => c.petsAllowed === true);
+    }
+    if (this.prefMusic()) {
+      results = results.filter(c => c.musicAllowed === true);
+    }
+    const conv = this.prefConversation();
+    if (conv) {
+      results = results.filter(c => c.conversationLevel === conv);
+    }
 
     // Sort
     switch (this.sortBy()) {
@@ -1768,6 +2304,10 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     this.sortBy.set('price');
     this.energyFilters.set(new Set(['Electric', 'Hybrid', 'LPG']));
     this.minSeats.set(1);
+    this.prefSmoking.set(false);
+    this.prefPets.set(false);
+    this.prefMusic.set(false);
+    this.prefConversation.set(null);
     this.searchForm.maxPrice = undefined;
     this.searchForm.minimumRating = undefined;
   }
@@ -1777,6 +2317,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     this.selectedCarpool.set(carpool);
     this.detailPanelOpen.set(true);
     this.participationMessage.set('');
+    this.passengerCount.set(1);
     document.body.style.overflow = 'hidden';
   }
 
@@ -1796,13 +2337,14 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     const carpool = this.selectedCarpool();
     if (!carpool) return;
 
-    const msg = this.translate.instant('carpool.join_confirm', { price: carpool.pricePerPerson });
+    const totalPrice = carpool.pricePerPerson * this.passengerCount();
+    const msg = this.translate.instant('carpool.join_confirm', { price: totalPrice });
     if (!confirm(msg)) return;
 
     this.participating.set(true);
     this.participationMessage.set('');
 
-    this.carpoolService.participate(carpool.carpoolId).subscribe({
+    this.carpoolService.participate(carpool.carpoolId, this.passengerCount()).subscribe({
       next: () => {
         this.participating.set(false);
         this.participationMessage.set(this.translate.instant('carpools.request_sent'));
@@ -1820,6 +2362,20 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
         this.participationMessageType.set('error');
       }
     });
+  }
+
+  // Passenger count
+  incrementPassengers() {
+    const carpool = this.selectedCarpool();
+    if (carpool && this.passengerCount() < carpool.availableSeats) {
+      this.passengerCount.set(this.passengerCount() + 1);
+    }
+  }
+
+  decrementPassengers() {
+    if (this.passengerCount() > 1) {
+      this.passengerCount.set(this.passengerCount() - 1);
+    }
   }
 
   // Helpers

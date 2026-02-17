@@ -40,4 +40,13 @@ public class CreateCarpoolDTO
     public int VehicleId { get; set; }
 
     public int? EstimatedDurationMinutes { get; set; }
+
+    public int? PausesCount { get; set; }
+    public int? PausesDurationMinutes { get; set; }
+    [MaxLength(100)]
+    public string? WayBefore { get; set; }
+    [MaxLength(100)]
+    public string? WayAfter { get; set; }
+    public float? DistanceKm { get; set; }
+    public float? Co2SavedKg { get; set; }
 }

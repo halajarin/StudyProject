@@ -65,6 +65,26 @@ public class Carpool
     [Column("estimated_duration_minutes")]
     public int? EstimatedDurationMinutes { get; set; }
 
+    [Column("pauses_count")]
+    public int PausesCount { get; set; }
+
+    [Column("pauses_duration_minutes")]
+    public int PausesDurationMinutes { get; set; }
+
+    [Column("way_before")]
+    [MaxLength(100)]
+    public string? WayBefore { get; set; }
+
+    [Column("way_after")]
+    [MaxLength(100)]
+    public string? WayAfter { get; set; }
+
+    [Column("distance_km")]
+    public float? DistanceKm { get; set; }
+
+    [Column("co2_saved_kg")]
+    public float? Co2SavedKg { get; set; }
+
     // Relationships
     [ForeignKey("VehicleId")]
     public virtual Vehicle Vehicle { get; set; } = null!;

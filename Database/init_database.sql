@@ -111,6 +111,12 @@ CREATE TABLE IF NOT EXISTS carpool (
     user_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     estimated_duration_minutes INTEGER,
+    pauses_count INTEGER DEFAULT 0,
+    pauses_duration_minutes INTEGER DEFAULT 0,
+    way_before VARCHAR(100),
+    way_after VARCHAR(100),
+    distance_km FLOAT,
+    co2_saved_kg FLOAT,
     CONSTRAINT fk_carpool_vehicle FOREIGN KEY (vehicle_id)
         REFERENCES vehicle(vehicle_id) ON DELETE RESTRICT,
     CONSTRAINT fk_carpool_user FOREIGN KEY (user_id)
@@ -125,6 +131,7 @@ CREATE TABLE IF NOT EXISTS carpool_participation (
     participation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50) DEFAULT 'Confirmed',
     credits_used INTEGER NOT NULL,
+    seats_reserved INTEGER NOT NULL DEFAULT 1,
     trip_validated BOOLEAN,
     problem_comment TEXT,
     CONSTRAINT fk_participation_carpool FOREIGN KEY (carpool_id)
@@ -476,6 +483,100 @@ BEGIN
         RAISE NOTICE 'Migration v4: Add realistic seed data - EXECUTED';
     ELSE
         RAISE NOTICE 'Migration v4: Add realistic seed data - ALREADY EXECUTED, SKIPPED';
+    END IF;
+END $$;
+
+-- ==============================================================================
+-- STEP 8: Add deactivated_at column (v5)
+-- ==============================================================================
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM schema_migrations WHERE version = 5) THEN
+        -- Add deactivated_at column if not exists
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'user' AND column_name = 'deactivated_at'
+        ) THEN
+            ALTER TABLE "user" ADD COLUMN deactivated_at TIMESTAMP;
+            RAISE NOTICE 'Added deactivated_at column to user table';
+        END IF;
+
+        INSERT INTO schema_migrations (version, description) VALUES (5, 'Add deactivated_at column to track account closure date');
+        RAISE NOTICE 'Migration v5: Add deactivated_at column - EXECUTED';
+    ELSE
+        RAISE NOTICE 'Migration v5: Add deactivated_at column - ALREADY EXECUTED, SKIPPED';
+    END IF;
+END $$;
+
+-- ==============================================================================
+-- STEP 9: Add seats_reserved column to carpool_participation (v6)
+-- ==============================================================================
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM schema_migrations WHERE version = 6) THEN
+        -- Add seats_reserved column if not exists
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'carpool_participation' AND column_name = 'seats_reserved'
+        ) THEN
+            ALTER TABLE carpool_participation ADD COLUMN seats_reserved INTEGER NOT NULL DEFAULT 1;
+            RAISE NOTICE 'Added seats_reserved column to carpool_participation table';
+        END IF;
+
+        INSERT INTO schema_migrations (version, description) VALUES (6, 'Add seats_reserved column for multi-seat reservations');
+        RAISE NOTICE 'Migration v6: Add seats_reserved column - EXECUTED';
+    ELSE
+        RAISE NOTICE 'Migration v6: Add seats_reserved column - ALREADY EXECUTED, SKIPPED';
+    END IF;
+END $$;
+
+-- ==============================================================================
+-- STEP 10: Add carpool trip details columns (v7)
+-- ==============================================================================
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM schema_migrations WHERE version = 7) THEN
+        -- Add pauses columns
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'carpool' AND column_name = 'pauses_count'
+        ) THEN
+            ALTER TABLE carpool ADD COLUMN pauses_count INTEGER DEFAULT 0;
+            ALTER TABLE carpool ADD COLUMN pauses_duration_minutes INTEGER DEFAULT 0;
+            RAISE NOTICE 'Added pauses columns to carpool table';
+        END IF;
+
+        -- Add waypoint columns
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'carpool' AND column_name = 'way_before'
+        ) THEN
+            ALTER TABLE carpool ADD COLUMN way_before VARCHAR(100);
+            ALTER TABLE carpool ADD COLUMN way_after VARCHAR(100);
+            RAISE NOTICE 'Added waypoint columns to carpool table';
+        END IF;
+
+        -- Add distance and CO2 columns
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'carpool' AND column_name = 'distance_km'
+        ) THEN
+            ALTER TABLE carpool ADD COLUMN distance_km FLOAT;
+            ALTER TABLE carpool ADD COLUMN co2_saved_kg FLOAT;
+            RAISE NOTICE 'Added distance_km and co2_saved_kg columns to carpool table';
+        END IF;
+
+        -- Backfill distance and CO2 estimates from duration
+        UPDATE carpool
+        SET distance_km = ROUND((estimated_duration_minutes * 1.2)::numeric, 1),
+            co2_saved_kg = ROUND((estimated_duration_minutes * 1.2 * 0.12)::numeric, 1)
+        WHERE estimated_duration_minutes IS NOT NULL
+          AND distance_km IS NULL;
+
+        INSERT INTO schema_migrations (version, description) VALUES (7, 'Add pauses, waypoints, distance and CO2 columns to carpool');
+        RAISE NOTICE 'Migration v7: Add carpool trip details - EXECUTED';
+    ELSE
+        RAISE NOTICE 'Migration v7: Add carpool trip details - ALREADY EXECUTED, SKIPPED';
     END IF;
 END $$;
 
