@@ -169,6 +169,7 @@ public class CarpoolService : ICarpoolService
             searchDto.DepartureCity,
             searchDto.ArrivalCity,
             searchDto.DepartureDate,
+            searchDto.DepartureDateTo,
             searchDto.IsEcological,
             searchDto.MaxPrice,
             searchDto.MaxDurationMinutes,

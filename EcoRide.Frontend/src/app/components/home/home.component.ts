@@ -75,8 +75,25 @@ import { AuthService } from '../../services/auth.service';
                 type="date"
                 [(ngModel)]="searchForm.departureDate"
                 name="departureDate">
-              <label>{{ 'home.date' | translate }}</label>
+              <label>{{ showDateRange ? ('home.date_from' | translate) : ('home.date' | translate) }}</label>
             </div>
+
+            <button type="button" class="date-toggle" (click)="toggleDateRange()">
+              {{ showDateRange ? '&times;' : '+' }}
+            </button>
+
+            @if (showDateRange) {
+              <div class="search-field">
+                <div class="search-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <input
+                  type="date"
+                  [(ngModel)]="searchForm.departureDateTo"
+                  name="departureDateTo">
+                <label>{{ 'home.date_to' | translate }}</label>
+              </div>
+            }
 
             <button type="submit" class="search-btn">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -442,10 +459,13 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   private router = inject(Router);
   private observer: IntersectionObserver | null = null;
 
+  showDateRange = false;
+
   searchForm = {
     departureCity: '',
     arrivalCity: '',
-    departureDate: ''
+    departureDate: '',
+    departureDateTo: ''
   };
 
   particles = Array.from({ length: 15 }, () => ({
@@ -492,11 +512,19 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     this.observer?.disconnect();
   }
 
+  toggleDateRange() {
+    this.showDateRange = !this.showDateRange;
+    if (!this.showDateRange) {
+      this.searchForm.departureDateTo = '';
+    }
+  }
+
   searchTrip() {
     const params: any = {};
     if (this.searchForm.departureCity) params.departureCity = this.searchForm.departureCity;
     if (this.searchForm.arrivalCity) params.arrivalCity = this.searchForm.arrivalCity;
     if (this.searchForm.departureDate) params.departureDate = this.searchForm.departureDate;
+    if (this.searchForm.departureDateTo) params.departureDateTo = this.searchForm.departureDateTo;
 
     this.router.navigate(['/carpools'], { queryParams: params });
   }

@@ -11,6 +11,7 @@ public interface ICarpoolRepository
         string departureCity,
         string arrivalCity,
         DateTime? departureDate,
+        DateTime? departureDateTo = null,
         bool? isEcological = null,
         float? maxPrice = null,
         int? maxDurationMinutes = null,

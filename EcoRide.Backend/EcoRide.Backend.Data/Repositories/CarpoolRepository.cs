@@ -41,6 +41,7 @@ public class CarpoolRepository : ICarpoolRepository
         string departureCity,
         string arrivalCity,
         DateTime? departureDate,
+        DateTime? departureDateTo = null,
         bool? isEcological = null,
         float? maxPrice = null,
         int? maxDurationMinutes = null,
@@ -64,7 +65,13 @@ public class CarpoolRepository : ICarpoolRepository
         }
 
         // Optional date filter
-        if (departureDate.HasValue)
+        if (departureDate.HasValue && departureDateTo.HasValue)
+        {
+            var fromDate = DateTime.SpecifyKind(departureDate.Value.Date, DateTimeKind.Utc);
+            var toDate = DateTime.SpecifyKind(departureDateTo.Value.Date, DateTimeKind.Utc);
+            query = query.Where(c => c.DepartureDate.Date >= fromDate && c.DepartureDate.Date <= toDate);
+        }
+        else if (departureDate.HasValue)
         {
             var searchDate = DateTime.SpecifyKind(departureDate.Value.Date, DateTimeKind.Utc);
             query = query.Where(c => c.DepartureDate.Date == searchDate);

@@ -46,6 +46,7 @@ export interface SearchCarpool {
   departureCity: string;
   arrivalCity: string;
   departureDate?: string; // ISO date string (YYYY-MM-DD), optional
+  departureDateTo?: string; // ISO date string (YYYY-MM-DD), optional — end of date range
   isEcological?: boolean;
   maxPrice?: number;
   maxDurationMinutes?: number;

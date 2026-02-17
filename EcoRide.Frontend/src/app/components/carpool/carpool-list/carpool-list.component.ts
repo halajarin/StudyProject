@@ -16,26 +16,62 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     <!-- ===== SEARCH HERO ===== -->
     <div class="search-hero">
       <h1>{{ 'carpools.search_hero_title' | translate }}</h1>
-      <form class="search-bar" (ngSubmit)="search()">
-        <div class="search-field">
-          <label>{{ 'carpools.label_departure' | translate }}</label>
-          <input type="text" [(ngModel)]="searchForm.departureCity" name="departureCity"
-                 [placeholder]="'carpools.placeholder_departure' | translate">
-        </div>
-        <span class="search-arrow">&rarr;</span>
-        <div class="search-field">
-          <label>{{ 'carpools.label_arrival' | translate }}</label>
-          <input type="text" [(ngModel)]="searchForm.arrivalCity" name="arrivalCity"
-                 [placeholder]="'carpools.placeholder_arrival' | translate">
-        </div>
-        <div class="search-field">
-          <label>{{ 'carpools.label_date' | translate }}</label>
-          <input type="date" [(ngModel)]="searchForm.departureDate" name="departureDate">
-        </div>
-        <button type="submit" class="btn-search">
-          &#128269; {{ 'common.search' | translate }}
-        </button>
-      </form>
+      <div class="search-box">
+        <form class="search-form" (ngSubmit)="search()">
+          <div class="search-field">
+            <div class="search-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+            </div>
+            <input type="text" [(ngModel)]="searchForm.departureCity" name="departureCity"
+                   [placeholder]="'carpools.placeholder_departure' | translate">
+            <label>{{ 'carpools.label_departure' | translate }}</label>
+          </div>
+
+          <div class="search-divider">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+
+          <div class="search-field">
+            <div class="search-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+            </div>
+            <input type="text" [(ngModel)]="searchForm.arrivalCity" name="arrivalCity"
+                   [placeholder]="'carpools.placeholder_arrival' | translate">
+            <label>{{ 'carpools.label_arrival' | translate }}</label>
+          </div>
+
+          <div class="search-divider hide-mobile">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+
+          <div class="search-field">
+            <div class="search-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <input type="date" [(ngModel)]="searchForm.departureDate" name="departureDate">
+            <label>{{ showDateRange ? ('carpools.date_from' | translate) : ('carpools.label_date' | translate) }}</label>
+          </div>
+
+          <button type="button" class="date-toggle" (click)="toggleDateRange()">
+            {{ showDateRange ? '&times;' : '+' }}
+          </button>
+
+          @if (showDateRange) {
+            <div class="search-field">
+              <div class="search-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <input type="date" [(ngModel)]="searchForm.departureDateTo" name="departureDateTo">
+              <label>{{ 'carpools.date_to' | translate }}</label>
+            </div>
+          }
+
+          <button type="submit" class="search-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>{{ 'common.search' | translate }}</span>
+          </button>
+        </form>
+      </div>
       <div class="energy-legend">
         <span class="legend-item"><span class="energy-dot elec-dot"></span> {{ 'vehicle.types.electric' | translate }}</span>
         <span class="legend-item"><span class="energy-dot hybrid-dot"></span> {{ 'vehicle.types.hybrid' | translate }}</span>
@@ -658,85 +694,111 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       position: relative;
       z-index: 1;
     }
-    .search-bar {
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 16px;
-      padding: 6px;
+    .search-box {
       max-width: 900px;
       margin: 0 auto;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      background: white;
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.08);
       position: relative;
       z-index: 1;
     }
+    .search-form {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
     .search-field {
       flex: 1;
+      position: relative;
+      padding: 8px 16px 6px 48px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      padding: 8px 14px;
-      position: relative;
+      justify-content: center;
       min-width: 0;
     }
-    .search-field:not(:last-of-type)::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 20%;
-      height: 60%;
-      width: 1px;
-      background: var(--light-gray);
-    }
     .search-field label {
-      font-size: 0.65rem;
+      font-size: 0.7rem;
+      color: var(--gray);
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: var(--gray);
       margin: 0;
+      line-height: 1;
+      order: -1;
     }
     .search-field input {
+      width: 100%;
       border: none;
       outline: none;
-      font-size: 0.88rem;
-      padding: 4px 0;
-      width: 100%;
-      margin: 0;
-      box-shadow: none;
+      font-size: 0.95rem;
+      padding: 2px 0 0;
       background: transparent;
       color: var(--black);
+      margin: 0;
+      line-height: 1.3;
     }
     .search-field input:focus {
       box-shadow: none;
       border-color: transparent;
     }
-    .search-arrow {
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary-green);
+      display: flex;
+    }
+    .search-divider {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      color: var(--light-gray);
+    }
+    .date-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--light-gray);
+      background: white;
       color: var(--primary-green);
       font-size: 1.2rem;
-      padding: 0 4px;
-      opacity: 0.5;
-      flex-shrink: 0;
-    }
-    .btn-search {
-      background: var(--primary-green);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 28px;
-      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      align-self: center;
+      margin: 0 4px;
+      transition: all 0.2s ease;
+      padding: 0;
+      line-height: 1;
+    }
+    .date-toggle:hover {
+      border-color: var(--primary-green);
+      background: var(--very-light-green);
+    }
+    .search-btn {
       display: flex;
       align-items: center;
       gap: 8px;
+      padding: 16px 28px;
+      background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
     }
-    .btn-search:hover {
-      background: var(--dark-green);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(46,204,113,0.3);
+    .search-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
     }
     .energy-legend {
       display: flex;
@@ -2079,24 +2141,30 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       .detail-right {
         position: static;
       }
-      .search-bar {
+      .search-form {
         flex-direction: column;
-        border-radius: 16px;
-        padding: 8px;
         gap: 0;
       }
       .search-field {
-        padding: 4px 12px;
+        border-bottom: 1px solid var(--light-gray);
+        padding: 10px 16px 8px 48px;
       }
-      .search-field::after {
+      .search-field:last-of-type {
+        border-bottom: none;
+      }
+      .search-divider {
         display: none;
       }
-      .search-arrow {
+      .hide-mobile {
         display: none;
       }
-      .btn-search {
-        width: 100%;
-        margin-top: 4px;
+      .date-toggle {
+        align-self: flex-start;
+        margin: 4px 16px;
+      }
+      .search-btn {
+        margin: 8px;
+        justify-content: center;
         border-radius: 12px;
       }
       .ride-card-inner {
@@ -2159,10 +2227,12 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
   searched = signal(false);
 
   // Search form
+  showDateRange = false;
   searchForm: SearchCarpool = {
     departureCity: '',
     arrivalCity: '',
-    departureDate: ''
+    departureDate: '',
+    departureDateTo: ''
   };
 
   // Client-side filters
@@ -2245,6 +2315,10 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
         this.searchForm.departureCity = params['departureCity'] || '';
         this.searchForm.arrivalCity = params['arrivalCity'] || '';
         this.searchForm.departureDate = params['departureDate'] || '';
+        this.searchForm.departureDateTo = params['departureDateTo'] || '';
+        if (this.searchForm.departureDateTo) {
+          this.showDateRange = true;
+        }
         this.search();
       } else {
         this.loadAll();
@@ -2310,6 +2384,13 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     this.prefConversation.set(null);
     this.searchForm.maxPrice = undefined;
     this.searchForm.minimumRating = undefined;
+  }
+
+  toggleDateRange() {
+    this.showDateRange = !this.showDateRange;
+    if (!this.showDateRange) {
+      this.searchForm.departureDateTo = '';
+    }
   }
 
   // Detail panel

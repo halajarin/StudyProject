@@ -143,6 +143,33 @@
   animation: fadeInDown 0.8s ease 0.2s both;
 }
 
+/* ========== DATE TOGGLE ========== */
+.date-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--light-gray);
+  background: white;
+  color: var(--primary-green);
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0 4px;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.date-toggle:hover {
+  border-color: var(--primary-green);
+  background: var(--very-light-green);
+}
+
 /* ========== SEARCH BOX ========== */
 .search-box {
   max-width: 900px;

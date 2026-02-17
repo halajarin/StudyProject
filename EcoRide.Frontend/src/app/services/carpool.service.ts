@@ -24,6 +24,7 @@ export class CarpoolService {
     if (!cleanedData.departureCity) delete cleanedData.departureCity;
     if (!cleanedData.arrivalCity) delete cleanedData.arrivalCity;
     if (!cleanedData.departureDate) delete cleanedData.departureDate;
+    if (!cleanedData.departureDateTo) delete cleanedData.departureDateTo;
 
     return this.http.post<Carpool[]>(`${this.apiUrl}/search`, cleanedData);
   }
