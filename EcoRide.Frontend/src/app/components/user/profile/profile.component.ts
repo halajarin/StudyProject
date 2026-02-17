@@ -7,6 +7,7 @@ import { User } from '../../../models/user.model';
 import { UserRole, RoleId } from '../../../models/role.enum';
 import { Vehicle, CreateVehicle } from '../../../models/vehicle.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
 
 @Component({
   selector: 'app-profile',
@@ -291,13 +292,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  getEnergyIcon(type: string): string {
-    switch (type) {
-      case 'Electric': return '⚡';
-      case 'Hybrid': return '🔋';
-      default: return '🌿';
-    }
-  }
+  getEnergyIcon = energyIcon;
 
   // --- Vehicle form (shared between add and edit) ---
 

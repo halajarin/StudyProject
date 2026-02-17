@@ -458,6 +458,28 @@
     "no_price_limit": "Sans limite",
     "per_person": "/personne"
   },
+  "create_carpool": {
+    "page_subtitle": "Proposez un trajet éco-responsable et partagez vos frais avec d'autres voyageurs.",
+    "step_route": "Itinéraire",
+    "step_schedule": "Horaires & prix",
+    "step_vehicle": "Véhicule",
+    "step_confirm": "Confirmation",
+    "step_of": "Étape {{current}}/{{total}}",
+    "route_title": "Itinéraire",
+    "schedule_title": "Horaires & tarif",
+    "vehicle_title": "Véhicule",
+    "confirm_title": "Confirmation & publication",
+    "select_vehicle_label": "Sélectionnez votre véhicule",
+    "vehicle_manage_link": "Vous pouvez gérer vos véhicules depuis",
+    "vehicle_manage_link_text": "Mon profil",
+    "confirm_box_title": "Confirmation obligatoire avant publication",
+    "confirm_text": "Je confirme que mon <strong>permis de conduire</strong> et mon <strong>assurance véhicule</strong> sont en cours de validité. Je m'engage à respecter le code de la route et les conditions d'utilisation de la plateforme EcoRide.",
+    "preview_note": "Votre trajet sera visible par tous les utilisateurs dès publication. Vous pourrez le modifier ou l'annuler depuis « Mes trajets ».",
+    "publish": "Publier le covoiturage",
+    "duration_fill_times": "Renseignez les horaires pour calculer",
+    "duration_error": "L'arrivée doit être après le départ",
+    "seats_option": "{{count}} place(s)"
+  },
   "messages": {
     "operation_successful": "Opération réussie",
     "operation_failed": "L'opération a échoué",

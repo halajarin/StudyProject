@@ -458,6 +458,28 @@
     "no_price_limit": "No limit",
     "per_person": "/person"
   },
+  "create_carpool": {
+    "page_subtitle": "Offer an eco-friendly trip and share your costs with other travelers.",
+    "step_route": "Itinerary",
+    "step_schedule": "Schedule & price",
+    "step_vehicle": "Vehicle",
+    "step_confirm": "Confirmation",
+    "step_of": "Step {{current}}/{{total}}",
+    "route_title": "Itinerary",
+    "schedule_title": "Schedule & pricing",
+    "vehicle_title": "Vehicle",
+    "confirm_title": "Confirmation & publication",
+    "select_vehicle_label": "Select your vehicle",
+    "vehicle_manage_link": "You can manage your vehicles from",
+    "vehicle_manage_link_text": "My profile",
+    "confirm_box_title": "Mandatory confirmation before publishing",
+    "confirm_text": "I confirm that my <strong>driver's license</strong> and my <strong>vehicle insurance</strong> are currently valid. I agree to comply with traffic laws and the EcoRide platform terms of use.",
+    "preview_note": "Your trip will be visible to all users once published. You can edit or cancel it from \"My trips\".",
+    "publish": "Publish carpool",
+    "duration_fill_times": "Fill in the times to calculate",
+    "duration_error": "Arrival must be after departure",
+    "seats_option": "{{count}} seat(s)"
+  },
   "messages": {
     "operation_successful": "Operation completed successfully",
     "operation_failed": "Operation failed",

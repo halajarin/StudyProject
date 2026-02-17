@@ -6,6 +6,7 @@ import { CarpoolService } from '../../../services/carpool.service';
 import { AuthService } from '../../../services/auth.service';
 import { Carpool, SearchCarpool } from '../../../models/carpool.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
 
 @Component({
   selector: 'app-carpool-list',
@@ -1617,14 +1618,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     return m > 0 ? `${h}h ${m.toString().padStart(2, '0')}min` : `${h}h`;
   }
 
-  getEnergyIcon(type: string): string {
-    switch (type) {
-      case 'Electric': return '\u26A1';
-      case 'Hybrid': return '\uD83D\uDD0B';
-      case 'LPG': return '\uD83C\uDF3F';
-      default: return '\u26A1';
-    }
-  }
+  getEnergyIcon = energyIcon;
 
   getStatusKey(status: string): string {
     if (status === 'InProgress') return 'in_progress';
