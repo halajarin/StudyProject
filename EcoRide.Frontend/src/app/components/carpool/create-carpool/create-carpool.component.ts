@@ -211,9 +211,9 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
         <!-- ── 4. ARRÊTS & RECHARGE ── -->
         <div class="form-section">
           <div class="section-header">
-            <div class="section-icon stops">&#128268;</div>
+            <div class="section-icon charge">&#128268;</div>
             <div class="section-title">{{ 'create_carpool.stops_title' | translate }}</div>
-            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 4, total: 5} }} · Optionnel</div>
+            <div class="section-subtitle">{{ 'create_carpool.step_of' | translate:{current: 4, total: 5} }} · {{ 'create_carpool.optional' | translate }}</div>
           </div>
           <div class="section-body">
             <p class="stops-description">{{ 'create_carpool.stops_subtitle' | translate }}</p>
@@ -226,26 +226,28 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   <option [ngValue]="1">{{ 'create_carpool.stops_option_1' | translate }}</option>
                   <option [ngValue]="2">{{ 'create_carpool.stops_option_2' | translate }}</option>
                   <option [ngValue]="3">{{ 'create_carpool.stops_option_3' | translate }}</option>
+                  <option [ngValue]="4">{{ 'create_carpool.stops_option_4' | translate }}</option>
+                  <option [ngValue]="5">{{ 'create_carpool.stops_option_5' | translate }}</option>
                 </select>
               </div>
               <div class="field-group">
                 <label class="field-label">{{ 'create_carpool.stops_duration_label' | translate }}</label>
                 <div class="field-input-wrap">
-                  <span class="field-input-icon">&#9201;</span>
-                  <input class="field-input has-icon" type="number" min="0" max="180"
+                  <span class="field-input-icon">&#9201;&#65039;</span>
+                  <input class="field-input has-icon" type="number" min="0"
                          [(ngModel)]="trip.pausesDurationMinutes" name="pausesDurationMinutes"
-                         [disabled]="!trip.pausesCount || trip.pausesCount === 0">
+                         [placeholder]="'create_carpool.stops_duration_placeholder' | translate">
                 </div>
                 <span class="field-hint">{{ 'create_carpool.stops_duration_hint' | translate }}</span>
               </div>
             </div>
             @if (trip.pausesCount && trip.pausesCount > 0) {
-              <div class="stops-summary">
-                <span class="stops-summary-icon">&#128268;</span>
-                <div class="stops-summary-text">
-                  <strong>{{ 'create_carpool.stops_summary' | translate:{count: trip.pausesCount, duration: trip.pausesDurationMinutes || 0} }}</strong>
-                  <span>{{ 'create_carpool.stops_summary_hint' | translate }}</span>
-                </div>
+              <div class="recharge-summary">
+                <span class="recharge-summary-icon">&#128268;</span>
+                <span class="recharge-summary-text">
+                  <span [innerHTML]="'create_carpool.stops_summary' | translate:{count: trip.pausesCount, duration: trip.pausesDurationMinutes || 0}"></span>
+                  <br><span class="recharge-summary-sub">{{ 'create_carpool.stops_summary_hint' | translate }}</span>
+                </span>
               </div>
             }
           </div>
@@ -282,6 +284,9 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                 } @else {
                   &#128640; {{ 'create_carpool.publish' | translate }}
                 }
+              </button>
+              <button type="button" class="btn-draft">
+                &#128190; {{ 'create_carpool.save_draft' | translate }}
               </button>
             </div>
           </div>
@@ -448,7 +453,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     .section-icon.route { background: #e8f5e9; }
     .section-icon.time { background: #e3f2fd; }
     .section-icon.vehicle { background: #e0f7fa; }
-    .section-icon.stops { background: #FFF3E0; }
+    .section-icon.charge { background: #FFF8E1; }
     .section-icon.confirm { background: #ffebee; }
     .section-title { font-weight: 700; font-size: 1.05rem; }
     .section-subtitle { font-size: 0.82rem; color: var(--gray); margin-left: auto; }
@@ -616,33 +621,29 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       margin: 0 0 16px;
       line-height: 1.5;
     }
-    .stops-summary {
+    .recharge-summary {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 12px;
-      background: #FFF8E1;
-      border: 1.5px solid #FFE082;
-      border-radius: 10px;
       padding: 14px 18px;
-      margin-top: 16px;
+      background: #FFF8E1;
+      border-radius: 10px;
+      border: 1px solid #FFE082;
+      margin-top: 12px;
     }
-    .stops-summary-icon {
-      font-size: 1.3rem;
-      flex-shrink: 0;
-      margin-top: 1px;
+    .recharge-summary-icon {
+      font-size: 1.4rem;
     }
-    .stops-summary-text {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .recharge-summary-text {
+      font-size: 0.88rem;
+      color: #E65100;
     }
-    .stops-summary-text strong {
-      font-size: 0.9rem;
-      color: var(--dark-green);
+    .recharge-summary-text strong {
+      color: #BF360C;
     }
-    .stops-summary-text span {
-      font-size: 0.82rem;
-      color: #8D6E63;
+    .recharge-summary-sub {
+      font-size: 0.8rem;
+      opacity: 0.8;
     }
 
     /* ===== CONFIRMATION ===== */
@@ -705,7 +706,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     .preview-note-icon { font-size: 1.2rem; }
 
     /* ===== SUBMIT ===== */
-    .submit-area { margin-top: 20px; }
+    .submit-area { margin-top: 20px; display: flex; align-items: center; gap: 12px; }
     .btn-submit {
       padding: 16px 40px;
       background: var(--primary-green);
@@ -732,6 +733,22 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
+    }
+    .btn-draft {
+      padding: 16px 28px;
+      background: transparent;
+      border: 2px solid var(--light-gray);
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--gray);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-draft:hover {
+      border-color: var(--primary-green);
+      color: var(--primary-green);
     }
 
     @keyframes fadeInUp {
