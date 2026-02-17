@@ -95,6 +95,28 @@ public class AuthService : IAuthService
         return GenerateJwtToken(user, roles);
     }
 
+    public async Task<(bool success, string? token, string? error)> ChangePasswordAsync(int userId, ChangePasswordDTO dto)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+        {
+            return (false, null, "User not found");
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.Password))
+        {
+            return (false, null, "Current password is incorrect");
+        }
+
+        user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+        await _userRepository.UpdateAsync(user);
+
+        var roles = await _userRepository.GetUserRolesAsync(userId);
+        var token = GenerateJwtToken(user, roles);
+
+        return (true, token, null);
+    }
+
     private string GenerateJwtToken(User user, List<string> roles)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");

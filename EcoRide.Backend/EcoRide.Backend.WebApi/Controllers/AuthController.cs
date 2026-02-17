@@ -1,19 +1,23 @@
-using Microsoft.AspNetCore.Mvc;
-using EcoRide.Backend.Dtos.Auth;
 using EcoRide.Backend.Business.Services.Interfaces;
 using EcoRide.Backend.Data.Repositories.Interfaces;
+using EcoRide.Backend.Dtos.Auth;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EcoRide.Backend.WebApi.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
     private readonly IUserRepository _userRepository;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService, IUserRepository userRepository, ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService,
+        IUserRepository userRepository,
+        ILogger<AuthController> logger
+    )
     {
         _authService = authService;
         _userRepository = userRepository;
@@ -40,21 +44,23 @@ public class AuthController : ControllerBase
         // Get user roles
         var roles = await _userRepository.GetUserRolesAsync(user.UserId);
 
-        return Ok(new
-        {
-            message = "Registration successful",
-            user = new
+        return Ok(
+            new
             {
-                user.UserId,
-                user.Username,
-                user.Email,
-                user.Credits,
-                roles,
-                averageRating = 0.0,
-                reviewCount = 0
-            },
-            token
-        });
+                message = "Registration successful",
+                user = new
+                {
+                    user.UserId,
+                    user.Username,
+                    user.Email,
+                    user.Credits,
+                    roles,
+                    averageRating = 0.0,
+                    reviewCount = 0,
+                },
+                token,
+            }
+        );
     }
 
     [HttpPost("login")]
@@ -79,20 +85,42 @@ public class AuthController : ControllerBase
         var averageRating = await _userRepository.GetAverageRatingAsync(user.UserId);
         var reviewCount = await _userRepository.GetRatingCountAsync(user.UserId);
 
-        return Ok(new
-        {
-            message = "Login successful",
-            user = new
+        return Ok(
+            new
             {
-                user.UserId,
-                user.Username,
-                user.Email,
-                user.Credits,
-                roles,
-                averageRating,
-                reviewCount
-            },
-            token
-        });
+                message = "Login successful",
+                user = new
+                {
+                    user.UserId,
+                    user.Username,
+                    user.Email,
+                    user.Credits,
+                    roles,
+                    averageRating,
+                    reviewCount,
+                },
+                token,
+            }
+        );
+    }
+
+    [HttpPost("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var userId = GetCurrentUserId();
+        var (success, token, error) = await _authService.ChangePasswordAsync(userId, dto);
+
+        if (!success)
+        {
+            return BadRequest(new { message = error });
+        }
+
+        return Ok(new { message = "Password changed successfully", token });
     }
 }

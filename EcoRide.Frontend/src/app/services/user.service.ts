@@ -49,4 +49,20 @@ export class UserService {
   savePreferences(preferences: UserPreferences): Observable<UserPreferences> {
     return this.http.post<UserPreferences>(`${this.apiUrl}/preferences`, preferences);
   }
+
+  deleteVehicle(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/vehicles/${id}`);
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/auth/change-password`, { currentPassword, newPassword });
+  }
+
+  deactivateAccount(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/deactivate`, {});
+  }
+
+  deleteAccount(password: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/account`, { body: { password } });
+  }
 }

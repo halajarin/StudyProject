@@ -264,4 +264,73 @@ public class UserController : BaseController
 
         return Ok(new { message = "Preferences saved successfully" });
     }
+
+    [HttpDelete("vehicles/{id}")]
+    public async Task<IActionResult> DeleteVehicle(int id)
+    {
+        var userId = GetCurrentUserId();
+        var vehicle = await _vehicleRepository.GetByIdAsync(id);
+
+        if (vehicle == null)
+        {
+            return NotFound(new { message = "Vehicle not found" });
+        }
+
+        if (vehicle.UserId != userId)
+        {
+            return Forbid();
+        }
+
+        await _vehicleRepository.DeleteAsync(id);
+        _logger.LogInformation($"Vehicle {id} deleted by user {userId}");
+
+        return Ok(new { message = "Vehicle deleted successfully" });
+    }
+
+    [HttpPost("deactivate")]
+    public async Task<IActionResult> DeactivateAccount()
+    {
+        var userId = GetCurrentUserId();
+        var user = await _userRepository.GetByIdAsync(userId);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        user.IsActive = false;
+        user.DeactivatedAt = DateTime.UtcNow;
+        await _userRepository.UpdateAsync(user);
+
+        _logger.LogInformation($"User {userId} deactivated their account");
+
+        return Ok(new { message = "Account deactivated successfully" });
+    }
+
+    [HttpDelete("account")]
+    public async Task<IActionResult> DeleteAccount([FromBody] DeactivateAccountDTO dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var userId = GetCurrentUserId();
+        var user = await _userRepository.GetByIdAsync(userId);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
+        {
+            return BadRequest(new { message = "Incorrect password" });
+        }
+
+        await _userRepository.DeleteAsync(userId);
+        _logger.LogInformation($"User {userId} permanently deleted their account");
+
+        return Ok(new { message = "Account deleted successfully" });
+    }
 }
