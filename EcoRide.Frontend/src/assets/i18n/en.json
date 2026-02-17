@@ -300,6 +300,16 @@
       "brown": "Brown",
       "beige": "Beige",
       "other": "Other"
+    },
+    "emission": {
+      "electric": "zero emission",
+      "hybrid": "low emissions",
+      "lpg": "reduced emissions"
+    },
+    "short": {
+      "electric": "Elec",
+      "hybrid": "Hyb.",
+      "lpg": "LPG"
     }
   },
   "review": {
@@ -482,7 +492,25 @@
     "delete_confirm": "This action is irreversible. Enter your password to confirm the permanent deletion of your account.",
     "enter_password": "Enter your password",
     "account_deactivated": "Your account has been deactivated.",
-    "account_deleted": "Your account has been permanently deleted."
+    "account_deleted": "Your account has been permanently deleted.",
+    "free": "Free",
+    "driver_confirmed_sub": "License and insurance confirmed on honor.",
+    "driver_inactive_sub": "Enable the driver role to offer carpools.",
+    "driver_license": "Driver's license",
+    "driver_insurance": "Vehicle insurance",
+    "confirmed_m": "Confirmed",
+    "confirmed_f": "Confirmed",
+    "security_desc": "Change your password and security settings.",
+    "preferences_desc": "Customize your carpooling experience.",
+    "advanced_desc": "Advanced and irreversible actions on your account.",
+    "pledge_section_title": "Honor pledge",
+    "pledge_intro": "To become a driver on EcoRide, you must certify on your honor that you have the following valid documents:",
+    "confirm_license_desc": "I certify that I hold a valid driver's license authorizing the driving of the vehicle used.",
+    "confirm_insurance_desc": "I certify that I have automobile insurance covering passenger transport.",
+    "confirm_and_save": "Confirm and save",
+    "pref_smoking_desc": "Allow passengers to smoke in your vehicle",
+    "pref_pets_desc": "Allow pets in your vehicle",
+    "pref_music_desc": "Allow music during the trip"
   },
   "carpools": {
     "search_hero_title": "Search for an eco-friendly carpool",

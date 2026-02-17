@@ -300,6 +300,16 @@
       "brown": "Marron",
       "beige": "Beige",
       "other": "Autre"
+    },
+    "emission": {
+      "electric": "0 émission",
+      "hybrid": "faibles émissions",
+      "lpg": "émissions réduites"
+    },
+    "short": {
+      "electric": "Élec",
+      "hybrid": "Hyb.",
+      "lpg": "GPL"
     }
   },
   "review": {
@@ -482,7 +492,25 @@
     "delete_confirm": "Cette action est irréversible. Entrez votre mot de passe pour confirmer la suppression définitive de votre compte.",
     "enter_password": "Entrez votre mot de passe",
     "account_deactivated": "Votre compte a été désactivé.",
-    "account_deleted": "Votre compte a été définitivement supprimé."
+    "account_deleted": "Votre compte a été définitivement supprimé.",
+    "free": "Gratuit",
+    "driver_confirmed_sub": "Permis et assurance confirmés sur l'honneur.",
+    "driver_inactive_sub": "Activez le rôle conducteur pour proposer des covoiturages.",
+    "driver_license": "Permis de conduire",
+    "driver_insurance": "Assurance véhicule",
+    "confirmed_m": "Confirmé",
+    "confirmed_f": "Confirmée",
+    "security_desc": "Modifiez votre mot de passe et vos paramètres de sécurité.",
+    "preferences_desc": "Personnalisez votre expérience de covoiturage.",
+    "advanced_desc": "Actions avancées et irréversibles sur votre compte.",
+    "pledge_section_title": "Engagement sur l'honneur",
+    "pledge_intro": "Pour devenir conducteur sur EcoRide, vous devez certifier sur l'honneur que vous disposez des documents suivants en cours de validité :",
+    "confirm_license_desc": "Je certifie posséder un permis de conduire valide autorisant la conduite du véhicule utilisé.",
+    "confirm_insurance_desc": "Je certifie disposer d'une assurance automobile couvrant le transport de passagers.",
+    "confirm_and_save": "Confirmer et enregistrer",
+    "pref_smoking_desc": "Autoriser les passagers à fumer dans votre véhicule",
+    "pref_pets_desc": "Autoriser les animaux de compagnie dans votre véhicule",
+    "pref_music_desc": "Autoriser la musique pendant le trajet"
   },
   "carpools": {
     "search_hero_title": "Rechercher un covoiturage éco-responsable",
