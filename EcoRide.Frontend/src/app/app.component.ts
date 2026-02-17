@@ -17,7 +17,7 @@ import { filter } from 'rxjs';
       <div class="container nav-container">
         <div class="nav-brand">
           <a routerLink="/" class="logo">
-            <span class="eco">Eco</span><span class="ride">Ride</span>
+            <img src="assets/ecoride-logo-navbar.svg" alt="EcoRide" class="logo-img" />
           </a>
         </div>
         <button class="hamburger" [class.open]="menuOpen()" (click)="toggleMenu($event)" aria-label="Menu">
@@ -128,13 +128,15 @@ import { filter } from 'rxjs';
     }
 
     .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
       text-decoration: none;
+      display: flex;
+      align-items: center;
     }
 
-    .eco { color: var(--light-green); }
-    .ride { color: var(--white); }
+    .logo-img {
+      height: 38px;
+      width: auto;
+    }
 
     /* ===== NAV ICONS ===== */
     .nav-icon {

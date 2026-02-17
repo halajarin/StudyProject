@@ -181,6 +181,41 @@ public class UserController : BaseController
         return CreatedAtAction(nameof(GetVehicles), new { id = created.VehicleId }, created);
     }
 
+    [HttpPut("vehicles/{id}")]
+    public async Task<IActionResult> UpdateVehicle(int id, [FromBody] CreateVehicleDTO updateDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var userId = GetCurrentUserId();
+        var vehicle = await _vehicleRepository.GetByIdAsync(id);
+
+        if (vehicle == null)
+        {
+            return NotFound(new { message = "Vehicle not found" });
+        }
+
+        if (vehicle.UserId != userId)
+        {
+            return Forbid();
+        }
+
+        vehicle.Model = updateDto.Model;
+        vehicle.RegistrationNumber = updateDto.RegistrationNumber;
+        vehicle.EnergyType = updateDto.EnergyType;
+        vehicle.Color = updateDto.Color;
+        vehicle.FirstRegistrationDate = updateDto.FirstRegistrationDate;
+        vehicle.BrandId = updateDto.BrandId;
+        vehicle.SeatCount = updateDto.SeatCount;
+
+        await _vehicleRepository.UpdateAsync(vehicle);
+        _logger.LogInformation($"Vehicle {id} updated by user {userId}");
+
+        return Ok(new { message = "Vehicle updated successfully" });
+    }
+
     [HttpPost("add-credits")]
     public async Task<IActionResult> AddCredits([FromBody] AddCreditsDTO addCreditsDto)
     {

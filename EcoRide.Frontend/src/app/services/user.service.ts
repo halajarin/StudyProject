@@ -34,6 +34,10 @@ export class UserService {
     return this.http.post<Vehicle>(`${this.apiUrl}/vehicles`, vehicle);
   }
 
+  updateVehicle(id: number, vehicle: CreateVehicle): Observable<any> {
+    return this.http.put(`${this.apiUrl}/vehicles/${id}`, vehicle);
+  }
+
   addCredits(amount: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/add-credits`, { amount });
   }

@@ -5,8 +5,7 @@ import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
 import { User } from '../../../models/user.model';
 import { UserRole, RoleId } from '../../../models/role.enum';
-import { Vehicle } from '../../../models/vehicle.model';
-import { CreateVehicleForm } from '../../../interfaces/vehicle.interface';
+import { Vehicle, CreateVehicle } from '../../../models/vehicle.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -59,9 +58,18 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             @if (vehicles().length > 0) {
               @for (vehicle of vehicles(); track vehicle.vehicleId) {
                 <div class="vehicle-card">
-                  <h4>{{ vehicle.brandLabel }} {{ vehicle.model }}</h4>
-                  <p>{{ vehicle.registrationNumber }} - {{ vehicle.energyType === 'Electric' ? '⚡' : vehicle.energyType === 'Hybrid' ? '🔋' : '🌿' }} {{ vehicle.energyType }}</p>
-                  <p>{{ vehicle.seatCount }} {{ 'carpool.seats_available' | translate }} - {{ vehicle.color }}</p>
+                  @if (editingVehicleId() === vehicle.vehicleId) {
+                    <ng-container *ngTemplateOutlet="vehicleFormTpl" />
+                  } @else {
+                    <div class="vehicle-card-header">
+                      <h4>{{ vehicle.brandLabel }} {{ vehicle.model }}</h4>
+                      @if (hasRole(UserRole.Driver)) {
+                        <button class="btn-edit" (click)="startEdit(vehicle)">✏️</button>
+                      }
+                    </div>
+                    <p>{{ vehicle.registrationNumber }} - {{ getEnergyIcon(vehicle.energyType) }} {{ vehicle.energyType }}</p>
+                    <p>{{ vehicle.seatCount }} {{ 'carpool.seats_available' | translate }} - {{ vehicle.color }}</p>
+                  }
                 </div>
               }
             } @else {
@@ -69,53 +77,62 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             }
 
             @if (hasRole(UserRole.Driver)) {
-              <button (click)="showAddVehicle.set(!showAddVehicle())" class="btn btn-secondary mt-2">
+              <button (click)="toggleAddVehicle()" class="btn btn-secondary mt-2">
                 {{ showAddVehicle() ? ('common.cancel' | translate) : ('user.add_vehicle' | translate) }}
               </button>
 
-            @if (showAddVehicle()) {
-              <form (ngSubmit)="addVehicle()" class="mt-2">
-                <div class="form-group">
-                  <label>{{ 'vehicle.brand' | translate }}</label>
-                  <select [(ngModel)]="newVehicle.brandId" name="brandId" required>
-                    <option value="">{{ 'carpool.select_vehicle' | translate }}</option>
-                    <option value="1">Renault</option>
-                    <option value="2">Peugeot</option>
-                    <option value="3">Citroën</option>
-                    <option value="4">Tesla</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>{{ 'vehicle.model' | translate }}</label>
-                  <input type="text" [(ngModel)]="newVehicle.model" name="model" required>
-                </div>
-                <div class="form-group">
-                  <label>{{ 'vehicle.registration_number' | translate }}</label>
-                  <input type="text" [(ngModel)]="newVehicle.registrationNumber" name="registrationNumber" required>
-                </div>
-                <div class="form-group">
-                  <label>{{ 'vehicle.energy_type' | translate }}</label>
-                  <select [(ngModel)]="newVehicle.energyType" name="energyType" required>
-                    <option value="Electric">⚡ {{ 'vehicle.types.electric' | translate }}</option>
-                    <option value="Hybrid">🔋 {{ 'vehicle.types.hybrid' | translate }}</option>
-                    <option value="LPG">🌿 {{ 'vehicle.types.lpg' | translate }}</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>{{ 'vehicle.color' | translate }}</label>
-                  <input type="text" [(ngModel)]="newVehicle.color" name="color" required>
-                </div>
-                <div class="form-group">
-                  <label>{{ 'vehicle.seat_count' | translate }}</label>
-                  <input type="number" [(ngModel)]="newVehicle.seatCount" name="seatCount" min="1" max="8" required>
-                </div>
-                <button type="submit" class="btn btn-primary">{{ 'common.save' | translate }}</button>
-              </form>
+              @if (showAddVehicle()) {
+                <ng-container *ngTemplateOutlet="vehicleFormTpl" />
+              }
             }
-          }
           </div>
         </div>
       }
+
+      <!-- Single shared vehicle form template (DRY) -->
+      <ng-template #vehicleFormTpl>
+        <form (ngSubmit)="submitVehicleForm()" class="vehicle-form mt-2">
+          <div class="form-group">
+            <label>{{ 'vehicle.brand' | translate }}</label>
+            <select [(ngModel)]="formData.brandId" name="brandId" required>
+              <option [ngValue]="0" disabled>{{ 'carpool.select_vehicle' | translate }}</option>
+              @for (brand of brands; track brand.id) {
+                <option [ngValue]="brand.id">{{ brand.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{ 'vehicle.model' | translate }}</label>
+            <input type="text" [(ngModel)]="formData.model" name="model" required>
+          </div>
+          <div class="form-group">
+            <label>{{ 'vehicle.registration_number' | translate }}</label>
+            <input type="text" [(ngModel)]="formData.registrationNumber" name="registrationNumber" required>
+          </div>
+          <div class="form-group">
+            <label>{{ 'vehicle.energy_type' | translate }}</label>
+            <select [(ngModel)]="formData.energyType" name="energyType" required>
+              <option value="Electric">⚡ {{ 'vehicle.types.electric' | translate }}</option>
+              <option value="Hybrid">🔋 {{ 'vehicle.types.hybrid' | translate }}</option>
+              <option value="LPG">🌿 {{ 'vehicle.types.lpg' | translate }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{ 'vehicle.color' | translate }}</label>
+            <input type="text" [(ngModel)]="formData.color" name="color" required>
+          </div>
+          <div class="form-group">
+            <label>{{ 'vehicle.seat_count' | translate }}</label>
+            <input type="number" [(ngModel)]="formData.seatCount" name="seatCount" min="1" max="8" required>
+          </div>
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary btn-sm">{{ 'common.save' | translate }}</button>
+            @if (editingVehicleId()) {
+              <button type="button" class="btn btn-secondary btn-sm" (click)="cancelEdit()">{{ 'common.cancel' | translate }}</button>
+            }
+          </div>
+        </form>
+      </ng-template>
     </div>
   `,
   styles: [`
@@ -175,13 +192,37 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       border-radius: 5px;
     }
 
-    .badge-success {
-      background-color: #28a745;
-      color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
+    .vehicle-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vehicle-card-header h4 {
+      margin: 0;
+    }
+
+    .btn-edit {
+      background: none;
+      border: 1px solid var(--light-gray);
+      border-radius: 5px;
+      padding: 0.3rem 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+
+    .btn-edit:hover {
+      background-color: var(--very-light-green);
+    }
+
+    .vehicle-form .form-group {
+      margin-bottom: 0.75rem;
+    }
+
+    .vehicle-form input,
+    .vehicle-form select {
+      margin: 4px 0;
     }
   `]
 })
@@ -191,16 +232,21 @@ export class ProfileComponent implements OnInit {
   user = signal<User | null>(null);
   vehicles = signal<Vehicle[]>([]);
   showAddVehicle = signal(false);
-  newVehicle: CreateVehicleForm = {
-    brandId: 0,
-    model: '',
-    registrationNumber: '',
-    energyType: '',
-    color: '',
-    seatCount: 4
-  };
+  editingVehicleId = signal<number | null>(null);
 
-  // Credits
+  formData: CreateVehicle = this.emptyVehicle();
+
+  brands = [
+    { id: 1, label: 'Renault' },
+    { id: 2, label: 'Peugeot' },
+    { id: 3, label: 'Citroën' },
+    { id: 4, label: 'Tesla' },
+    { id: 5, label: 'Volkswagen' },
+    { id: 6, label: 'Toyota' },
+    { id: 7, label: 'BMW' },
+    { id: 8, label: 'Mercedes' },
+  ];
+
   creditOptions = [10, 20, 50];
   addingCredits = signal(false);
 
@@ -245,15 +291,66 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  addVehicle() {
-    this.userService.addVehicle(this.newVehicle).subscribe({
-      next: () => {
-        alert(this.translate.instant('messages.operation_successful'));
-        this.showAddVehicle.set(false);
-        this.loadVehicles();
-      },
-    });
+  getEnergyIcon(type: string): string {
+    switch (type) {
+      case 'Electric': return '⚡';
+      case 'Hybrid': return '🔋';
+      default: return '🌿';
+    }
   }
+
+  // --- Vehicle form (shared between add and edit) ---
+
+  submitVehicleForm() {
+    const editId = this.editingVehicleId();
+    if (editId) {
+      this.userService.updateVehicle(editId, this.formData).subscribe({
+        next: () => {
+          alert(this.translate.instant('messages.operation_successful'));
+          this.editingVehicleId.set(null);
+          this.loadVehicles();
+        },
+        error: (err) => {
+          alert(err.error?.message || this.translate.instant('messages.error_occurred'));
+        },
+      });
+    } else {
+      this.userService.addVehicle(this.formData).subscribe({
+        next: () => {
+          alert(this.translate.instant('messages.operation_successful'));
+          this.showAddVehicle.set(false);
+          this.loadVehicles();
+        },
+      });
+    }
+  }
+
+  toggleAddVehicle() {
+    this.editingVehicleId.set(null); // Close any edit
+    this.showAddVehicle.set(!this.showAddVehicle());
+    if (this.showAddVehicle()) {
+      this.formData = this.emptyVehicle();
+    }
+  }
+
+  startEdit(vehicle: Vehicle) {
+    this.showAddVehicle.set(false); // Close add form
+    this.editingVehicleId.set(vehicle.vehicleId);
+    this.formData = {
+      brandId: vehicle.brandId,
+      model: vehicle.model,
+      registrationNumber: vehicle.registrationNumber,
+      energyType: vehicle.energyType,
+      color: vehicle.color,
+      seatCount: vehicle.seatCount,
+    };
+  }
+
+  cancelEdit() {
+    this.editingVehicleId.set(null);
+  }
+
+  // --- Credits ---
 
   addCredits(amount: number) {
     this.addingCredits.set(true);
@@ -266,7 +363,11 @@ export class ProfileComponent implements OnInit {
       error: (err) => {
         alert(err.error?.message || this.translate.instant('messages.error_occurred'));
         this.addingCredits.set(false);
-      }
+      },
     });
+  }
+
+  private emptyVehicle(): CreateVehicle {
+    return { brandId: 0, model: '', registrationNumber: '', energyType: '', color: '', seatCount: 4 };
   }
 }
