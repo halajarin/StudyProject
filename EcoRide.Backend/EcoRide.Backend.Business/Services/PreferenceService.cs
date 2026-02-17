@@ -1,3 +1,4 @@
+using System.Text.Json;
 using EcoRide.Backend.Business.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
@@ -38,14 +39,13 @@ public class PreferenceService : IPreferenceService
         var document = new BsonDocument
         {
             { "utilisateur_id", userId },
-            { "fumeur", BsonValue.Create(preferences.ContainsKey("fumeur") && (bool)preferences["fumeur"]) },
-            { "animaux", BsonValue.Create(preferences.ContainsKey("animaux") && (bool)preferences["animaux"]) }
+            { "fumeur", GetBool(preferences, "fumeur") },
+            { "animaux", GetBool(preferences, "animaux") }
         };
 
-        // Add custom preferences
         if (preferences.ContainsKey("preferences_personnalisees"))
         {
-            var customPrefs = preferences["preferences_personnalisees"] as List<string> ?? new List<string>();
+            var customPrefs = GetStringList(preferences, "preferences_personnalisees");
             document.Add("preferences_personnalisees", new BsonArray(customPrefs));
         }
 
@@ -59,6 +59,25 @@ public class PreferenceService : IPreferenceService
         {
             await _preferencesCollection.InsertOneAsync(document);
         }
+    }
+
+    private static bool GetBool(Dictionary<string, object> dict, string key)
+    {
+        if (!dict.TryGetValue(key, out var value)) return false;
+        if (value is bool b) return b;
+        if (value is JsonElement je && je.ValueKind == JsonValueKind.True) return true;
+        return false;
+    }
+
+    private static List<string> GetStringList(Dictionary<string, object> dict, string key)
+    {
+        if (!dict.TryGetValue(key, out var value)) return new List<string>();
+        if (value is List<string> list) return list;
+        if (value is JsonElement je && je.ValueKind == JsonValueKind.Array)
+        {
+            return je.EnumerateArray().Select(e => e.GetString() ?? "").ToList();
+        }
+        return new List<string>();
     }
 
     public async Task DeletePreferencesAsync(int userId)
