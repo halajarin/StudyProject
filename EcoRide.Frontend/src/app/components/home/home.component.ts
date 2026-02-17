@@ -21,6 +21,7 @@ import { AuthService } from '../../services/auth.service';
         </div>
       </div>
       <div class="container hero-content">
+        <img src="assets/ecoride-logo-v2.svg" alt="EcoRide" class="hero-logo" />
         <div class="hero-badge">
           <span class="pulse-dot"></span>
           {{ 'home.hero_badge' | translate }}
