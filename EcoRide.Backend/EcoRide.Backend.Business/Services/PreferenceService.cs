@@ -18,7 +18,9 @@ public class PreferenceService : IPreferenceService
     public async Task<BsonDocument?> GetPreferencesAsync(int userId)
     {
         var filter = Builders<BsonDocument>.Filter.Eq("utilisateur_id", userId);
-        return await _preferencesCollection.Find(filter).FirstOrDefaultAsync();
+        var doc = await _preferencesCollection.Find(filter).FirstOrDefaultAsync();
+        doc?.Remove("_id");
+        return doc;
     }
 
     public async Task CreateOrUpdatePreferencesAsync(int userId, Dictionary<string, object> preferences)
