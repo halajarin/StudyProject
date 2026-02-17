@@ -18,19 +18,18 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       <h1>{{ 'carpools.search_hero_title' | translate }}</h1>
       <form class="search-bar" (ngSubmit)="search()">
         <div class="search-field">
-          <span class="search-icon">&#128205;</span>
+          <label>{{ 'carpools.label_departure' | translate }}</label>
           <input type="text" [(ngModel)]="searchForm.departureCity" name="departureCity"
                  [placeholder]="'carpools.placeholder_departure' | translate">
         </div>
-        <div class="search-separator"></div>
+        <span class="search-arrow">&rarr;</span>
         <div class="search-field">
-          <span class="search-icon">&#128204;</span>
+          <label>{{ 'carpools.label_arrival' | translate }}</label>
           <input type="text" [(ngModel)]="searchForm.arrivalCity" name="arrivalCity"
                  [placeholder]="'carpools.placeholder_arrival' | translate">
         </div>
-        <div class="search-separator"></div>
         <div class="search-field">
-          <span class="search-icon">&#128197;</span>
+          <label>{{ 'carpools.label_date' | translate }}</label>
           <input type="date" [(ngModel)]="searchForm.departureDate" name="departureDate">
         </div>
         <button type="submit" class="btn-search">
@@ -38,10 +37,10 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
         </button>
       </form>
       <div class="energy-legend">
-        <span class="legend-badge">{{ 'carpools.energy_legend_label' | translate }}</span>
-        <span class="legend-item electric-legend">&#9889; {{ 'vehicle.types.electric' | translate }}</span>
-        <span class="legend-item hybrid-legend">&#128267; {{ 'vehicle.types.hybrid' | translate }}</span>
-        <span class="legend-item lpg-legend">&#127807; {{ 'vehicle.types.lpg' | translate }}</span>
+        <span class="legend-item"><span class="energy-dot elec-dot"></span> {{ 'vehicle.types.electric' | translate }}</span>
+        <span class="legend-item"><span class="energy-dot hybrid-dot"></span> {{ 'vehicle.types.hybrid' | translate }}</span>
+        <span class="legend-item"><span class="energy-dot lpg-dot"></span> {{ 'vehicle.types.lpg' | translate }}</span>
+        <span class="legend-hint">&#8212; {{ 'carpools.energy_legend_label' | translate }}</span>
       </div>
     </div>
 
@@ -50,91 +49,91 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       <!-- SIDEBAR -->
       <aside class="sidebar">
         <div class="filter-card">
-          <div class="filter-header">
-            <h3>{{ 'carpools.filters' | translate }}</h3>
-            <button class="btn-clear" (click)="clearFilters()">{{ 'carpools.clear_all' | translate }}</button>
-          </div>
-
-          <!-- Sort by -->
-          <div class="filter-section">
-            <h4>{{ 'carpools.sort_by' | translate }}</h4>
-            <label class="radio-option">
-              <input type="radio" name="sortBy" value="price" [checked]="sortBy() === 'price'" (change)="sortBy.set('price')">
-              <span>{{ 'carpools.sort_cheapest' | translate }}</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="sortBy" value="time" [checked]="sortBy() === 'time'" (change)="sortBy.set('time')">
-              <span>{{ 'carpools.sort_earliest' | translate }}</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="sortBy" value="duration" [checked]="sortBy() === 'duration'" (change)="sortBy.set('duration')">
-              <span>{{ 'carpools.sort_shortest' | translate }}</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="sortBy" value="rating" [checked]="sortBy() === 'rating'" (change)="sortBy.set('rating')">
-              <span>{{ 'carpools.sort_best_rated' | translate }}</span>
-            </label>
-          </div>
-
-          <!-- Energy type -->
-          <div class="filter-section">
-            <h4>{{ 'carpools.vehicle_energy' | translate }}</h4>
-            <label class="checkbox-option">
-              <input type="checkbox" [checked]="energyFilters().has('Electric')" (change)="toggleEnergy('Electric')">
-              <span class="energy-tag electric-tag">&#9889; {{ 'vehicle.types.electric' | translate }}</span>
-            </label>
-            <label class="checkbox-option">
-              <input type="checkbox" [checked]="energyFilters().has('Hybrid')" (change)="toggleEnergy('Hybrid')">
-              <span class="energy-tag hybrid-tag">&#128267; {{ 'vehicle.types.hybrid' | translate }}</span>
-            </label>
-            <label class="checkbox-option">
-              <input type="checkbox" [checked]="energyFilters().has('LPG')" (change)="toggleEnergy('LPG')">
-              <span class="energy-tag lpg-tag">&#127807; {{ 'vehicle.types.lpg' | translate }}</span>
-            </label>
-          </div>
-
-          <!-- Max price -->
-          <div class="filter-section">
-            <h4>{{ 'carpools.max_price' | translate }}</h4>
-            <div class="range-display">
-              @if (searchForm.maxPrice) {
-                <span class="range-value">{{ searchForm.maxPrice }} {{ 'common.credits' | translate }}</span>
-              } @else {
-                <span class="range-value muted">{{ 'carpools.no_price_limit' | translate }}</span>
-              }
+          <div class="filter-card-scroll">
+            <div class="filter-header">
+              <h3>{{ 'carpools.filters' | translate }}</h3>
+              <button class="btn-clear" (click)="clearFilters()">{{ 'carpools.clear_all' | translate }}</button>
             </div>
-            <input type="range" class="range-slider" min="0" max="50" step="1"
-                   [ngModel]="searchForm.maxPrice || 50" name="maxPrice"
-                   (ngModelChange)="onMaxPriceChange($event)">
-          </div>
 
-          <!-- Min rating -->
-          <div class="filter-section">
-            <h4>{{ 'carpools.min_rating' | translate }}</h4>
-            <div class="rating-buttons">
-              <button class="rating-btn" [class.active]="!searchForm.minimumRating" (click)="setMinRating(undefined)">
-                {{ 'carpools.all_ratings' | translate }}
-              </button>
-              <button class="rating-btn" [class.active]="searchForm.minimumRating === 3" (click)="setMinRating(3)">
-                3&#11088;
-              </button>
-              <button class="rating-btn" [class.active]="searchForm.minimumRating === 4" (click)="setMinRating(4)">
-                4&#11088;
-              </button>
-              <button class="rating-btn" [class.active]="searchForm.minimumRating === 4.5" (click)="setMinRating(4.5)">
-                4.5&#11088;
-              </button>
+            <!-- Sort by -->
+            <div class="filter-section">
+              <h4>{{ 'carpools.sort_by' | translate }}</h4>
+              <div class="sort-options">
+                <div class="sort-option" [class.active]="sortBy() === 'time'" (click)="sortBy.set('time')">
+                  <div class="sort-radio"></div><span>&#9200; {{ 'carpools.sort_earliest' | translate }}</span>
+                </div>
+                <div class="sort-option" [class.active]="sortBy() === 'price'" (click)="sortBy.set('price')">
+                  <div class="sort-radio"></div><span>&#128176; {{ 'carpools.sort_cheapest' | translate }}</span>
+                </div>
+                <div class="sort-option" [class.active]="sortBy() === 'duration'" (click)="sortBy.set('duration')">
+                  <div class="sort-radio"></div><span>&#9889; {{ 'carpools.sort_shortest' | translate }}</span>
+                </div>
+                <div class="sort-option" [class.active]="sortBy() === 'rating'" (click)="sortBy.set('rating')">
+                  <div class="sort-radio"></div><span>&#11088; {{ 'carpools.sort_best_rated' | translate }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Energy type -->
+            <div class="filter-section">
+              <h4>{{ 'carpools.vehicle_energy' | translate }}</h4>
+              <div class="energy-chips">
+                <div class="energy-chip" [class.checked]="energyFilters().has('Electric')" (click)="toggleEnergy('Electric')">
+                  <div class="chip-check"></div><span class="energy-dot elec-dot"></span><span>{{ 'vehicle.types.electric' | translate }}</span>
+                </div>
+                <div class="energy-chip" [class.checked]="energyFilters().has('Hybrid')" (click)="toggleEnergy('Hybrid')">
+                  <div class="chip-check"></div><span class="energy-dot hybrid-dot"></span><span>{{ 'vehicle.types.hybrid' | translate }}</span>
+                </div>
+                <div class="energy-chip" [class.checked]="energyFilters().has('LPG')" (click)="toggleEnergy('LPG')">
+                  <div class="chip-check"></div><span class="energy-dot lpg-dot"></span><span>{{ 'vehicle.types.lpg' | translate }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Max price -->
+            <div class="filter-section">
+              <h4>{{ 'carpools.max_price' | translate }}</h4>
+              <div class="range-display">
+                <span>0 cr</span>
+                <strong class="range-value">{{ searchForm.maxPrice || 50 }} {{ 'common.credits' | translate }}</strong>
+                <span>50 cr</span>
+              </div>
+              <input type="range" class="range-slider" min="0" max="50" step="1"
+                     [ngModel]="searchForm.maxPrice || 50" name="maxPrice"
+                     (ngModelChange)="onMaxPriceChange($event)">
+            </div>
+
+            <!-- Min rating -->
+            <div class="filter-section">
+              <h4>{{ 'carpools.min_rating' | translate }}</h4>
+              <div class="rating-buttons">
+                <button class="rating-btn" [class.active]="!searchForm.minimumRating" (click)="setMinRating(undefined)">
+                  {{ 'carpools.all_ratings' | translate }}
+                </button>
+                <button class="rating-btn" [class.active]="searchForm.minimumRating === 3" (click)="setMinRating(3)">
+                  3 <span class="note-star">&#9733;</span>
+                </button>
+                <button class="rating-btn" [class.active]="searchForm.minimumRating === 4" (click)="setMinRating(4)">
+                  4 <span class="note-star">&#9733;</span>
+                </button>
+                <button class="rating-btn" [class.active]="searchForm.minimumRating === 4.5" (click)="setMinRating(4.5)">
+                  4.5 <span class="note-star">&#9733;</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Min seats -->
+            <div class="filter-section">
+              <h4>{{ 'carpools.min_seats' | translate }}</h4>
+              <div class="seats-buttons">
+                <button class="seat-btn" [class.active]="minSeats() === 1" (click)="minSeats.set(1)">1+</button>
+                <button class="seat-btn" [class.active]="minSeats() === 2" (click)="minSeats.set(2)">2+</button>
+                <button class="seat-btn" [class.active]="minSeats() === 3" (click)="minSeats.set(3)">3+</button>
+              </div>
             </div>
           </div>
-
-          <!-- Min seats -->
-          <div class="filter-section">
-            <h4>{{ 'carpools.min_seats' | translate }}</h4>
-            <div class="seats-buttons">
-              <button class="seat-btn" [class.active]="minSeats() === 1" (click)="minSeats.set(1)">1+</button>
-              <button class="seat-btn" [class.active]="minSeats() === 2" (click)="minSeats.set(2)">2+</button>
-              <button class="seat-btn" [class.active]="minSeats() === 3" (click)="minSeats.set(3)">3+</button>
-            </div>
+          <div class="filter-apply-bar">
+            <button class="btn-apply" (click)="search()">&#128269; {{ 'carpools.apply_filters' | translate }}</button>
           </div>
         </div>
       </aside>
@@ -160,63 +159,54 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
 
           @for (carpool of filteredCarpools(); track carpool.carpoolId) {
             <div class="ride-card" (click)="openDetail(carpool)">
+              <!-- Date -->
+              <div class="ride-date">
+                <span class="ride-date-icon">&#128197;</span>
+                <span class="ride-date-text">{{ carpool.departureDate | date:'EEEE d MMMM yyyy' }}</span>
+              </div>
+
               <div class="ride-card-inner">
                 <!-- Route timeline -->
                 <div class="route-timeline">
-                  <div class="timeline-point departure-point">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-info">
-                      <span class="timeline-time">{{ carpool.departureTime }}</span>
-                      <span class="timeline-city">{{ carpool.departureCity }}</span>
-                      @if (carpool.departureLocation) {
-                        <span class="timeline-location">{{ carpool.departureLocation }}</span>
-                      }
-                    </div>
+                  <div class="ride-time-block">
+                    <div class="ride-time">{{ carpool.departureTime }}</div>
+                    <div class="ride-city">{{ carpool.departureCity }}</div>
                   </div>
-                  <div class="timeline-line">
+                  <div class="ride-line">
                     @if (carpool.estimatedDurationMinutes) {
-                      <span class="timeline-duration">{{ formatDuration(carpool.estimatedDurationMinutes) }}</span>
+                      <div class="ride-duration">{{ formatDuration(carpool.estimatedDurationMinutes) }}</div>
                     }
+                    <div class="ride-line-track"></div>
                   </div>
-                  <div class="timeline-point arrival-point">
-                    <div class="timeline-dot arrival-dot"></div>
-                    <div class="timeline-info">
-                      <span class="timeline-time">{{ carpool.arrivalTime }}</span>
-                      <span class="timeline-city">{{ carpool.arrivalCity }}</span>
-                      @if (carpool.arrivalLocation) {
-                        <span class="timeline-location">{{ carpool.arrivalLocation }}</span>
-                      }
-                    </div>
+                  <div class="ride-time-block">
+                    <div class="ride-time">{{ carpool.arrivalTime }}</div>
+                    <div class="ride-city">{{ carpool.arrivalCity }}</div>
                   </div>
                 </div>
 
                 <!-- Price -->
-                <div class="ride-price">
-                  <span class="price-amount">{{ carpool.pricePerPerson }}</span>
-                  <span class="price-unit">{{ 'common.credits' | translate }}</span>
-                  <span class="price-label">{{ 'carpools.per_person' | translate }}</span>
+                <div class="ride-price-block">
+                  <div class="ride-price-amount">{{ carpool.pricePerPerson }} <span class="ride-price-unit">{{ 'common.credits' | translate }}</span></div>
+                  @if (carpool.availableSeats <= 1) {
+                    <span class="ride-status-urgent">&#9888; {{ 'carpools.almost_full' | translate }}</span>
+                  }
                 </div>
               </div>
 
               <!-- Footer -->
               <div class="ride-footer">
+                <div class="ride-info">
+                  <span class="ride-driver-name">{{ carpool.driverUsername }}</span>
+                  <span class="ride-driver-rating">&#9733; {{ carpool.driverAverageRating.toFixed(1) }}</span>
+                </div>
+                <span class="ride-separator"></span>
+                <span class="ride-vehicle">{{ carpool.vehicleBrand }} {{ carpool.vehicleModel }} &#8212; {{ carpool.vehicleColor }}</span>
                 <span class="energy-badge" [ngClass]="getEnergyClass(carpool.vehicleEnergyType)">
                   {{ getEnergyIcon(carpool.vehicleEnergyType) }} {{ carpool.vehicleEnergyType }}
                 </span>
-                <span class="driver-tag">
-                  <span class="driver-avatar">{{ carpool.driverUsername.charAt(0).toUpperCase() }}</span>
-                  {{ carpool.driverUsername }}
-                  <span class="driver-rating">&#11088; {{ carpool.driverAverageRating.toFixed(1) }}</span>
-                </span>
-                <span class="vehicle-tag">{{ carpool.vehicleBrand }} {{ carpool.vehicleModel }}</span>
-                <span class="seats-tag" [class.almost-full]="carpool.availableSeats <= 1">
-                  @if (carpool.availableSeats <= 1) {
-                    {{ 'carpools.almost_full' | translate }}
-                  } @else {
-                    {{ 'carpools.spots_available' | translate:{count: carpool.availableSeats} }}
-                  }
-                </span>
-                <button class="btn-details">{{ 'carpools.view_details' | translate }} &rarr;</button>
+                <span class="ride-separator"></span>
+                <div class="ride-spots">&#129681; <strong>{{ carpool.availableSeats }}</strong> / {{ carpool.totalSeats }}</div>
+                <button class="btn-details" (click)="$event.stopPropagation(); openDetail(carpool)">{{ 'carpools.view_details' | translate }}</button>
               </div>
             </div>
           } @empty {
@@ -384,7 +374,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   <span>{{ c.pricePerPerson }} {{ 'common.credits' | translate }}</span>
                 </div>
                 <div class="booking-total">
-                  <span>Total</span>
+                  <span>{{ 'common.total' | translate }}</span>
                   <span class="booking-total-amount">{{ c.pricePerPerson }} {{ 'common.credits' | translate }}</span>
                 </div>
               </div>
@@ -438,44 +428,75 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
   styles: [`
     /* ===== SEARCH HERO ===== */
     .search-hero {
-      background: linear-gradient(135deg, var(--dark-green) 0%, var(--primary-green) 50%, #58d68d 100%);
-      padding: 3rem 2rem 2.5rem;
+      background: linear-gradient(135deg, var(--dark-green) 0%, var(--primary-green) 100%);
+      padding: 2rem 2rem 2.5rem;
       text-align: center;
       color: white;
       margin: -20px -20px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .search-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+      border-radius: 50%;
     }
     .search-hero h1 {
       color: white;
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
       font-weight: 700;
+      position: relative;
+      z-index: 1;
     }
     .search-bar {
       display: flex;
       align-items: center;
       background: white;
-      border-radius: 50px;
+      border-radius: 16px;
       padding: 6px;
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      position: relative;
+      z-index: 1;
     }
     .search-field {
       flex: 1;
       display: flex;
-      align-items: center;
-      padding: 0 12px;
+      flex-direction: column;
+      gap: 2px;
+      padding: 8px 14px;
+      position: relative;
+      min-width: 0;
     }
-    .search-icon {
-      font-size: 1.1rem;
-      margin-right: 8px;
-      flex-shrink: 0;
+    .search-field:not(:last-of-type)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 20%;
+      height: 60%;
+      width: 1px;
+      background: var(--light-gray);
+    }
+    .search-field label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray);
+      margin: 0;
     }
     .search-field input {
       border: none;
       outline: none;
-      font-size: 0.95rem;
-      padding: 10px 4px;
+      font-size: 0.88rem;
+      padding: 4px 0;
       width: 100%;
       margin: 0;
       box-shadow: none;
@@ -486,129 +507,264 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       box-shadow: none;
       border-color: transparent;
     }
-    .search-separator {
-      width: 1px;
-      height: 30px;
-      background: var(--light-gray);
+    .search-arrow {
+      color: var(--primary-green);
+      font-size: 1.2rem;
+      padding: 0 4px;
+      opacity: 0.5;
       flex-shrink: 0;
     }
     .btn-search {
-      background: var(--dark-green);
+      background: var(--primary-green);
       color: white;
       border: none;
-      border-radius: 50px;
-      padding: 12px 24px;
+      border-radius: 12px;
+      padding: 14px 28px;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .btn-search:hover {
-      background: #1e8449;
+      background: var(--dark-green);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(46,204,113,0.3);
     }
     .energy-legend {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
-      margin-top: 1.2rem;
+      gap: 1.5rem;
+      margin-top: 0.75rem;
       flex-wrap: wrap;
-    }
-    .legend-badge {
-      background: rgba(255,255,255,0.2);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      position: relative;
+      z-index: 1;
     }
     .legend-item {
-      font-size: 0.85rem;
-      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      opacity: 0.85;
     }
+    .legend-hint {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.78rem;
+    }
+    .energy-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .elec-dot { background: #00B8D4; }
+    .hybrid-dot { background: #7CB342; }
+    .lpg-dot { background: #FF8F00; }
 
     /* ===== MAIN CONTENT ===== */
     .main-content {
       display: grid;
       grid-template-columns: 280px 1fr;
-      gap: 1.5rem;
+      gap: 28px;
       max-width: 1200px;
-      margin: 1.5rem auto 0;
-      padding: 0 1rem;
+      margin: 0 auto;
+      padding: 24px 32px;
+      align-items: start;
     }
 
     /* ===== SIDEBAR ===== */
-    .sidebar { position: relative; }
+    .sidebar {
+      position: sticky;
+      top: 12px;
+      max-height: calc(100vh - 24px);
+      display: flex;
+      flex-direction: column;
+    }
     .filter-card {
       background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      position: sticky;
-      top: 1rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(46,204,113,0.08);
+      border: 1px solid var(--light-gray);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .filter-card-scroll {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+      max-height: calc(100vh - 140px);
+    }
+    .filter-card-scroll::-webkit-scrollbar { width: 4px; }
+    .filter-card-scroll::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 2px; }
+    .filter-card-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary-green); }
+    .filter-apply-bar {
+      padding: 14px 20px;
+      border-top: 1px solid var(--light-gray);
+      background: white;
+    }
+    .btn-apply {
+      width: 100%;
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-apply:hover {
+      background: var(--dark-green);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(46,204,113,0.25);
     }
     .filter-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
     }
     .filter-header h3 {
       margin: 0;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
+      font-weight: 700;
     }
     .btn-clear {
       background: none;
       border: none;
       color: var(--primary-green);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 500;
       cursor: pointer;
       padding: 0;
     }
     .btn-clear:hover { text-decoration: underline; }
     .filter-section {
-      padding: 1rem 0;
-      border-top: 1px solid var(--light-gray);
+      margin-bottom: 22px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--light-gray);
+    }
+    .filter-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
     .filter-section h4 {
       margin: 0 0 0.75rem;
-      font-size: 0.9rem;
-      color: var(--gray);
+      font-size: 0.8rem;
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--gray);
     }
-    .radio-option, .checkbox-option {
+
+    /* Sort options */
+    .sort-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sort-option {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 0.9rem;
+      transition: all 0.15s;
+      font-size: 0.88rem;
     }
-    .radio-option input, .checkbox-option input {
-      width: auto;
-      margin: 0;
-      accent-color: var(--primary-green);
+    .sort-option:hover { background: var(--very-light-green); }
+    .sort-option.active {
+      background: #e8f5e9;
+      color: var(--dark-green);
+      font-weight: 600;
     }
-    .energy-tag {
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 500;
+    .sort-radio {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--light-gray);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
     }
-    .electric-tag { background: #e8f4fd; color: #1565c0; }
-    .hybrid-tag { background: #e8f5e9; color: #2e7d32; }
-    .lpg-tag { background: #fff3e0; color: #e65100; }
+    .sort-option.active .sort-radio {
+      border-color: var(--primary-green);
+    }
+    .sort-option.active .sort-radio::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--primary-green);
+      border-radius: 50%;
+    }
+
+    /* Energy chips */
+    .energy-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .energy-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.88rem;
+    }
+    .energy-chip:hover { background: var(--very-light-green); }
+    .chip-check {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--light-gray);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .energy-chip.checked .chip-check {
+      border-color: var(--primary-green);
+      background: var(--primary-green);
+    }
+    .energy-chip.checked .chip-check::after {
+      content: '\\2713';
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    /* Range */
     .range-display {
       display: flex;
       justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--gray);
       margin-bottom: 0.5rem;
     }
     .range-value {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--dark-green);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
-    .range-value.muted { color: var(--gray); font-weight: 400; }
     .range-slider {
       width: 100%;
       accent-color: var(--primary-green);
@@ -619,46 +775,57 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       box-shadow: none;
     }
     .range-slider:focus { box-shadow: none; }
+
+    /* Rating & seats buttons */
     .rating-buttons, .seats-buttons {
       display: flex;
-      gap: 0.5rem;
+      gap: 6px;
       flex-wrap: wrap;
     }
     .rating-btn, .seat-btn {
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--light-gray);
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--light-gray);
       background: white;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .rating-btn.active, .seat-btn.active {
-      background: var(--primary-green);
-      color: white;
       border-color: var(--primary-green);
+      background: #e8f5e9;
+      color: var(--dark-green);
+      font-weight: 600;
     }
     .rating-btn:hover, .seat-btn:hover {
       border-color: var(--primary-green);
     }
+    .note-star { color: #f39c12; font-size: 0.75rem; }
 
     /* ===== RESULTS AREA ===== */
     .results-area {
-      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
     .results-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
     }
     .results-count {
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 1.15rem;
       color: var(--dark-green);
     }
     .results-summary {
       color: var(--gray);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
     .loading-state {
       display: flex;
@@ -682,177 +849,211 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     /* ===== RIDE CARDS ===== */
     .ride-card {
       background: white;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(46,204,113,0.08);
+      border: 1px solid var(--light-gray);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s;
       overflow: hidden;
+      animation: fadeInUp 0.4s ease-out both;
     }
     .ride-card:hover {
-      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      box-shadow: 0 6px 24px rgba(46,204,113,0.15);
       transform: translateY(-2px);
+      border-color: var(--primary-green);
     }
-    .ride-card-inner {
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Date on card */
+    .ride-date {
+      font-size: 0.82rem;
+      color: var(--gray);
+      padding: 12px 24px 0;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 1.25rem 1.5rem;
+      gap: 6px;
+      font-weight: 600;
+    }
+    .ride-date-icon { font-size: 0.85rem; }
+    .ride-date-text {
+      background: var(--very-light-green);
+      padding: 4px 12px;
+      border-radius: 8px;
+      color: var(--dark-green);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    /* Card inner */
+    .ride-card-inner {
+      padding: 12px 24px 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
     }
 
     /* Route timeline in card */
     .route-timeline {
       display: flex;
       align-items: center;
-      gap: 0;
-      flex: 1;
     }
-    .timeline-point {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    .timeline-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: var(--primary-green);
-      border: 2px solid var(--dark-green);
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-    .arrival-dot {
-      background: var(--danger);
-      border-color: #c0392b;
-    }
-    .timeline-info {
+    .ride-time-block {
       display: flex;
       flex-direction: column;
-    }
-    .timeline-time {
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--black);
-    }
-    .timeline-city {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--dark-green);
-    }
-    .timeline-location {
-      font-size: 0.8rem;
-      color: var(--gray);
-    }
-    .timeline-line {
-      flex: 1;
-      height: 2px;
-      background: linear-gradient(to right, var(--primary-green), var(--danger));
-      margin: 0 1rem;
-      position: relative;
+      align-items: center;
       min-width: 60px;
     }
-    .timeline-duration {
+    .ride-time {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--black);
+    }
+    .ride-city {
+      font-size: 0.82rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+    .ride-line {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 12px;
+      min-width: 120px;
+    }
+    .ride-duration {
+      font-size: 0.78rem;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .ride-line-track {
+      width: 100%;
+      height: 3px;
+      background: var(--light-gray);
+      border-radius: 2px;
+      position: relative;
+    }
+    .ride-line-track::before,
+    .ride-line-track::after {
+      content: '';
       position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.75rem;
-      color: var(--gray);
-      white-space: nowrap;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 2.5px solid var(--primary-green);
       background: white;
-      padding: 0 4px;
     }
+    .ride-line-track::before { left: -5px; }
+    .ride-line-track::after { right: -5px; }
 
-    /* Price in card */
-    .ride-price {
+    /* Price block */
+    .ride-price-block {
       text-align: right;
-      flex-shrink: 0;
-      margin-left: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
     }
-    .price-amount {
-      font-size: 1.6rem;
+    .ride-price-amount {
       font-weight: 800;
-      color: var(--primary-green);
-      display: block;
+      font-size: 1.5rem;
+      color: var(--dark-green);
     }
-    .price-unit {
-      font-size: 0.8rem;
-      color: var(--gray);
+    .ride-price-unit {
+      font-size: 0.85rem;
+      font-weight: 500;
+      opacity: 0.7;
     }
-    .price-label {
+    .ride-status-urgent {
+      background: #FFF3E0;
+      color: #E65100;
+      padding: 3px 10px;
+      border-radius: 6px;
       font-size: 0.75rem;
-      color: var(--gray);
-      display: block;
+      font-weight: 600;
     }
 
     /* Ride footer */
     .ride-footer {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1.5rem;
-      border-top: 1px solid #f0f0f0;
-      background: #fafafa;
+      gap: 16px;
+      padding: 12px 24px;
+      border-top: 1px solid var(--light-gray);
+      background: var(--very-light-green);
       flex-wrap: wrap;
     }
-    .energy-badge {
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-    .energy-electric { background: #e8f4fd; color: #1565c0; }
-    .energy-hybrid { background: #e8f5e9; color: #2e7d32; }
-    .energy-lpg { background: #fff3e0; color: #e65100; }
-    .driver-tag {
+    .ride-info {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.85rem;
+      gap: 5px;
+      font-size: 0.82rem;
+      color: var(--gray);
+    }
+    .ride-driver-name {
+      font-weight: 600;
       color: var(--black);
     }
-    .driver-avatar {
-      width: 24px;
-      height: 24px;
+    .ride-driver-rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: #f39c12;
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+    .ride-separator {
+      width: 4px;
+      height: 4px;
       border-radius: 50%;
-      background: var(--primary-green);
-      color: white;
+      background: var(--light-gray);
+    }
+    .ride-vehicle {
+      font-size: 0.82rem;
+      color: var(--gray);
+      font-style: italic;
+    }
+    .ride-spots {
+      margin-left: auto;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-    .driver-rating {
-      color: var(--warning);
-      font-size: 0.8rem;
-    }
-    .vehicle-tag {
-      font-size: 0.8rem;
+      gap: 6px;
+      font-size: 0.82rem;
       color: var(--gray);
     }
-    .seats-tag {
+    .ride-spots strong { color: var(--dark-green); }
+    .energy-badge {
+      padding: 5px 12px;
+      border-radius: 20px;
       font-size: 0.8rem;
-      color: var(--gray);
-      margin-left: auto;
-    }
-    .seats-tag.almost-full {
-      color: var(--danger);
       font-weight: 600;
     }
+    .energy-electric { background: #E0F7FA; color: #00838F; }
+    .energy-hybrid { background: #F1F8E9; color: #558B2F; }
+    .energy-lpg { background: #FFF8E1; color: #E65100; }
     .btn-details {
-      padding: 6px 14px;
-      border-radius: 20px;
+      margin-left: auto;
+      padding: 8px 20px;
+      border-radius: 10px;
       background: var(--primary-green);
       color: white;
       border: none;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
+      transition: all 0.2s;
     }
     .btn-details:hover {
       background: var(--dark-green);
+      transform: translateY(-1px);
     }
 
     /* Empty state */
@@ -957,13 +1158,13 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       border-radius: 12px;
       padding: 1.25rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      animation: fadeInUp 0.3s ease both;
+      animation: fadeInUpDetail 0.3s ease both;
     }
     .detail-card h3 {
       margin: 0 0 1rem;
       font-size: 1rem;
     }
-    @keyframes fadeInUp {
+    @keyframes fadeInUpDetail {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
@@ -1345,8 +1546,12 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       .main-content {
         grid-template-columns: 1fr;
       }
-      .filter-card {
+      .sidebar {
         position: static;
+        max-height: none;
+      }
+      .filter-card-scroll {
+        max-height: none;
       }
       .detail-panel {
         width: 100%;
@@ -1367,9 +1572,11 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       .search-field {
         padding: 4px 12px;
       }
-      .search-separator {
-        width: 100%;
-        height: 1px;
+      .search-field::after {
+        display: none;
+      }
+      .search-arrow {
+        display: none;
       }
       .btn-search {
         width: 100%;
@@ -1377,19 +1584,18 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
         border-radius: 12px;
       }
       .ride-card-inner {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-      }
-      .ride-price {
-        text-align: left;
-        margin-left: 0;
-        display: flex;
-        align-items: baseline;
+        grid-template-columns: 1fr;
         gap: 0.5rem;
       }
-      .price-label { display: none; }
-      .timeline-line { min-width: 40px; }
+      .ride-price-block {
+        text-align: left;
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 0.75rem;
+      }
+      .ride-line {
+        min-width: 80px;
+      }
     }
 
     @media (max-width: 600px) {
@@ -1401,25 +1607,31 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       }
       .route-timeline {
         flex-direction: column;
+        align-items: flex-start;
         gap: 0;
       }
-      .timeline-line {
+      .ride-line {
         width: 2px;
         height: 20px;
-        margin: 0.25rem 0 0.25rem 5px;
         min-width: auto;
+        padding: 0;
+        margin-left: 20px;
       }
-      .timeline-duration {
-        position: static;
-        transform: none;
-        display: block;
-        margin: 0.25rem 0;
+      .ride-line-track {
+        width: 2px;
+        height: 100%;
+      }
+      .ride-duration {
+        display: none;
       }
       .ride-footer {
         gap: 0.5rem;
       }
       .energy-legend {
         gap: 0.5rem;
+      }
+      .main-content {
+        padding: 16px;
       }
     }
   `]

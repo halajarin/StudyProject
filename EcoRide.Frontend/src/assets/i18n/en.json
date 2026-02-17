@@ -29,6 +29,7 @@
     "or": "or",
     "and": "and",
     "credits": "credits",
+    "total": "Total",
     "credit": "credit"
   },
   "navigation": {
@@ -552,7 +553,12 @@
     "placeholder_departure": "Departure city...",
     "placeholder_arrival": "Arrival city...",
     "no_price_limit": "No limit",
-    "per_person": "/person"
+    "per_person": "/person",
+    "label_departure": "Departure",
+    "label_arrival": "Arrival",
+    "label_date": "Date",
+    "apply_filters": "Apply filters",
+    "verified_profile": "Verified profile"
   },
   "create_carpool": {
     "page_subtitle": "Offer an eco-friendly trip and share your costs with other travelers.",

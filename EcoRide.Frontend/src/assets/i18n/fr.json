@@ -29,6 +29,7 @@
     "or": "ou",
     "and": "et",
     "credits": "crédits",
+    "total": "Total",
     "credit": "crédit"
   },
   "navigation": {
@@ -552,7 +553,12 @@
     "placeholder_departure": "Ville de départ...",
     "placeholder_arrival": "Ville d'arrivée...",
     "no_price_limit": "Sans limite",
-    "per_person": "/personne"
+    "per_person": "/personne",
+    "label_departure": "Départ",
+    "label_arrival": "Arrivée",
+    "label_date": "Date",
+    "apply_filters": "Appliquer les filtres",
+    "verified_profile": "Profil vérifié"
   },
   "create_carpool": {
     "page_subtitle": "Proposez un trajet éco-responsable et partagez vos frais avec d'autres voyageurs.",
