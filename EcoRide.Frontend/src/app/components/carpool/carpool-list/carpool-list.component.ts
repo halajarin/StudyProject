@@ -1324,7 +1324,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       gap: 16px;
       padding: 12px 24px;
       border-top: 1px solid var(--light-gray);
-      background: var(--very-light-green);
+      background: linear-gradient(135deg, #f0faf6, #e0f2ec);
       flex-wrap: wrap;
     }
     .ride-info {
