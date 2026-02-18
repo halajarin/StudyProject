@@ -127,7 +127,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                         @if (trip.status === CarpoolStatus.Completed) {
                           <span class="badge badge-success">{{ 'carpool.status.completed' | translate }}</span>
                           @if (reviews().length > 0) {
-                            <a routerLink="/reviews" class="btn-sm btn-outline-primary">
+                            <a routerLink="/reviews" [queryParams]="{ driver: trip.driverUsername }" class="btn-sm btn-outline-primary">
                               {{ 'profile.view_reviews' | translate }}
                             </a>
                           }

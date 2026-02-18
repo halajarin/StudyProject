@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { ReviewDashboardItem } from '../../../interfaces/review-dashboard.interface';
 import { AuthService } from '../../../services/auth.service';
@@ -346,11 +347,16 @@ export class EmployeeDashboardComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private auth: AuthService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
     this.loadReviews();
+    const driver = this.route.snapshot.queryParamMap.get('driver');
+    if (driver) {
+      this.columnFilters.set({ driverUsername: driver });
+    }
   }
 
   loadReviews() {
