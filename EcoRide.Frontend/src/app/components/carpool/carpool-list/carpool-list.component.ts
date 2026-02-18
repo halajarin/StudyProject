@@ -431,7 +431,10 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   </div>
                 </div>
               </div>
-              <button class="btn-contact" (click)="contactDriver()">&#9993; {{ 'carpools.contact_driver' | translate }}</button>
+              <div class="driver-actions">
+                <button class="btn-contact" (click)="contactDriver()">&#9993; {{ 'carpools.contact_driver' | translate }}</button>
+                <a routerLink="/reviews" [queryParams]="{ driver: c.driverUsername }" class="btn-contact btn-reviews">&#11088; {{ 'profile.view_reviews' | translate }}</a>
+              </div>
             </div>
 
             <!-- Vehicle card -->
@@ -1570,9 +1573,13 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       background: var(--very-light-green);
       color: var(--dark-green);
     }
-    .btn-contact {
+    .driver-actions {
+      display: flex;
+      gap: 0.5rem;
       margin-top: 0.75rem;
-      width: 100%;
+    }
+    .btn-contact {
+      flex: 1;
       padding: 8px;
       border: 1.5px solid var(--primary-green);
       background: white;
@@ -1582,6 +1589,8 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      text-align: center;
+      text-decoration: none;
     }
     .btn-contact:hover {
       background: var(--very-light-green);
