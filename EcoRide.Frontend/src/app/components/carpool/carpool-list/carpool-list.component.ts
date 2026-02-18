@@ -95,6 +95,9 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
             <div class="filter-section">
               <h4>{{ 'carpools.sort_by' | translate }}</h4>
               <div class="sort-options">
+                <div class="sort-option" [class.active]="sortBy() === 'date'" (click)="sortBy.set('date')">
+                  <div class="sort-radio"></div><span>&#128197; {{ 'carpools.sort_newest' | translate }}</span>
+                </div>
                 <div class="sort-option" [class.active]="sortBy() === 'time'" (click)="sortBy.set('time')">
                   <div class="sort-radio"></div><span>&#9200; {{ 'carpools.sort_earliest' | translate }}</span>
                 </div>
@@ -2229,7 +2232,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
   };
 
   // Client-side filters
-  sortBy = signal<'price' | 'time' | 'duration' | 'rating'>('price');
+  sortBy = signal<'date' | 'price' | 'time' | 'duration' | 'rating'>('date');
   energyFilters = signal<Set<string>>(new Set(['Electric', 'Hybrid', 'LPG']));
   minSeats = signal(1);
   prefSmoking = signal(false);
@@ -2274,6 +2277,9 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
 
     // Sort
     switch (this.sortBy()) {
+      case 'date':
+        results.sort((a, b) => new Date(b.departureDate).getTime() - new Date(a.departureDate).getTime());
+        break;
       case 'price':
         results.sort((a, b) => a.pricePerPerson - b.pricePerPerson);
         break;
@@ -2368,7 +2374,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
   }
 
   clearFilters() {
-    this.sortBy.set('price');
+    this.sortBy.set('date');
     this.energyFilters.set(new Set(['Electric', 'Hybrid', 'LPG']));
     this.minSeats.set(1);
     this.prefSmoking.set(false);
