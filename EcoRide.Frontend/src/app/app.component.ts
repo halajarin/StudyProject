@@ -18,7 +18,7 @@ import { filter } from 'rxjs';
       <div class="container nav-container">
         <div class="nav-brand">
           <a routerLink="/" class="logo">
-            <img src="assets/ecoride-logo-navbar.svg" alt="EcoRide" class="logo-img" />
+            <img src="assets/ecoride-logo.svg" alt="EcoRide" class="logo-img" />
           </a>
         </div>
         <button class="hamburger" [class.open]="menuOpen()" (click)="toggleMenu($event)" aria-label="Menu">

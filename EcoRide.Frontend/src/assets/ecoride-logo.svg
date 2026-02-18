@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 180" width="620" height="180">
+  <defs>
+    <linearGradient id="bgGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3CB371"/>
+      <stop offset="100%" style="stop-color:#2E8B57"/>
+    </linearGradient>
+    <linearGradient id="leafG" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="100%" style="stop-color:#E8F5E9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fond vert -->
+  <rect width="620" height="180" rx="16" fill="url(#bgGreen)"/>
+
+  <!-- ═══ FEUILLE-VOITURE ═══ -->
+  <g transform="translate(60, 24)">
+    
+    <!-- Ombre au sol -->
+    <ellipse cx="75" cy="126" rx="55" ry="7" fill="rgba(0,0,0,0.12)"/>
+
+    <!-- CARROSSERIE = Grande feuille blanche -->
+    <path d="
+      M16 68
+      C6 48, 12 24, 36 14
+      C52 8, 74 4, 96 6
+      C118 8, 136 14, 144 24
+      C154 36, 154 52, 148 64
+      C140 80, 118 92, 90 96
+      C60 100, 30 90, 16 68
+      Z"
+      fill="url(#leafG)" 
+      stroke="white" stroke-width="2.5"/>
+
+    <!-- Nervure centrale -->
+    <path d="M26 76 C50 62, 80 44, 142 18" 
+          stroke="#4CAF50" stroke-width="2.5" fill="none" opacity="0.18" stroke-linecap="round"/>
+    <path d="M36 84 C56 70, 84 52, 130 30" 
+          stroke="#4CAF50" stroke-width="1.5" fill="none" opacity="0.1" stroke-linecap="round"/>
+    <path d="M30 60 C52 52, 82 38, 138 20" 
+          stroke="#4CAF50" stroke-width="1.2" fill="none" opacity="0.08" stroke-linecap="round"/>
+
+    <!-- Tige -->
+    <path d="M142 18 C150 10, 160 8, 166 12" 
+          stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="166" cy="8" rx="6" ry="4" fill="white" opacity="0.7" transform="rotate(-30, 166, 8)"/>
+
+    <!-- PARE-BRISE -->
+    <path d="
+      M46 58
+      C48 36, 62 22, 84 18
+      C106 14, 122 20, 128 34
+      L132 54
+      C132 58, 128 60, 126 60
+      L50 62
+      C46 62, 44 60, 46 58
+      Z"
+      fill="rgba(46,125,50,0.1)" stroke="rgba(46,125,50,0.12)" stroke-width="1.2"/>
+    <line x1="88" y1="18" x2="86" y2="60" stroke="rgba(46,125,50,0.15)" stroke-width="2"/>
+
+    <!-- PASSAGER GAUCHE -->
+    <circle cx="66" cy="38" r="9" fill="white"/>
+    <circle cx="62.5" cy="35.5" r="1.8" fill="#4E342E"/>
+    <circle cx="69.5" cy="35.5" r="1.8" fill="#4E342E"/>
+    <path d="M63 41 C64.5 44.5, 67.5 44.5, 69 41" stroke="#E65100" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <circle cx="60" cy="39" r="2" fill="#FFAB91" opacity="0.3"/>
+    <circle cx="72" cy="39" r="2" fill="#FFAB91" opacity="0.3"/>
+
+    <!-- CONDUCTEUR -->
+    <circle cx="88" cy="35" r="11" fill="white"/>
+    <circle cx="84" cy="31.5" r="2" fill="#4E342E"/>
+    <circle cx="92" cy="31.5" r="2" fill="#4E342E"/>
+    <path d="M83 37 C85 41.5, 91 41.5, 93 37" stroke="#E65100" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="80.5" cy="35" r="2.2" fill="#FFAB91" opacity="0.3"/>
+    <circle cx="95.5" cy="35" r="2.2" fill="#FFAB91" opacity="0.3"/>
+    <!-- Main coucou -->
+    <circle cx="102" cy="22" r="5" fill="white"/>
+    <line x1="100" y1="17" x2="99" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="102" y1="17" x2="102" y2="11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="104" y1="17.5" x2="105" y2="12.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- PASSAGER DROITE -->
+    <circle cx="110" cy="38" r="8" fill="white"/>
+    <circle cx="107" cy="35.5" r="1.6" fill="#4E342E"/>
+    <circle cx="113" cy="35.5" r="1.6" fill="#4E342E"/>
+    <path d="M107.5 40 C108.5 43, 111.5 43, 112.5 40" stroke="#E65100" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <circle cx="105" cy="38.5" r="1.8" fill="#FFAB91" opacity="0.3"/>
+    <circle cx="115" cy="38.5" r="1.8" fill="#FFAB91" opacity="0.3"/>
+
+    <!-- PHARE -->
+    <ellipse cx="140" cy="58" rx="6" ry="5" fill="white" opacity="0.7"/>
+    <ellipse cx="140" cy="58" rx="3" ry="2.5" fill="#FFFDE7" opacity="0.6"/>
+
+    <!-- ROUES -->
+    <circle cx="112" cy="100" r="18" fill="#263238"/>
+    <circle cx="112" cy="100" r="12.5" fill="#37474F"/>
+    <circle cx="112" cy="100" r="7" fill="#546E7A"/>
+    <circle cx="112" cy="100" r="3.5" fill="#78909C"/>
+
+    <circle cx="48" cy="100" r="18" fill="#263238"/>
+    <circle cx="48" cy="100" r="12.5" fill="#37474F"/>
+    <circle cx="48" cy="100" r="7" fill="#546E7A"/>
+    <circle cx="48" cy="100" r="3.5" fill="#78909C"/>
+
+    <!-- Mouvement -->
+    <line x1="0" y1="58" x2="14" y2="58" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.35"/>
+    <line x1="0" y1="70" x2="12" y2="70" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>
+    <line x1="3" y1="82" x2="12" y2="82" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.15"/>
+    
+    <!-- Étoiles -->
+    <circle cx="152" cy="12" r="2.5" fill="white" opacity="0.5"/>
+    <circle cx="8" cy="32" r="2" fill="white" opacity="0.4"/>
+    <circle cx="160" cy="44" r="1.8" fill="white" opacity="0.35"/>
+  </g>
+
+  <!-- ═══ TEXTE ═══ -->
+  <text x="242" y="92" 
+        font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" 
+        font-weight="900" font-size="58" 
+        fill="#FFFFFF" letter-spacing="-2">Eco</text>
+
+  <text x="364" y="92" 
+        font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" 
+        font-weight="900" font-size="58" 
+        fill="rgba(255,255,255,0.85)" letter-spacing="-2">Ride</text>
+
+  <text x="245" y="116" 
+        font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" 
+        font-weight="600" font-size="11" 
+        fill="rgba(255,255,255,0.5)" letter-spacing="3.5">COVOITURAGE ÉCO-RESPONSABLE</text>
+
+</svg>
