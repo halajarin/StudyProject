@@ -271,4 +271,146 @@ public class AuthServiceTests
     }
 
     #endregion
+
+    #region RefreshTokenAsync Tests
+
+    [Fact]
+    public async Task RefreshTokenAsync_WithValidUser_ShouldReturnToken()
+    {
+        // Arrange
+        int userId = 1;
+        var user = new User
+        {
+            UserId = userId,
+            Username = "testuser",
+            Email = "test@example.com",
+            Password = BCrypt.Net.BCrypt.HashPassword("Test@1234"),
+            IsActive = true
+        };
+
+        _userRepositoryMock.Setup(x => x.GetByIdAsync(userId))
+            .ReturnsAsync(user);
+        _userRepositoryMock.Setup(x => x.GetUserRolesAsync(userId))
+            .ReturnsAsync(new List<string> { "Passenger" });
+
+        // Act
+        var token = await _authService.RefreshTokenAsync(userId);
+
+        // Assert
+        token.Should().NotBeNullOrEmpty();
+        _userRepositoryMock.Verify(x => x.GetByIdAsync(userId), Times.Once);
+        _userRepositoryMock.Verify(x => x.GetUserRolesAsync(userId), Times.Once);
+    }
+
+    [Fact]
+    public async Task RefreshTokenAsync_WithNonExistentUser_ShouldThrowException()
+    {
+        // Arrange
+        int userId = 999;
+        _userRepositoryMock.Setup(x => x.GetByIdAsync(userId))
+            .ReturnsAsync((User?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() => _authService.RefreshTokenAsync(userId));
+    }
+
+    #endregion
+
+    #region ChangePasswordAsync Tests
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithValidData_ShouldReturnSuccessAndToken()
+    {
+        // Arrange
+        int userId = 1;
+        var currentPassword = "Test@1234";
+        var dto = new ChangePasswordDTO
+        {
+            CurrentPassword = currentPassword,
+            NewPassword = "NewTest@5678"
+        };
+
+        var user = new User
+        {
+            UserId = userId,
+            Username = "testuser",
+            Email = "test@example.com",
+            Password = BCrypt.Net.BCrypt.HashPassword(currentPassword),
+            IsActive = true
+        };
+
+        _userRepositoryMock.Setup(x => x.GetByIdAsync(userId))
+            .ReturnsAsync(user);
+        _userRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<User>()))
+            .ReturnsAsync(user);
+        _userRepositoryMock.Setup(x => x.GetUserRolesAsync(userId))
+            .ReturnsAsync(new List<string> { "Passenger" });
+
+        // Act
+        var (success, token, error) = await _authService.ChangePasswordAsync(userId, dto);
+
+        // Assert
+        success.Should().BeTrue();
+        token.Should().NotBeNullOrEmpty();
+        error.Should().BeNull();
+        _userRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<User>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithWrongCurrentPassword_ShouldReturnFailure()
+    {
+        // Arrange
+        int userId = 1;
+        var dto = new ChangePasswordDTO
+        {
+            CurrentPassword = "WrongPassword",
+            NewPassword = "NewTest@5678"
+        };
+
+        var user = new User
+        {
+            UserId = userId,
+            Username = "testuser",
+            Email = "test@example.com",
+            Password = BCrypt.Net.BCrypt.HashPassword("Test@1234"),
+            IsActive = true
+        };
+
+        _userRepositoryMock.Setup(x => x.GetByIdAsync(userId))
+            .ReturnsAsync(user);
+
+        // Act
+        var (success, token, error) = await _authService.ChangePasswordAsync(userId, dto);
+
+        // Assert
+        success.Should().BeFalse();
+        token.Should().BeNull();
+        error.Should().Be("Current password is incorrect");
+        _userRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<User>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithNonExistentUser_ShouldReturnFailure()
+    {
+        // Arrange
+        int userId = 999;
+        var dto = new ChangePasswordDTO
+        {
+            CurrentPassword = "Test@1234",
+            NewPassword = "NewTest@5678"
+        };
+
+        _userRepositoryMock.Setup(x => x.GetByIdAsync(userId))
+            .ReturnsAsync((User?)null);
+
+        // Act
+        var (success, token, error) = await _authService.ChangePasswordAsync(userId, dto);
+
+        // Assert
+        success.Should().BeFalse();
+        token.Should().BeNull();
+        error.Should().Be("User not found");
+    }
+
+    #endregion
 }

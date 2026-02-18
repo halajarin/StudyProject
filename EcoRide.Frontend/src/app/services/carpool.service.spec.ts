@@ -234,4 +234,95 @@ describe('CarpoolService', () => {
       req.flush(mockResponse);
     });
   });
+
+  describe('update', () => {
+    it('should update a carpool via PUT', (done) => {
+      const carpoolId = 1;
+      const updateData = {
+        departureCity: 'Marseille',
+        arrivalCity: 'Nice',
+        departureDate: '2026-02-20',
+        departureTime: '09:00',
+        pricePerPerson: 20,
+        totalSeats: 3,
+        vehicleId: 1
+      };
+      const mockResponse = { carpoolId: 1, departureCity: 'Marseille', status: 'Pending' };
+
+      service.update(carpoolId, updateData as any).subscribe(response => {
+        expect(response.carpoolId).toBe(1);
+        expect(response.departureCity).toBe('Marseille');
+        done();
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/${carpoolId}`);
+      expect(req.request.method).toBe('PUT');
+      req.flush(mockResponse);
+    });
+
+    it('should handle update error for non-pending carpool', (done) => {
+      const carpoolId = 1;
+
+      service.update(carpoolId, {} as any).subscribe({
+        next: () => fail('should have failed'),
+        error: (error: any) => {
+          expect(error.status).toBe(400);
+          done();
+        }
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/${carpoolId}`);
+      req.flush({ message: 'Only pending carpools can be edited' }, { status: 400, statusText: 'Bad Request' });
+    });
+  });
+
+  describe('getAll', () => {
+    it('should get all available carpools via GET', (done) => {
+      const mockCarpools = [
+        { carpoolId: 1, departureCity: 'Paris', status: 'Pending' },
+        { carpoolId: 2, departureCity: 'Lyon', status: 'Pending' }
+      ];
+
+      service.getAll().subscribe(carpools => {
+        expect(carpools.length).toBe(2);
+        done();
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/available`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockCarpools);
+    });
+  });
+
+  describe('start', () => {
+    it('should start a carpool via POST', (done) => {
+      const carpoolId = 1;
+      const mockResponse = { success: true, message: 'Carpool started' };
+
+      service.start(carpoolId).subscribe(response => {
+        expect(response.success).toBe(true);
+        done();
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/${carpoolId}/start`);
+      expect(req.request.method).toBe('POST');
+      req.flush(mockResponse);
+    });
+  });
+
+  describe('complete', () => {
+    it('should complete a carpool via POST', (done) => {
+      const carpoolId = 1;
+      const mockResponse = { success: true, message: 'Carpool completed' };
+
+      service.complete(carpoolId).subscribe(response => {
+        expect(response.success).toBe(true);
+        done();
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/carpool/${carpoolId}/complete`);
+      expect(req.request.method).toBe('POST');
+      req.flush(mockResponse);
+    });
+  });
 });

@@ -56,7 +56,7 @@
     "hero_title_line1": "Travel ",
     "hero_title_highlight": "eco-friendly",
     "hero_title_line2": " together",
-    "hero_subtitle": "Share your rides, reduce your carbon footprint and save money. Join the EcoRide community today.",
+    "hero_subtitle": "At EcoRide, driving green is a given. Here, we don't just make trips, we make journeys — with stops that are part of the adventure. Join the only fully green carpooling community. Good for the planet, good for your wallet.",
     "hero_trust": "Join 2,500+ eco-conscious travelers",
     "departure_city": "From",
     "arrival_city": "To",
@@ -394,7 +394,7 @@
       "reviews_given": "Reviews given",
       "review_count": "Number of reviews",
       "average_rating": "Average rating",
-      "average_note_given": "Average note given",
+      "average_note_given": "Average rating given",
       "no_data": "No data"
     }
   },
@@ -654,6 +654,23 @@
     "insufficient_credits": "Insufficient credits",
     "login_required": "You must be logged in to perform this action",
     "error_occurred": "An error occurred"
+  },
+  "server_errors": {
+    "You cannot join your own carpool": "You cannot join your own carpool",
+    "Not enough seats available": "Not enough seats available",
+    "Insufficient credits": "Insufficient credits",
+    "You are already participating in this carpool": "You are already participating in this carpool",
+    "Carpool not found": "Carpool not found",
+    "Participation not found": "Participation not found",
+    "You are not the driver of this carpool": "You are not the driver of this carpool",
+    "Carpool cannot be started": "Carpool cannot be started",
+    "Carpool is not in progress": "Carpool is not in progress",
+    "Trip already validated or problem already reported": "Trip already validated or problem already reported",
+    "Passenger count must be at least 1": "Passenger count must be at least 1",
+    "You must have participated in the carpool to leave a review": "You must have participated in the carpool to leave a review",
+    "You must first validate the trip": "You must first validate the trip",
+    "You have already reviewed this trip": "You have already reviewed this trip",
+    "Only pending carpools can be edited": "Only pending carpools can be edited"
   },
   "cookies": {
     "banner_text": "This site uses technical cookies necessary for its proper functioning (authentication, language preferences).",
