@@ -33,6 +33,38 @@ public class ReviewController(
         };
     }
 
+    private static object MapToDashboardItem(Review r) => new
+    {
+        r.ReviewId,
+        r.Comment,
+        r.Note,
+        Status = r.Status.ToString(),
+        r.CreatedAt,
+        AuthorUsername = r.Author.Username,
+        TargetUsername = r.Target.Username,
+        CarpoolId = r.CarpoolId,
+        DepartureCity = r.Carpool?.DepartureCity ?? "",
+        ArrivalCity = r.Carpool?.ArrivalCity ?? "",
+        DepartureDate = r.Carpool?.DepartureDate,
+        DriverUsername = r.Carpool?.Driver?.Username ?? "",
+        VehicleBrand = r.Carpool?.Vehicle?.Brand?.Label ?? "",
+        VehicleModel = r.Carpool?.Vehicle?.Model ?? "",
+    };
+
+    [AllowAnonymous]
+    [HttpGet("public")]
+    public async Task<IActionResult> GetPublic()
+    {
+        var reviews = await _reviewRepository.GetAllAsync();
+        var validated = reviews
+            .Where(r => r.Status == ReviewStatus.Validated)
+            .OrderByDescending(r => r.CreatedAt)
+            .Select(MapToDashboardItem)
+            .ToList();
+
+        return Ok(validated);
+    }
+
     [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetByUser(int userId)
     {
@@ -116,23 +148,7 @@ public class ReviewController(
             reviews = await _reviewRepository.GetByUserAsync(GetCurrentUserId());
         }
 
-        var result = reviews.Select(r => new
-        {
-            r.ReviewId,
-            r.Comment,
-            r.Note,
-            Status = r.Status.ToString(),
-            r.CreatedAt,
-            AuthorUsername = r.Author.Username,
-            TargetUsername = r.Target.Username,
-            CarpoolId = r.CarpoolId,
-            DepartureCity = r.Carpool?.DepartureCity ?? "",
-            ArrivalCity = r.Carpool?.ArrivalCity ?? "",
-            DepartureDate = r.Carpool?.DepartureDate,
-            DriverUsername = r.Carpool?.Driver?.Username ?? "",
-            VehicleBrand = r.Carpool?.Vehicle?.Brand?.Label ?? "",
-            VehicleModel = r.Carpool?.Vehicle?.Model ?? "",
-        }).ToList();
+        var result = reviews.Select(MapToDashboardItem).ToList();
 
         return Ok(result);
     }

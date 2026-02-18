@@ -62,15 +62,17 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       <div class="card">
         <div class="table-header">
           <div class="table-header-actions">
-            <div class="filter-group">
-              <label>{{ 'admin.status_label' | translate }}:</label>
-              <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
-                <option value="all">{{ 'admin.filter_all' | translate }}</option>
-                <option value="Pending">{{ 'review.pending_validation' | translate }}</option>
-                <option value="Validated">{{ 'review.validated' | translate }}</option>
-                <option value="Rejected">{{ 'review.rejected' | translate }}</option>
-              </select>
-            </div>
+            @if (isStaff()) {
+              <div class="filter-group">
+                <label>{{ 'admin.status_label' | translate }}:</label>
+                <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+                  <option value="all">{{ 'admin.filter_all' | translate }}</option>
+                  <option value="Pending">{{ 'review.pending_validation' | translate }}</option>
+                  <option value="Validated">{{ 'review.validated' | translate }}</option>
+                  <option value="Rejected">{{ 'review.rejected' | translate }}</option>
+                </select>
+              </div>
+            }
           </div>
           <span class="result-count">{{ filteredReviews().length }} / {{ reviews().length }}</span>
         </div>
@@ -260,8 +262,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 export class EmployeeDashboardComponent implements OnInit {
   reviews = signal<ReviewDashboardItem[]>([]);
   statusFilter = signal<string>('all');
-  sortColumn = signal<string>('');
-  sortDirection = signal<'asc' | 'desc'>('asc');
+  sortColumn = signal<string>('createdAt');
+  sortDirection = signal<'asc' | 'desc'>('desc');
   columnFilters = signal<Record<string, string>>({});
 
   isStaff = computed(() => this.auth.hasRole('Employee') || this.auth.hasRole('Administrator'));
@@ -352,7 +354,10 @@ export class EmployeeDashboardComponent implements OnInit {
   }
 
   loadReviews() {
-    this.http.get<ReviewDashboardItem[]>(`${environment.apiUrl}/review/dashboard`).subscribe({
+    const endpoint = this.isStaff()
+      ? `${environment.apiUrl}/review/dashboard`
+      : `${environment.apiUrl}/review/public`;
+    this.http.get<ReviewDashboardItem[]>(endpoint).subscribe({
       next: (data) => this.reviews.set(data),
     });
   }

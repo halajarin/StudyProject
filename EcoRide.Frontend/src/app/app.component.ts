@@ -40,6 +40,12 @@ import { filter } from 'rxjs';
               {{ 'navigation.carpools' | translate }}
             </a>
           </li>
+          <li class="nav-links">
+            <a routerLink="/reviews" routerLinkActive="active">
+              <app-icon name="star" class="nav-icon" />
+              {{ 'navigation.reviews' | translate }}
+            </a>
+          </li>
 
           @if (authService.isLoggedIn()) {
             <li class="nav-links">
@@ -53,13 +59,6 @@ import { filter } from 'rxjs';
               <a routerLink="/profile" routerLinkActive="active">
                 <app-icon name="user" class="nav-icon" />
                 {{ 'navigation.my_profile' | translate }}
-              </a>
-            </li>
-
-            <li class="nav-links">
-              <a routerLink="/reviews" routerLinkActive="active">
-                <app-icon name="star" class="nav-icon" />
-                {{ 'navigation.reviews' | translate }}
               </a>
             </li>
 
@@ -192,7 +191,7 @@ import { filter } from 'rxjs';
       display: flex;
       flex: 1;
       list-style: none;
-      gap: 0.3rem;
+      gap: 0.6rem;
       align-items: center;
       justify-content: flex-end;
       margin: 0;

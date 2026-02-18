@@ -45,8 +45,7 @@ export const routes: Routes = [
   },
   {
     path: 'reviews',
-    loadComponent: () => import('./components/employee/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent),
-    canActivate: [authGuard]
+    loadComponent: () => import('./components/employee/employee-dashboard/employee-dashboard.component').then(m => m.EmployeeDashboardComponent)
   },
   {
     path: 'legal-notice',
