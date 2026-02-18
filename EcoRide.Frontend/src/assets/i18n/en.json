@@ -521,7 +521,7 @@
     "filters": "Filters",
     "clear_all": "Clear all",
     "sort_by": "Sort by",
-    "sort_newest": "Most recent",
+    "sort_newest": "Departure date",
     "sort_earliest": "Earliest departure",
     "sort_cheapest": "Lowest price",
     "sort_shortest": "Shortest trip",

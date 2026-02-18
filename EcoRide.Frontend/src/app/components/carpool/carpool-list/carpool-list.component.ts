@@ -2279,7 +2279,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     // Sort
     switch (this.sortBy()) {
       case 'date':
-        results.sort((a, b) => new Date(b.departureDate).getTime() - new Date(a.departureDate).getTime());
+        results.sort((a, b) => new Date(a.departureDate).getTime() - new Date(b.departureDate).getTime());
         break;
       case 'price':
         results.sort((a, b) => a.pricePerPerson - b.pricePerPerson);
