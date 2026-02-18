@@ -29,6 +29,7 @@ public static class CarpoolMapper
             WayBefore = carpool.WayBefore,
             WayAfter = carpool.WayAfter,
             IsEcological = carpool.Vehicle?.EnergyType == EnergyType.Electric,
+            VehicleId = carpool.VehicleId,
             UserId = carpool.UserId,
             DriverUsername = carpool.Driver?.Username ?? string.Empty,
             DriverEmail = carpool.Driver?.Email ?? string.Empty,
@@ -37,7 +38,7 @@ public static class CarpoolMapper
             VehicleModel = carpool.Vehicle?.Model ?? string.Empty,
             VehicleBrand = carpool.Vehicle?.Brand?.Label ?? string.Empty,
             VehicleEnergyType = carpool.Vehicle?.EnergyType.ToString() ?? string.Empty,
-            VehicleColor = carpool.Vehicle?.Color ?? string.Empty
+            VehicleColor = carpool.Vehicle?.Color ?? string.Empty,
         };
     }
 }

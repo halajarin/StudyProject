@@ -60,6 +60,31 @@ public class CarpoolController : BaseController
         return CreatedAtAction(nameof(GetById), new { id = created.CarpoolId }, created);
     }
 
+    [Authorize(Roles = "Driver")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] CreateCarpoolDTO dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var userId = GetCurrentUserId();
+            var updated = await _carpoolService.UpdateAsync(id, dto, userId);
+            return Ok(updated);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Forbid();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [Authorize]
     [HttpPost("{id}/participate")]
     public async Task<IActionResult> Participate(int id, [FromBody] ParticipateRequest? request = null)

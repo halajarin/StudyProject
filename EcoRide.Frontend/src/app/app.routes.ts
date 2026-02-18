@@ -29,6 +29,11 @@ export const routes: Routes = [
     canActivate: [roleGuard([UserRole.Driver])]
   },
   {
+    path: 'edit-carpool/:id',
+    loadComponent: () => import('./components/carpool/create-carpool/create-carpool.component').then(m => m.CreateCarpoolComponent),
+    canActivate: [roleGuard([UserRole.Driver])]
+  },
+  {
     path: 'profile',
     loadComponent: () => import('./components/user/profile/profile.component').then(m => m.ProfileComponent),
     canActivate: [authGuard]

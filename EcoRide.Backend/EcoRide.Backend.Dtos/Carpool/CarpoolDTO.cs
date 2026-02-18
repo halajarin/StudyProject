@@ -23,13 +23,14 @@ public class CarpoolDTO
     public bool IsEcological { get; set; }
 
     // Driver information
-    public int UserId { get; set; }  // Driver user ID
+    public int UserId { get; set; } // Driver user ID
     public string DriverUsername { get; set; } = string.Empty;
     public string DriverEmail { get; set; } = string.Empty;
     public byte[]? DriverPhoto { get; set; }
     public double DriverAverageRating { get; set; }
 
     // Vehicle information
+    public int VehicleId { get; set; }
     public string VehicleModel { get; set; } = string.Empty;
     public string VehicleBrand { get; set; } = string.Empty;
     public string VehicleEnergyType { get; set; } = string.Empty;

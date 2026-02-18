@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { CarpoolService } from '../../../services/carpool.service';
 import { UserService } from '../../../services/user.service';
 import { Vehicle } from '../../../models/vehicle.model';
@@ -17,7 +17,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
     <!-- ===== PAGE HERO ===== -->
     <div class="page-hero">
       <div class="page-hero-inner">
-        <h1>&#128663; {{ 'carpool.create_title' | translate }}</h1>
+        <h1>&#128663; {{ editMode() ? ('carpool.edit_title' | translate) : ('carpool.create_title' | translate) }}</h1>
         <p>{{ 'create_carpool.page_subtitle' | translate }}</p>
       </div>
     </div>
@@ -281,6 +281,8 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
               <button type="submit" class="btn-submit" [disabled]="!canSubmit()">
                 @if (loading()) {
                   {{ 'carpool.creating' | translate }}
+                } @else if (editMode()) {
+                  &#128640; {{ 'carpool.edit_submit' | translate }}
                 } @else {
                   &#128640; {{ 'create_carpool.publish' | translate }}
                 }
@@ -787,6 +789,9 @@ export class CreateCarpoolComponent implements OnInit {
     pausesDurationMinutes: 0
   };
 
+  editMode = signal(false);
+  editCarpoolId = signal<number | null>(null);
+
   vehicles = signal<Vehicle[]>([]);
   error = signal('');
   success = signal('');
@@ -810,12 +815,51 @@ export class CreateCarpoolComponent implements OnInit {
     private carpoolService: CarpoolService,
     private userService: UserService,
     private router: Router,
+    private route: ActivatedRoute,
     private translate: TranslateService
   ) {}
 
   ngOnInit() {
     this.durationDisplay.set(this.translate.instant('create_carpool.duration_fill_times'));
     this.loadVehicles();
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.editMode.set(true);
+      this.editCarpoolId.set(+id);
+      this.loadCarpool(+id);
+    }
+  }
+
+  private loadCarpool(id: number) {
+    this.carpoolService.getById(id).subscribe({
+      next: (carpool) => {
+        const depDate = new Date(carpool.departureDate);
+        const arrDate = new Date(carpool.arrivalDate);
+
+        this.trip = {
+          departureCity: carpool.departureCity,
+          departureLocation: carpool.departureLocation,
+          departureDate: depDate.toISOString().split('T')[0],
+          departureTime: carpool.departureTime,
+          arrivalCity: carpool.arrivalCity,
+          arrivalLocation: carpool.arrivalLocation,
+          arrivalDate: arrDate.toISOString().split('T')[0],
+          arrivalTime: carpool.arrivalTime,
+          totalSeats: carpool.totalSeats,
+          pricePerPerson: carpool.pricePerPerson,
+          vehicleId: carpool.vehicleId,
+          estimatedDurationMinutes: carpool.estimatedDurationMinutes,
+          pausesCount: carpool.pausesCount ?? 0,
+          pausesDurationMinutes: carpool.pausesDurationMinutes ?? 0
+        };
+        this.calculateDuration();
+        this.updateStepper();
+      },
+      error: () => {
+        this.error.set(this.translate.instant('messages.error_occurred'));
+      }
+    });
   }
 
   loadVehicles() {
@@ -904,10 +948,15 @@ export class CreateCarpoolComponent implements OnInit {
       arrivalDate: new Date(this.trip.arrivalDate)
     };
 
-    this.carpoolService.create(carpoolData).subscribe({
+    const request$ = this.editMode() && this.editCarpoolId()
+      ? this.carpoolService.update(this.editCarpoolId()!, carpoolData)
+      : this.carpoolService.create(carpoolData);
+
+    request$.subscribe({
       next: () => {
-        this.success.set(this.translate.instant('carpool.created_successfully'));
-        setTimeout(() => this.router.navigate(['/profile']), 2000);
+        const msgKey = this.editMode() ? 'carpool.edit_success' : 'carpool.created_successfully';
+        this.success.set(this.translate.instant(msgKey));
+        setTimeout(() => this.router.navigate(['/my-trips']), 2000);
       },
       error: (err) => {
         this.error.set(err.error?.message || this.translate.instant('messages.error_occurred'));

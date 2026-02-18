@@ -153,6 +153,55 @@ public class CarpoolService : ICarpoolService
         return dto;
     }
 
+    public async Task<CarpoolDTO> UpdateAsync(int carpoolId, CreateCarpoolDTO dto, int userId)
+    {
+        var carpool = await _carpoolRepository.GetByIdAsync(carpoolId);
+        if (carpool == null)
+            throw new InvalidOperationException("Carpool not found");
+
+        if (carpool.UserId != userId)
+            throw new UnauthorizedAccessException("You are not the driver of this carpool");
+
+        if (carpool.Status != CarpoolStatus.Pending)
+            throw new InvalidOperationException("Only pending carpools can be edited");
+
+        // Calculate current participants
+        var participations = await _carpoolRepository.GetParticipationsAsync(carpoolId);
+        var currentParticipants = participations
+            .Where(p => p.Status == Data.Enums.ParticipationStatus.Confirmed)
+            .Sum(p => p.SeatsReserved);
+
+        if (dto.TotalSeats < currentParticipants)
+            throw new InvalidOperationException($"Total seats cannot be less than current participants ({currentParticipants})");
+
+        carpool.DepartureCity = dto.DepartureCity;
+        carpool.DepartureLocation = dto.DepartureLocation;
+        carpool.DepartureTime = dto.DepartureTime;
+        carpool.DepartureDate = DateTime.SpecifyKind(dto.DepartureDate, DateTimeKind.Utc);
+        carpool.ArrivalCity = dto.ArrivalCity;
+        carpool.ArrivalLocation = dto.ArrivalLocation;
+        carpool.ArrivalTime = dto.ArrivalTime;
+        carpool.ArrivalDate = DateTime.SpecifyKind(dto.ArrivalDate, DateTimeKind.Utc);
+        carpool.VehicleId = dto.VehicleId;
+        carpool.TotalSeats = dto.TotalSeats;
+        carpool.AvailableSeats = dto.TotalSeats - currentParticipants;
+        carpool.PricePerPerson = dto.PricePerPerson;
+        carpool.EstimatedDurationMinutes = dto.EstimatedDurationMinutes;
+        carpool.PausesCount = dto.PausesCount ?? 0;
+        carpool.PausesDurationMinutes = dto.PausesDurationMinutes ?? 0;
+        carpool.WayBefore = dto.WayBefore;
+        carpool.WayAfter = dto.WayAfter;
+
+        await _carpoolRepository.UpdateAsync(carpool);
+
+        var updatedDto = carpool.ToDTO();
+        updatedDto.DriverAverageRating = await _userRepository.GetAverageRatingAsync(userId);
+
+        _logger.LogInformation("Carpool updated: {CarpoolId} by user {UserId}", carpoolId, userId);
+
+        return updatedDto;
+    }
+
     public async Task DeleteAsync(int id)
     {
         await _carpoolRepository.DeleteAsync(id);

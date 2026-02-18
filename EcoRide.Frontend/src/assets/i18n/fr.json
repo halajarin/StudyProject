@@ -254,7 +254,11 @@
     "participation_cancelled_success": "Participation annulée. Vos crédits ont été remboursés.",
     "mandatory_confirmations": "Confirmations obligatoires avant publication",
     "confirm_insurance": "Je confirme que mon assurance véhicule est valide",
-    "confirm_license": "Je confirme que mon permis de conduire est valide"
+    "confirm_license": "Je confirme que mon permis de conduire est valide",
+    "edit": "Modifier",
+    "edit_title": "Modifier le covoiturage",
+    "edit_success": "Covoiturage modifié avec succès ! Redirection...",
+    "edit_submit": "Enregistrer les modifications"
   },
   "user": {
     "profile": "Profil",
@@ -662,7 +666,8 @@
     "Passenger count must be at least 1": "Le nombre de passagers doit être d'au moins 1",
     "You must have participated in the carpool to leave a review": "Vous devez avoir participé au covoiturage pour laisser un avis",
     "You must first validate the trip": "Vous devez d'abord valider le trajet",
-    "You have already reviewed this trip": "Vous avez déjà laissé un avis pour ce trajet"
+    "You have already reviewed this trip": "Vous avez déjà laissé un avis pour ce trajet",
+    "Only pending carpools can be edited": "Seuls les covoiturages en attente peuvent être modifiés"
   },
   "cookies": {
     "banner_text": "Ce site utilise des cookies techniques nécessaires à son bon fonctionnement (authentification, préférences de langue).",

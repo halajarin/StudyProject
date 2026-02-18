@@ -12,6 +12,7 @@ public interface ICarpoolService
     Task<List<CarpoolDTO>> GetByDriverAsync(int userId);
     Task<List<CarpoolDTO>> GetByPassengerAsync(int userId);
     Task<CarpoolDTO> CreateAsync(CreateCarpoolDTO createDto, int userId);
+    Task<CarpoolDTO> UpdateAsync(int carpoolId, CreateCarpoolDTO dto, int userId);
     Task DeleteAsync(int id);
 
     // Lifecycle management

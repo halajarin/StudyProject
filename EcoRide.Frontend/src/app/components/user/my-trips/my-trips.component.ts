@@ -105,6 +105,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                       <!-- Driver tab actions -->
                       @if (activeTripsTab() === 'driver') {
                         @if (trip.status === CarpoolStatus.Pending) {
+                          <a [routerLink]="['/edit-carpool', trip.carpoolId]" class="btn-sm btn-secondary">
+                            {{ 'carpool.edit' | translate }}
+                          </a>
                           <button (click)="startTrip(trip.carpoolId)" class="btn-sm btn-primary"
                                   [disabled]="actioningTripId() === trip.carpoolId">
                             {{ 'carpool.start' | translate }}

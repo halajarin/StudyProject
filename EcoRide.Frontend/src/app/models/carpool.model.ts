@@ -30,6 +30,7 @@ export interface Carpool {
   driverEmail?: string;
   driverPhoto?: Uint8Array;
   driverAverageRating: number;
+  vehicleId: number;
   vehicleModel: string;
   vehicleBrand: string;
   vehicleEnergyType: string;
