@@ -208,7 +208,9 @@
       "pending": "En attente",
       "in_progress": "En cours",
       "completed": "Terminé",
-      "cancelled": "Annulé"
+      "cancelled": "Annulé",
+      "cancelled_by_driver": "Annulé par le conducteur",
+      "cancelled_by_passenger": "Annulé par le passager"
     },
     "join": "Rejoindre ce covoiturage",
     "join_confirm": "Voulez-vous vraiment rejoindre ce covoiturage pour {{price}} crédits ?",
@@ -433,6 +435,7 @@
     "tab_passenger": "Passager",
     "column_route": "Trajet",
     "column_date": "Date de départ",
+    "column_seats": "Réservations",
     "column_actions": "Actions",
     "trip_detail_departure": "Départ",
     "trip_detail_arrival": "Arrivée",

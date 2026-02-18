@@ -75,6 +75,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                   <th class="sortable" (click)="toggleTripSort('status')">
                     {{ 'admin.status_label' | translate }} {{ getTripSortArrow('status') }}
                   </th>
+                  @if (activeTripsTab() === 'driver') {
+                    <th>{{ 'profile.column_seats' | translate }}</th>
+                  }
                   <th>{{ 'profile.column_actions' | translate }}</th>
                 </tr>
                 <tr class="filter-row">
@@ -82,12 +85,15 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                   <th><input class="column-filter" (input)="setTripFilter('route', $event)" placeholder="..."></th>
                   <th><input class="column-filter" (input)="setTripFilter('departureDate', $event)" placeholder="..."></th>
                   <th></th>
+                  @if (activeTripsTab() === 'driver') {
+                    <th></th>
+                  }
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 @if (currentFilteredTrips().length === 0) {
-                  <tr><td colspan="5" class="no-results">{{ 'profile.no_trips' | translate }}</td></tr>
+                  <tr><td [attr.colspan]="activeTripsTab() === 'driver' ? 6 : 5" class="no-results">{{ 'profile.no_trips' | translate }}</td></tr>
                 }
                 @for (trip of currentFilteredTrips(); track trip.carpoolId) {
                   <tr class="clickable-row" [class.expanded]="isTripExpanded(trip.carpoolId)" (click)="toggleTripExpand(trip.carpoolId)">
@@ -97,10 +103,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                     <td class="td-route">{{ trip.departureCity }} → {{ trip.arrivalCity }}</td>
                     <td class="td-date">{{ trip.departureDate | date:'dd/MM/yyyy' }} {{ trip.departureTime }}</td>
                     <td>
-                      <span class="status-badge status-{{ trip.status.toLowerCase() }}">
-                        {{ getStatusLabel(trip.status) | translate }}
+                      <span class="status-badge status-{{ getCancelDisplayStatus(trip).class }}">
+                        {{ getCancelDisplayStatus(trip).labelKey | translate }}
                       </span>
                     </td>
+                    @if (activeTripsTab() === 'driver') {
+                      <td class="td-seats">{{ trip.totalSeats - trip.availableSeats }} / {{ trip.totalSeats }}</td>
+                    }
                     <td class="td-actions" (click)="$event.stopPropagation()">
                       <!-- Driver tab actions -->
                       @if (activeTripsTab() === 'driver') {
@@ -171,7 +180,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                   <!-- Expanded detail row -->
                   @if (isTripExpanded(trip.carpoolId)) {
                     <tr class="stats-row">
-                      <td colspan="5">
+                      <td [attr.colspan]="activeTripsTab() === 'driver' ? 6 : 5">
                         <div class="trip-detail">
                           <div class="stats-cards-grid">
                             <div class="detail-stat-card">
@@ -330,6 +339,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       white-space: nowrap;
       font-size: 0.82rem;
       color: var(--gray);
+    }
+
+    .td-seats {
+      white-space: nowrap;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
     }
 
     .td-actions {
@@ -589,6 +605,23 @@ export class MyTripsComponent implements OnInit {
       case CarpoolStatus.Cancelled: return 'carpool.status.cancelled';
       default: return 'carpool.status.pending';
     }
+  }
+
+  getCancelDisplayStatus(trip: Carpool): { labelKey: string; class: string } {
+    // Passenger tab: participation cancelled by passenger
+    if (this.activeTripsTab() === 'passenger' && trip.participationStatus === 'Cancelled') {
+      return { labelKey: 'carpool.status.cancelled_by_passenger', class: 'cancelled' };
+    }
+    // Passenger tab: carpool cancelled by driver
+    if (this.activeTripsTab() === 'passenger' && trip.status === CarpoolStatus.Cancelled) {
+      return { labelKey: 'carpool.status.cancelled_by_driver', class: 'cancelled' };
+    }
+    // Driver tab: carpool cancelled by driver
+    if (this.activeTripsTab() === 'driver' && trip.status === CarpoolStatus.Cancelled) {
+      return { labelKey: 'carpool.status.cancelled_by_driver', class: 'cancelled' };
+    }
+    // Default: use normal status
+    return { labelKey: this.getStatusLabel(trip.status), class: trip.status.toLowerCase() };
   }
 
   // --- Driver actions ---

@@ -36,6 +36,9 @@ public class CarpoolDTO
     public string VehicleEnergyType { get; set; } = string.Empty;
     public string VehicleColor { get; set; } = string.Empty;
 
+    // Participation (passenger context only)
+    public string? ParticipationStatus { get; set; }
+
     // Driver preferences (from MongoDB)
     public bool? SmokingAllowed { get; set; }
     public bool? PetsAllowed { get; set; }

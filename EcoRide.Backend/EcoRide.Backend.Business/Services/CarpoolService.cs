@@ -246,6 +246,13 @@ public class CarpoolService : ICarpoolService
         var dtos = carpools.Select(c => c.ToDTO()).ToList();
         await PopulateDriverRatingsAsync(dtos);
 
+        foreach (var dto in dtos)
+        {
+            var participation = await _carpoolRepository.GetParticipationAsync(dto.CarpoolId, userId);
+            if (participation != null)
+                dto.ParticipationStatus = participation.Status.ToString();
+        }
+
         return dtos;
     }
 

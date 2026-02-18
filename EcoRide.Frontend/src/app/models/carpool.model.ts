@@ -35,6 +35,8 @@ export interface Carpool {
   vehicleBrand: string;
   vehicleEnergyType: string;
   vehicleColor: string;
+  // Participation (passenger context)
+  participationStatus?: string;
   // Driver preferences
   smokingAllowed?: boolean;
   petsAllowed?: boolean;

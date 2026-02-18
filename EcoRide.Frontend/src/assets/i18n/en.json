@@ -208,7 +208,9 @@
       "pending": "Pending",
       "in_progress": "In progress",
       "completed": "Completed",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "cancelled_by_driver": "Cancelled by driver",
+      "cancelled_by_passenger": "Cancelled by passenger"
     },
     "join": "Join this carpool",
     "join_confirm": "Do you really want to join this carpool for {{price}} credits?",
@@ -433,6 +435,7 @@
     "tab_passenger": "Passenger",
     "column_route": "Route",
     "column_date": "Departure date",
+    "column_seats": "Bookings",
     "column_actions": "Actions",
     "trip_detail_departure": "Departure",
     "trip_detail_arrival": "Arrival",
