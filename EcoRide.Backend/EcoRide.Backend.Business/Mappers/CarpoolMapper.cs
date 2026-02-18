@@ -28,8 +28,6 @@ public static class CarpoolMapper
             PausesDurationMinutes = carpool.PausesDurationMinutes,
             WayBefore = carpool.WayBefore,
             WayAfter = carpool.WayAfter,
-            DistanceKm = carpool.DistanceKm,
-            Co2SavedKg = carpool.Co2SavedKg,
             IsEcological = carpool.Vehicle?.EnergyType == EnergyType.Electric,
             UserId = carpool.UserId,
             DriverUsername = carpool.Driver?.Username ?? string.Empty,

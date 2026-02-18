@@ -25,8 +25,6 @@ export interface Carpool {
   pausesDurationMinutes?: number;
   wayBefore?: string;
   wayAfter?: string;
-  distanceKm?: number;
-  co2SavedKg?: number;
   isEcological: boolean;
   driverUsername: string;
   driverEmail?: string;
@@ -71,6 +69,4 @@ export interface CreateCarpool {
   pausesDurationMinutes?: number;
   wayBefore?: string;
   wayAfter?: string;
-  distanceKm?: number;
-  co2SavedKg?: number;
 }

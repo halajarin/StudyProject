@@ -20,8 +20,6 @@ public class CarpoolDTO
     public int PausesDurationMinutes { get; set; }
     public string? WayBefore { get; set; }
     public string? WayAfter { get; set; }
-    public float? DistanceKm { get; set; }
-    public float? Co2SavedKg { get; set; }
     public bool IsEcological { get; set; }
 
     // Driver information

@@ -58,10 +58,6 @@ public class CreateCarpoolDTOValidator : AbstractValidator<CreateCarpoolDTO>
             .MaximumLength(100).When(x => !string.IsNullOrEmpty(x.WayBefore));
         RuleFor(x => x.WayAfter)
             .MaximumLength(100).When(x => !string.IsNullOrEmpty(x.WayAfter));
-        RuleFor(x => x.DistanceKm)
-            .GreaterThan(0).When(x => x.DistanceKm.HasValue);
-        RuleFor(x => x.Co2SavedKg)
-            .GreaterThanOrEqualTo(0).When(x => x.Co2SavedKg.HasValue);
     }
 
     private bool BeInFuture(DateTime date)

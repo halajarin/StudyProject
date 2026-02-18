@@ -597,8 +597,6 @@
     "pause_label": "{{count}} stop(s) · ~{{duration}} min",
     "no_pauses": "None",
     "recharge_stop": "Recharge stop",
-    "distance_info": "Distance",
-    "co2_saved": "CO2 saved",
     "remaining_spots_after": "Remaining spots after"
   },
   "create_carpool": {

@@ -47,6 +47,4 @@ public class CreateCarpoolDTO
     public string? WayBefore { get; set; }
     [MaxLength(100)]
     public string? WayAfter { get; set; }
-    public float? DistanceKm { get; set; }
-    public float? Co2SavedKg { get; set; }
 }

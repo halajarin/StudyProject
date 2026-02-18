@@ -56,7 +56,7 @@
     "hero_title_line1": "Voyagez ",
     "hero_title_highlight": "éco-responsable",
     "hero_title_line2": " ensemble",
-    "hero_subtitle": "Partagez vos trajets, réduisez votre empreinte carbone et faites des économies. Rejoignez la communauté EcoRide dès aujourd'hui.",
+    "hero_subtitle": "Chez EcoRide, rouler propre est une évidence. Ici, on ne fait pas des trajets, on fait des voyages — avec des pauses qui font partie de l'aventure. Rejoignez la seule communauté de covoiturage entièrement verte. Bon pour la planète, bon pour votre budget.",
     "hero_trust": "Rejoignez plus de 2 500 voyageurs éco-responsables",
     "departure_city": "Départ",
     "arrival_city": "Arrivée",
@@ -597,8 +597,6 @@
     "pause_label": "{{count}} pause(s) · ~{{duration}} min",
     "no_pauses": "Aucune",
     "recharge_stop": "Arrêt recharge",
-    "distance_info": "Distance",
-    "co2_saved": "CO2 économisé",
     "remaining_spots_after": "Places restantes après"
   },
   "create_carpool": {

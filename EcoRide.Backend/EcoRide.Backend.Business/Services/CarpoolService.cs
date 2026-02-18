@@ -141,8 +141,6 @@ public class CarpoolService : ICarpoolService
             PausesDurationMinutes = createDto.PausesDurationMinutes ?? 0,
             WayBefore = createDto.WayBefore,
             WayAfter = createDto.WayAfter,
-            DistanceKm = createDto.DistanceKm,
-            Co2SavedKg = createDto.Co2SavedKg,
             Status = CarpoolStatus.Pending,
             CreatedAt = DateTime.UtcNow,
         };

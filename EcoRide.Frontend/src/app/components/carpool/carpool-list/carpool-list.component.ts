@@ -257,6 +257,9 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                       <div class="ride-duration">{{ formatDuration(carpool.estimatedDurationMinutes) }}</div>
                     }
                     <div class="ride-line-track"></div>
+                    @if (carpool.pausesCount && carpool.pausesCount > 0) {
+                      <div class="ride-pause">&#128268; {{ carpool.pausesCount }} pause(s) · ~{{ carpool.pausesDurationMinutes }} min</div>
+                    }
                   </div>
                   <div class="ride-time-block">
                     <div class="ride-time">{{ carpool.arrivalTime }}</div>
@@ -272,11 +275,6 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   }
                 </div>
               </div>
-
-              <!-- Pause info -->
-              @if (carpool.pausesCount && carpool.pausesCount > 0) {
-                <div class="ride-pause">&#128268; {{ carpool.pausesCount }} pause(s) · ~{{ carpool.pausesDurationMinutes }} min</div>
-              }
 
               <!-- Preferences labels -->
               @if (carpool.smokingAllowed !== undefined || carpool.petsAllowed !== undefined || carpool.musicAllowed !== undefined || carpool.conversationLevel) {
@@ -494,20 +492,6 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                     }
                   </span>
                 </div>
-                @if (c.distanceKm) {
-                  <div class="info-item-h">
-                    <span class="info-icon">&#128663;</span>
-                    <span class="info-label">{{ 'carpools.distance_info' | translate }}</span>
-                    <span class="info-value">~{{ c.distanceKm | number:'1.0-0' }} km</span>
-                  </div>
-                }
-                @if (c.co2SavedKg) {
-                  <div class="info-item-h">
-                    <span class="info-icon">&#127807;</span>
-                    <span class="info-label">{{ 'carpools.co2_saved' | translate }}</span>
-                    <span class="info-value">~{{ c.co2SavedKg | number:'1.0-1' }} kg</span>
-                  </div>
-                }
                 <div class="info-item-h">
                   <span class="info-icon">&#128200;</span>
                   <span class="info-label">{{ 'admin.status_label' | translate }}</span>
@@ -1188,7 +1172,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       background: white;
       border-radius: 16px;
       box-shadow: 0 2px 12px rgba(46,204,113,0.08);
-      border: 1px solid var(--light-gray);
+      border: 1px solid #ccc;
       cursor: pointer;
       transition: all 0.25s;
       overflow: hidden;
@@ -2056,11 +2040,10 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
 
     /* ===== RIDE PAUSE LABEL ===== */
     .ride-pause {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #E65100;
-      padding: 4px 24px 2px;
-      font-weight: 600;
-      text-align: center;
+      font-weight: 500;
+      margin-top: 6px;
     }
 
     /* ===== WAYPOINT STYLES ===== */
