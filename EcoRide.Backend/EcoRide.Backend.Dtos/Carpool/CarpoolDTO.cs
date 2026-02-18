@@ -27,6 +27,7 @@ public class CarpoolDTO
     // Driver information
     public int UserId { get; set; }  // Driver user ID
     public string DriverUsername { get; set; } = string.Empty;
+    public string DriverEmail { get; set; } = string.Empty;
     public byte[]? DriverPhoto { get; set; }
     public double DriverAverageRating { get; set; }
 

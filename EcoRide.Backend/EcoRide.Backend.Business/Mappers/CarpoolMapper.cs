@@ -33,6 +33,7 @@ public static class CarpoolMapper
             IsEcological = carpool.Vehicle?.EnergyType == EnergyType.Electric,
             UserId = carpool.UserId,
             DriverUsername = carpool.Driver?.Username ?? string.Empty,
+            DriverEmail = carpool.Driver?.Email ?? string.Empty,
             DriverPhoto = carpool.Driver?.Photo,
             DriverAverageRating = 0, // Will be calculated separately if needed
             VehicleModel = carpool.Vehicle?.Model ?? string.Empty,

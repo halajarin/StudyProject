@@ -6,12 +6,13 @@ import { UserRole } from './models/role.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from './components/language-selector/language-selector.component';
 import { IconComponent } from './components/shared/icon/icon.component';
+import { CookieConsentComponent } from './components/cookie-consent/cookie-consent.component';
 import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, TranslateModule, LanguageSelectorComponent, IconComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, TranslateModule, LanguageSelectorComponent, IconComponent, CookieConsentComponent],
   template: `
     <nav class="navbar">
       <div class="container nav-container">
@@ -109,6 +110,8 @@ import { filter } from 'rxjs';
         <p>{{ 'footer.contact' | translate }}: <a href="mailto:contact@ecoride.fr">contact@ecoride.fr</a> | <a routerLink="/legal-notice">{{ 'footer.legal_notice' | translate }}</a></p>
       </div>
     </footer>
+
+    <app-cookie-consent />
   `,
   styles: [`
     /* ===== NAVBAR BASE ===== */

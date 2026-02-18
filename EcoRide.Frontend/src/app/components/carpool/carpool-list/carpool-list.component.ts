@@ -433,7 +433,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   </div>
                 </div>
               </div>
-              <button class="btn-contact">&#9993; {{ 'carpools.contact_driver' | translate }}</button>
+              <button class="btn-contact" (click)="contactDriver()">&#9993; {{ 'carpools.contact_driver' | translate }}</button>
             </div>
 
             <!-- Vehicle card -->
@@ -2405,6 +2405,14 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
   closeDetail() {
     this.detailPanelOpen.set(false);
     document.body.style.overflow = '';
+  }
+
+  contactDriver() {
+    const c = this.selectedCarpool();
+    if (c?.driverEmail) {
+      const subject = `EcoRide: ${c.departureCity} → ${c.arrivalCity}`;
+      window.location.href = `mailto:${c.driverEmail}?subject=${encodeURIComponent(subject)}`;
+    }
   }
 
   @HostListener('document:keydown.escape')

@@ -648,5 +648,10 @@
     "insufficient_credits": "Insufficient credits",
     "login_required": "You must be logged in to perform this action",
     "error_occurred": "An error occurred"
+  },
+  "cookies": {
+    "banner_text": "This site uses technical cookies necessary for its proper functioning (authentication, language preferences).",
+    "learn_more": "Learn more",
+    "accept": "Accept"
   }
 }

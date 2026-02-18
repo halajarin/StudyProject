@@ -29,6 +29,7 @@ export interface Carpool {
   co2SavedKg?: number;
   isEcological: boolean;
   driverUsername: string;
+  driverEmail?: string;
   driverPhoto?: Uint8Array;
   driverAverageRating: number;
   vehicleModel: string;
