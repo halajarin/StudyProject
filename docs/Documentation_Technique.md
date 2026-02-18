@@ -154,9 +154,9 @@ EcoRide.Backend.Client      → Client MongoDB (Préférences utilisateur)
 
 **Repository Pattern :**
 ```csharp
-public interface IUtilisateurRepository {
-    Task<Utilisateur> GetByIdAsync(int id);
-    Task<Utilisateur> CreateAsync(Utilisateur utilisateur);
+public interface IUserRepository {
+    Task<User> GetByIdAsync(int id);
+    Task<User> CreateAsync(User user);
     // ...
 }
 ```
@@ -282,7 +282,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5000/api',
+  apiUrl: 'http://localhost:5222/api',
   version: '1.0.0'
 };
 ```
@@ -315,7 +315,7 @@ export const environment = {
 2. **role**
    - `role_id` (PK, SERIAL)
    - `libelle` (VARCHAR(50))
-   - Valeurs : Passager, Chauffeur, Employe, Administrateur
+   - Valeurs : Passenger, Driver, Employee, Administrator
 
 3. **utilisateur_role** (table d'association)
    - `utilisateur_role_id` (PK)
@@ -333,7 +333,7 @@ export const environment = {
    - `covoiturage_id` (PK)
    - `date_depart`, `heure_depart`, `lieu_depart`, `ville_depart`
    - `date_arrivee`, `heure_arrivee`, `lieu_arrivee`, `ville_arrivee`
-   - `statut` (VARCHAR: En attente, En cours, Terminé, Annulé)
+   - `statut` (ENUM: Pending, InProgress, Completed, Cancelled)
    - `nb_place`, `nb_place_restante`
    - `prix_personne` (FLOAT)
    - `voiture_id` (FK)
@@ -343,14 +343,14 @@ export const environment = {
    - `participation_id` (PK)
    - `covoiturage_id` (FK)
    - `utilisateur_id` (FK) - Le passager
-   - `statut` (VARCHAR: Confirmé, Annulé, Validé)
+   - `statut` (ENUM: Confirmed, Cancelled, Validated)
    - `credit_utilise` (INTEGER)
    - `trajet_valide` (BOOLEAN)
 
 7. **avis**
    - `avis_id` (PK)
    - `commentaire`, `note` (1-5)
-   - `statut` (En attente, Validé, Refusé)
+   - `statut` (Pending, Validated, Rejected)
    - `utilisateur_auteur_id` (FK)
    - `utilisateur_cible_id` (FK)
    - `covoiturage_id` (FK, NULLABLE)
@@ -368,7 +368,7 @@ export const environment = {
     "Musique classique",
     "Pas de discussion"
   ],
-  "date_modification": ISODate("2025-01-15T10:00:00Z")
+  "date_modification": ISODate("2026-01-15T10:00:00Z")
 }
 ```
 
@@ -431,7 +431,8 @@ Utilisateur    Frontend       Backend          PostgreSQL
     │             │              │                  │
     │──Clic──────▶│              │                  │
     │             │──POST────────▶│                  │
-    │             │ /participate │                  │
+    │             │ /participation│                  │
+    │             │ /{id}/join   │                  │
     │             │              │──SELECT──────────▶│
     │             │              │ Covoiturage      │
     │             │              │◀─────────────────│
@@ -546,7 +547,7 @@ Response (200 OK):
   "nameid": "1",
   "email": "jean@email.com",
   "unique_name": "jeandu",
-  "role": ["Passager", "Chauffeur"],
+  "role": ["Passenger", "Driver"],
   "exp": 1735689600
 }
 ```

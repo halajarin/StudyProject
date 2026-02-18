@@ -206,16 +206,17 @@ Le projet EcoRide a été développé en suivant la méthodologie Agile Scrum av
 - Déploiement
 
 **Tasks :**
+- Tests unitaires backend (52 tests xUnit)
+- Tests unitaires frontend (80 tests Karma/Jasmine)
 - Tests manuels de toutes les US
 - Correction des bugs
 - README.md
 - Documentation technique
 - Charte graphique
 - Manuel utilisateur
-- Déploiement backend
-- Déploiement frontend
+- Déploiement backend et frontend (Kubernetes on-premise)
 
-**Estimation :** 16h
+**Estimation :** 20h
 **Résultat :** ✅ Complété
 
 ---
@@ -318,8 +319,7 @@ docs(readme): update installation instructions
 ## Outils utilisés
 
 ### Gestion de projet
-- **Trello / Notion** : Tableau Kanban
-- **GitHub Projects** : Alternative intégrée
+- **Trello** : Tableau Kanban
 
 ### Communication
 - **Email** : Communication avec le Product Owner
