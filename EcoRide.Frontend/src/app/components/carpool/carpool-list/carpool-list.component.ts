@@ -2060,6 +2060,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
       color: #E65100;
       padding: 4px 24px 2px;
       font-weight: 600;
+      text-align: center;
     }
 
     /* ===== WAYPOINT STYLES ===== */
