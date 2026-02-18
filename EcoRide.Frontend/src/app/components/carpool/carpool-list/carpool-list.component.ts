@@ -242,7 +242,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
               <!-- Date -->
               <div class="ride-date">
                 <span class="ride-date-icon">&#128197;</span>
-                <span class="ride-date-text">{{ carpool.departureDate | date:'EEEE d MMMM yyyy' }}</span>
+                <span class="ride-date-text">{{ carpool.departureDate | date:'EEEE d MMMM yyyy':undefined:translate.currentLang }}</span>
               </div>
 
               <div class="ride-card-inner">
@@ -311,9 +311,9 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                   <span class="ride-driver-rating">&#9733; {{ carpool.driverAverageRating.toFixed(1) }}</span>
                 </div>
                 <span class="ride-separator"></span>
-                <span class="ride-vehicle">{{ carpool.vehicleBrand }} {{ carpool.vehicleModel }} &#8212; {{ carpool.vehicleColor }}</span>
+                <span class="ride-vehicle">{{ carpool.vehicleBrand }} {{ carpool.vehicleModel }} &#8212; {{ 'vehicle.colors.' + carpool.vehicleColor.toLowerCase() | translate }}</span>
                 <span class="energy-badge" [ngClass]="getEnergyClass(carpool.vehicleEnergyType)">
-                  {{ getEnergyIcon(carpool.vehicleEnergyType) }} {{ carpool.vehicleEnergyType }}
+                  {{ getEnergyIcon(carpool.vehicleEnergyType) }} {{ 'vehicle.types.' + carpool.vehicleEnergyType.toLowerCase() | translate }}
                 </span>
                 <span class="ride-separator"></span>
                 <div class="ride-spots">&#129681; <strong>{{ carpool.availableSeats }}</strong> / {{ carpool.totalSeats }}</div>
@@ -377,7 +377,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                     @if (c.departureLocation) {
                       <span class="dt-sub">{{ c.departureLocation }}</span>
                     }
-                    <span class="dt-time">{{ c.departureDate | date:'dd/MM/yyyy' }} &middot; {{ c.departureTime }}</span>
+                    <span class="dt-time">{{ c.departureDate | date:'dd/MM/yyyy':undefined:translate.currentLang }} &middot; {{ c.departureTime }}</span>
                   </div>
                 </div>
                 <div class="dt-line">
@@ -445,11 +445,11 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
               <div class="vehicle-info-row">
                 <div class="vehicle-energy-badge" [ngClass]="getEnergyClass(c.vehicleEnergyType)">
                   <span class="vehicle-energy-icon">{{ getEnergyIcon(c.vehicleEnergyType) }}</span>
-                  <span class="vehicle-energy-label">{{ c.vehicleEnergyType }}</span>
+                  <span class="vehicle-energy-label">{{ 'vehicle.types.' + c.vehicleEnergyType.toLowerCase() | translate }}</span>
                 </div>
                 <div class="vehicle-details">
                   <span class="vehicle-name">{{ c.vehicleBrand }} {{ c.vehicleModel }}</span>
-                  <span class="vehicle-color">{{ c.vehicleColor }}</span>
+                  <span class="vehicle-color">{{ 'vehicle.colors.' + c.vehicleColor.toLowerCase() | translate }}</span>
                   <span class="vehicle-emission">
                     @switch (c.vehicleEnergyType) {
                       @case ('Electric') { {{ 'carpools.zero_emission' | translate }} }
@@ -471,7 +471,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
                 <div class="info-item-h">
                   <span class="info-icon">&#128197;</span>
                   <span class="info-label">{{ 'carpools.date_info' | translate }}</span>
-                  <span class="info-value">{{ c.departureDate | date:'dd/MM/yyyy' }}</span>
+                  <span class="info-value">{{ c.departureDate | date:'dd/MM/yyyy':undefined:translate.currentLang }}</span>
                 </div>
                 <div class="info-item-h">
                   <span class="info-icon">&#128186;</span>
@@ -547,7 +547,7 @@ import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
             <div class="booking-card">
               <!-- Date header -->
               <div class="booking-date-header">
-                &#128197; {{ c.departureDate | date:'EEEE d MMMM yyyy' }}
+                &#128197; {{ c.departureDate | date:'EEEE d MMMM yyyy':undefined:translate.currentLang }}
               </div>
 
               <!-- Mini timeline -->
@@ -2303,7 +2303,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     private carpoolService: CarpoolService,
     public authService: AuthService,
     private route: ActivatedRoute,
-    private translate: TranslateService
+    public translate: TranslateService
   ) {}
 
   ngOnDestroy() {
