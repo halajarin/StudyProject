@@ -218,7 +218,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
                               <div class="stat-breakdown">
                                 <span class="stat-item">{{ 'profile.seats_info' | translate:{ available: trip.availableSeats, total: trip.totalSeats } }}</span>
                                 @if (trip.estimatedDurationMinutes) {
-                                  <span class="stat-item">{{ 'profile.duration_info' | translate:{ duration: trip.estimatedDurationMinutes } }}</span>
+                                  <span class="stat-item">{{ formatDuration(trip.estimatedDurationMinutes) }}</span>
                                 }
                               </div>
                             </div>
@@ -519,6 +519,13 @@ export class MyTripsComponent implements OnInit {
 
   getStars(count: number): string {
     return '⭐'.repeat(count);
+  }
+
+  formatDuration(minutes: number): string {
+    if (minutes < 60) return `${minutes}min`;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m > 0 ? `${h}h ${m.toString().padStart(2, '0')}min` : `${h}h`;
   }
 
   // --- Trips table: sort, filter, expand ---
