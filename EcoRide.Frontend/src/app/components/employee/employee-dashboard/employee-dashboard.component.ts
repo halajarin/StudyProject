@@ -357,6 +357,10 @@ export class EmployeeDashboardComponent implements OnInit {
     if (driver) {
       this.columnFilters.set({ driverUsername: driver });
     }
+    const carpoolId = this.route.snapshot.queryParamMap.get('carpoolId');
+    if (carpoolId) {
+      this.columnFilters.set({ ...this.columnFilters(), carpoolId });
+    }
   }
 
   loadReviews() {
