@@ -52,7 +52,8 @@ public class CarpoolRepository : ICarpoolRepository
                 .ThenInclude(v => v.Brand)
             .Include(c => c.Driver)
             .Where(c => c.AvailableSeats > 0 &&
-                       c.Status == CarpoolStatus.Pending);
+                       c.Status == CarpoolStatus.Pending &&
+                       c.DepartureDate.Date >= DateTime.UtcNow.Date);
 
         if (!string.IsNullOrWhiteSpace(departureCity))
         {

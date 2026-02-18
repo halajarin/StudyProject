@@ -107,9 +107,10 @@ public class CarpoolService : ICarpoolService
 
     public async Task<List<CarpoolDTO>> GetAvailableAsync()
     {
+        var today = DateTime.UtcNow.Date;
         var carpools = await _carpoolRepository.GetAllAsync();
         var available = carpools
-            .Where(c => c.Status == CarpoolStatus.Pending && c.AvailableSeats > 0)
+            .Where(c => c.Status == CarpoolStatus.Pending && c.AvailableSeats > 0 && c.DepartureDate.Date >= today)
             .OrderBy(c => c.DepartureDate)
             .ToList();
         var dtos = available.Select(c => c.ToDTO()).ToList();
