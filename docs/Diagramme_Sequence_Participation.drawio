@@ -1,0 +1,138 @@
+<mxfile host="app.diagrams.net" modified="2026-02-18" agent="Claude" version="24.0.0" type="device">
+  <diagram id="seq" name="Sequence Participation">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="650" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- PARTICIPANTS (rectangles) -->
+        <mxCell id="p1" value="Utilisateur" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="130" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2" value="Frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="265" y="30" width="130" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3" value="Backend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="485" y="30" width="130" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="710" y="30" width="130" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- LIFELINES (dashed vertical lines) -->
+        <mxCell id="ll1" style="endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#999999;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="70" as="sourcePoint"/>
+            <mxPoint x="115" y="600" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll2" style="endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#999999;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="70" as="sourcePoint"/>
+            <mxPoint x="330" y="600" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll3" style="endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#999999;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="70" as="sourcePoint"/>
+            <mxPoint x="550" y="600" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll4" style="endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#999999;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="775" y="70" as="sourcePoint"/>
+            <mxPoint x="775" y="600" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MESSAGES -->
+
+        <!-- 1. Utilisateur > Frontend -->
+        <mxCell id="m1" value="Clic &quot;Participer&quot;" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontSize=10;fontStyle=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="110" as="sourcePoint"/>
+            <mxPoint x="330" y="110" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 2. Frontend > Backend -->
+        <mxCell id="m2" value="POST /carpool/{id}/participate" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontSize=10;fontStyle=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="160" as="sourcePoint"/>
+            <mxPoint x="550" y="160" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 3. Backend > PostgreSQL : SELECT covoiturage -->
+        <mxCell id="m3" value="SELECT covoiturage" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontSize=10;fontStyle=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="210" as="sourcePoint"/>
+            <mxPoint x="775" y="210" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 4. PostgreSQL > Backend : retour donnees -->
+        <mxCell id="m4" value="Donnees covoiturage" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;dashed=1;dashPattern=5 5;curved=0;rounded=0;fontSize=10;fontStyle=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="775" y="250" as="sourcePoint"/>
+            <mxPoint x="550" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 5. Backend > PostgreSQL : SELECT credits -->
+        <mxCell id="m5" value="SELECT credits utilisateur" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontSize=10;fontStyle=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="300" as="sourcePoint"/>
+            <mxPoint x="775" y="300" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 6. PostgreSQL > Backend : retour solde -->
+        <mxCell id="m6" value="Solde credits" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;dashed=1;dashPattern=5 5;curved=0;rounded=0;fontSize=10;fontStyle=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="775" y="340" as="sourcePoint"/>
+            <mxPoint x="550" y="340" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 7. Backend > PostgreSQL : INSERT participation -->
+        <mxCell id="m7" value="INSERT participation" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontSize=10;fontStyle=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="395" as="sourcePoint"/>
+            <mxPoint x="775" y="395" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 8. Backend > PostgreSQL : UPDATE credits et places -->
+        <mxCell id="m8" value="UPDATE credits et places" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontSize=10;fontStyle=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="440" as="sourcePoint"/>
+            <mxPoint x="775" y="440" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 9. Backend > Frontend : retour 200 OK -->
+        <mxCell id="m9" value="200 OK + confirmation" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;dashed=1;dashPattern=5 5;curved=0;rounded=0;fontSize=10;fontStyle=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="500" as="sourcePoint"/>
+            <mxPoint x="330" y="500" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 10. Frontend > Utilisateur : confirmation -->
+        <mxCell id="m10" value="Afficher confirmation" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;dashed=1;dashPattern=5 5;curved=0;rounded=0;fontSize=10;fontStyle=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="550" as="sourcePoint"/>
+            <mxPoint x="115" y="550" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Note explicative -->
+        <mxCell id="note" value="Verification : places disponibles,&#xa;credits suffisants, pas deja inscrit" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#ffffcc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="600" y="260" width="180" height="45" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

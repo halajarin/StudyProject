@@ -1,0 +1,136 @@
+<mxfile host="app.diagrams.net" modified="2026-02-18" agent="Claude" version="24.0.0" type="device">
+  <diagram id="uc" name="Cas d utilisation EcoRide">
+    <mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="860" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Frontiere systeme -->
+        <mxCell id="sys" value="Systeme EcoRide" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;dashed=1;fontSize=15;fontStyle=1;verticalAlign=top;spacingTop=5;align=center;" vertex="1" parent="1">
+          <mxGeometry x="230" y="10" width="680" height="810" as="geometry"/>
+        </mxCell>
+
+        <!-- ACTEURS -->
+        <mxCell id="act1" value="Visiteur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="105" width="30" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="act2" value="Utilisateur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="370" width="30" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="act3" value="Chauffeur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="640" width="30" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="act4" value="Employe" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="110" width="30" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="act5" value="Administrateur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="560" width="30" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- GENERALISATIONS (heritage) -->
+        <mxCell id="gen1" style="endArrow=block;endFill=0;html=1;strokeWidth=1.5;" edge="1" source="act2" target="act1" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gen2" style="endArrow=block;endFill=0;html=1;strokeWidth=1.5;" edge="1" source="act3" target="act2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gen3" style="endArrow=block;endFill=0;html=1;strokeWidth=1.5;" edge="1" source="act5" target="act4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- CAS D UTILISATION : Visiteur -->
+        <mxCell id="uc1" value="S'inscrire" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="42" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc2" value="Se connecter" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="92" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc3" value="Rechercher des covoiturages" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="147" width="200" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc4" value="Voir details covoiturage" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="202" width="200" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- CAS D UTILISATION : Utilisateur -->
+        <mxCell id="uc5" value="Participer a un covoiturage" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="285" width="200" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc6" value="Gerer son profil" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="340" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc7" value="Consulter ses credits" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="395" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc8" value="Laisser un avis" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="450" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc9" value="Annuler une participation" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="505" width="200" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- CAS D UTILISATION : Chauffeur -->
+        <mxCell id="uc10" value="Ajouter un vehicule" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="580" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc11" value="Creer un covoiturage" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="635" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc12" value="Demarrer / Terminer un trajet" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="695" width="210" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc13" value="Annuler un covoiturage" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="755" width="200" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- CAS D UTILISATION : Employe -->
+        <mxCell id="uc14" value="Valider / Refuser des avis" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="67" width="200" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc15" value="Gerer les problemes signales" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="147" width="210" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- CAS D UTILISATION : Administrateur -->
+        <mxCell id="uc16" value="Creer des employes" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="490" width="180" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc17" value="Suspendre des comptes" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="555" width="200" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc18" value="Consulter les statistiques" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="620" width="200" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- ASSOCIATIONS Visiteur -->
+        <mxCell id="l1" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act1" target="uc1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l2" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act1" target="uc2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l3" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act1" target="uc3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l4" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act1" target="uc4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- ASSOCIATIONS Utilisateur -->
+        <mxCell id="l5" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act2" target="uc5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l6" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act2" target="uc6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l7" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act2" target="uc7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l8" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act2" target="uc8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l9" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act2" target="uc9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- ASSOCIATIONS Chauffeur -->
+        <mxCell id="l10" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act3" target="uc10" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l11" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act3" target="uc11" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l12" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act3" target="uc12" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l13" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act3" target="uc13" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- ASSOCIATIONS Employe -->
+        <mxCell id="l14" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act4" target="uc14" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l15" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act4" target="uc15" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- ASSOCIATIONS Administrateur -->
+        <mxCell id="l16" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act5" target="uc16" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l17" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act5" target="uc17" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l18" style="endArrow=none;html=1;strokeWidth=1;" edge="1" source="act5" target="uc18" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
