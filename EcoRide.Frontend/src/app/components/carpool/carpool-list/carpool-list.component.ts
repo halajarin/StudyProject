@@ -6,6 +6,7 @@ import { CarpoolService } from '../../../services/carpool.service';
 import { AuthService } from '../../../services/auth.service';
 import { Carpool, SearchCarpool } from '../../../models/carpool.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ErrorHandlerService } from '../../../services/error-handler.service';
 import { getEnergyIcon as energyIcon } from '../../../utils/energy.utils';
 
 @Component({
@@ -2301,7 +2302,8 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
     private carpoolService: CarpoolService,
     public authService: AuthService,
     private route: ActivatedRoute,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnDestroy() {
@@ -2446,7 +2448,7 @@ export class CarpoolListComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.participating.set(false);
-        this.participationMessage.set(err.error?.message || this.translate.instant('messages.error_occurred'));
+        this.participationMessage.set(this.errorHandler.handleError(err));
         this.participationMessageType.set('error');
       }
     });

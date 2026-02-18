@@ -648,6 +648,22 @@
     "login_required": "Vous devez être connecté pour effectuer cette action",
     "error_occurred": "Une erreur s'est produite"
   },
+  "server_errors": {
+    "You cannot join your own carpool": "Vous ne pouvez pas rejoindre votre propre covoiturage",
+    "Not enough seats available": "Pas assez de places disponibles",
+    "Insufficient credits": "Crédits insuffisants",
+    "You are already participating in this carpool": "Vous participez déjà à ce covoiturage",
+    "Carpool not found": "Covoiturage introuvable",
+    "Participation not found": "Participation introuvable",
+    "You are not the driver of this carpool": "Vous n'êtes pas le conducteur de ce covoiturage",
+    "Carpool cannot be started": "Ce covoiturage ne peut pas être démarré",
+    "Carpool is not in progress": "Ce covoiturage n'est pas en cours",
+    "Trip already validated or problem already reported": "Trajet déjà validé ou problème déjà signalé",
+    "Passenger count must be at least 1": "Le nombre de passagers doit être d'au moins 1",
+    "You must have participated in the carpool to leave a review": "Vous devez avoir participé au covoiturage pour laisser un avis",
+    "You must first validate the trip": "Vous devez d'abord valider le trajet",
+    "You have already reviewed this trip": "Vous avez déjà laissé un avis pour ce trajet"
+  },
   "cookies": {
     "banner_text": "Ce site utilise des cookies techniques nécessaires à son bon fonctionnement (authentification, préférences de langue).",
     "learn_more": "En savoir plus",

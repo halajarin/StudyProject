@@ -14,7 +14,10 @@ export class ErrorHandlerService {
    * @returns Error message string
    */
   handleError(err: any, defaultKey: string = 'messages.error_occurred'): string {
-    return err.error?.message || this.translate.instant(defaultKey);
+    const message = err.error?.message;
+    if (!message) return this.translate.instant(defaultKey);
+    const translated = this.translate.instant('server_errors.' + message);
+    return translated !== 'server_errors.' + message ? translated : message;
   }
 
   /**
