@@ -24,12 +24,10 @@ Le projet EcoRide a été développé en suivant la méthodologie Agile Scrum av
 ### Colonnes du tableau
 
 1. **Backlog** : Toutes les fonctionnalités à développer (priorisées)
-2. **À faire (Sprint actuel)** : Tâches prévues pour le sprint en cours
+2. **À faire Sprint** : Tâches prévues pour le sprint en cours
 3. **En cours** : Tâche actuellement en développement
-4. **En test** : Fonctionnalité développée, en phase de test
-5. **Review** : En attente de validation
-6. **Terminé (Dev)** : Mergé dans la branche develop
-7. **En production (Main)** : Mergé dans la branche main
+4. **Terminé Dev** : Mergé dans la branche dev
+5. **Merge Main** : Mergé dans la branche main, en production
 
 ### Exemple de Kanban (Sprint 1)
 
@@ -48,7 +46,7 @@ Le projet EcoRide a été développé en suivant la méthodologie Agile Scrum av
 12. [P3] US12 : Espace employé
 13. [P3] US13 : Espace admin
 
-#### Sprint 1 (À faire)
+#### À faire Sprint
 - US1 : Page d'accueil
 - US2 : Menu navigation
 - US7 : Création de compte
@@ -58,19 +56,14 @@ Le projet EcoRide a été développé en suivant la méthodologie Agile Scrum av
 #### En cours
 - US1 : Page d'accueil (3h restantes)
 
-#### En test
-- Configuration PostgreSQL
-- Modèles de données
-
-#### Review
-- (vide)
-
-#### Terminé (Dev)
+#### Terminé Dev
 - Architecture backend
 - Architecture frontend
 - Configuration projet
+- Configuration PostgreSQL
+- Modèles de données
 
-#### En production (Main)
+#### Merge Main
 - (vide - sera rempli après validation finale)
 
 ---
@@ -91,7 +84,7 @@ Le projet EcoRide a été développé en suivant la méthodologie Agile Scrum av
 - US7 : Création de compte + Connexion
 
 **Tasks techniques :**
-- Setup projet .NET 9
+- Setup projet .NET 8
 - Setup projet Angular 20
 - Configuration PostgreSQL
 - Configuration MongoDB
@@ -270,7 +263,7 @@ main (production)
   ↑
   merge après tests complets
   ↑
-develop (développement)
+dev (développement)
   ↑
   merge après feature complète
   ↑
@@ -279,7 +272,7 @@ feature/US-xxx (feature branches)
 
 **Branches :**
 - `main` : Code en production, stable
-- `develop` : Code de développement, testé
+- `dev` : Code de développement, testé
 - `feature/US-01-homepage` : Fonctionnalité spécifique
 - `feature/US-03-search` : etc.
 - `hotfix/fix-credit-bug` : Correction urgente
@@ -444,5 +437,5 @@ La gestion de projet Agile avec un Kanban a permis de :
 **Points complétés :** ~110 points
 **User Stories complétées :** 13/13
 
-**Date :** Janvier 2025
+**Date :** Février 2026
 **Version :** 1.0

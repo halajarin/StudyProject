@@ -29,7 +29,7 @@ EcoRide suit une architecture en 3 couches :
                │ HTTP/REST
                │ JSON
 ┌──────────────▼──────────────────────┐
-│      Backend (.NET 9)               │
+│      Backend (.NET 8)               │
 │   - Controllers (API REST)          │
 │   - Services (Business Logic)       │
 │   - Repositories (Data Access)      │
@@ -48,7 +48,7 @@ EcoRide suit une architecture en 3 couches :
 
 ### 1.2 Choix architecturaux
 
-**Backend .NET 9 :**
+**Backend .NET 8 :**
 - Framework moderne et performant
 - Excellent support pour les API REST
 - Entity Framework Core pour l'ORM
@@ -107,7 +107,7 @@ EcoRide.Backend.Client      → Client MongoDB (Préférences utilisateur)
 
 ### 2.1 Choix du stack technologique
 
-#### Backend : Pourquoi .NET 9 ?
+#### Backend : Pourquoi .NET 8 ?
 
 **Avantages :**
 - Performance exceptionnelle (meilleure que Node.js/PHP)
@@ -212,9 +212,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 - Windows 10/11, macOS 12+, Linux (Ubuntu 20.04+)
 
 **Logiciels requis :**
-1. **.NET 9.0 SDK**
+1. **.NET 8.0 SDK**
    ```bash
-   dotnet --version  # Doit afficher 9.0.x
+   dotnet --version  # Doit afficher 8.0.x
    ```
 
 2. **Node.js & npm**
@@ -458,12 +458,16 @@ Utilisateur    Frontend       Backend          PostgreSQL
 - `POST /api/auth/login` - Connexion
 
 **Covoiturages :**
-- `POST /api/covoiturage/search` - Recherche
-- `GET /api/covoiturage/{id}` - Détails
-- `POST /api/covoiturage` - Créer (Auth requis, role Chauffeur)
-- `POST /api/covoiturage/{id}/participate` - Participer (Auth requis)
-- `POST /api/covoiturage/{id}/cancel` - Annuler (Auth requis)
-- `GET /api/covoiturage/my-trips` - Mes trajets (Auth requis)
+- `POST /api/carpool/search` - Recherche
+- `GET /api/carpool/{id}` - Détails
+- `GET /api/carpool/available` - Liste des covoiturages disponibles
+- `POST /api/carpool` - Créer (Auth requis, rôle Driver)
+- `PUT /api/carpool/{id}` - Modifier (Auth requis, rôle Driver)
+- `GET /api/carpool/my-trips` - Mes trajets (Auth requis)
+
+**Participation :**
+- `POST /api/participation/{carpoolId}/join` - Participer (Auth requis)
+- `POST /api/participation/{carpoolId}/cancel` - Annuler participation (Auth requis)
 
 **Utilisateur :**
 - `GET /api/user/profile` - Profil (Auth requis)
@@ -473,11 +477,11 @@ Utilisateur    Frontend       Backend          PostgreSQL
 - `POST /api/user/vehicles` - Ajouter véhicule (Auth requis)
 
 **Avis :**
-- `GET /api/avis/user/{id}` - Avis d'un utilisateur
-- `POST /api/avis` - Créer avis (Auth requis)
-- `GET /api/avis/pending` - Avis en attente (Employé/Admin)
-- `PUT /api/avis/{id}/validate` - Valider (Employé/Admin)
-- `PUT /api/avis/{id}/reject` - Refuser (Employé/Admin)
+- `GET /api/review/user/{id}` - Avis d'un utilisateur
+- `POST /api/review` - Créer avis (Auth requis)
+- `GET /api/review/pending` - Avis en attente (Employé/Admin)
+- `PUT /api/review/{id}/validate` - Valider (Employé/Admin)
+- `PUT /api/review/{id}/reject` - Refuser (Employé/Admin)
 
 **Administration :**
 - `POST /api/admin/create-employee` - Créer employé (Admin)
@@ -491,14 +495,14 @@ Utilisateur    Frontend       Backend          PostgreSQL
 
 Request:
 ```json
-POST /api/covoiturage/search
+POST /api/carpool/search
 {
-  "villeDepart": "Paris",
-  "villeArrivee": "Lyon",
-  "dateDepart": "2025-12-20",
-  "estEcologique": true,
-  "prixMax": 40,
-  "noteMinimale": 4
+  "departureCity": "Paris",
+  "arrivalCity": "Lyon",
+  "departureDate": "2026-03-20",
+  "isEcological": true,
+  "maxPrice": 40,
+  "minRating": 4
 }
 ```
 
@@ -506,19 +510,19 @@ Response (200 OK):
 ```json
 [
   {
-    "covoiturageId": 1,
-    "villeDepart": "Paris",
-    "villeArrivee": "Lyon",
-    "dateDepart": "2025-12-20T00:00:00",
-    "heureDepart": "08:00",
-    "prixPersonne": 35,
-    "nbPlaceRestante": 2,
-    "estEcologique": true,
-    "pseudoChauffeur": "jeandu",
-    "noteMoyenneChauffeur": 4.7,
-    "marqueVoiture": "Renault",
-    "modeleVoiture": "Zoé",
-    "energieVoiture": "Electrique"
+    "carpoolId": 1,
+    "departureCity": "Paris",
+    "arrivalCity": "Lyon",
+    "departureDate": "2026-03-20T00:00:00",
+    "departureTime": "08:00",
+    "pricePerSeat": 35,
+    "availableSeats": 2,
+    "isEcological": true,
+    "driverPseudo": "jeandu",
+    "driverAverageRating": 4.7,
+    "vehicleBrand": "Renault",
+    "vehicleModel": "Zoé",
+    "vehicleEnergy": "Electrique"
   }
 ]
 ```
@@ -557,28 +561,34 @@ var isValid = BCrypt.Net.BCrypt.Verify(password, hashedPassword);
 
 ### 7.3 Validation des données
 
-**Backend (Data Annotations) :**
+**Backend (FluentValidation) :**
 ```csharp
-public class RegisterDTO {
-    [Required(ErrorMessage = "Le pseudo est requis")]
-    [MinLength(3)]
-    public string Pseudo { get; set; }
+public class RegisterDTOValidator : AbstractValidator<RegisterDTO> {
+    public RegisterDTOValidator() {
+        RuleFor(x => x.Pseudo)
+            .NotEmpty().WithMessage("Le pseudo est requis")
+            .MinimumLength(3);
 
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .EmailAddress();
 
-    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).*$")]
-    public string Password { get; set; }
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$");
+    }
 }
 ```
 
-**Frontend (Validation) :**
+**Frontend (Angular Reactive Forms Validators) :**
 ```typescript
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-if (!passwordRegex.test(password)) {
-  // Erreur
-}
+this.form = this.fb.group({
+  pseudo: ['', [Validators.required, Validators.minLength(3)]],
+  email: ['', [Validators.required, Validators.email]],
+  password: ['', [Validators.required, Validators.pattern(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/
+  )]]
+});
 ```
 
 ### 7.4 Protection CORS
@@ -621,7 +631,7 @@ az webapp up --name ecoride-api --resource-group ecoride-rg
 
 2. **Docker**
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "EcoRide.Backend.dll"]
@@ -684,7 +694,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '8.0.x'
       - name: Publish
         run: dotnet publish -c Release
       - name: Deploy to Azure
@@ -714,5 +724,5 @@ jobs:
 Cette documentation technique couvre l'ensemble de l'architecture et des choix techniques de l'application EcoRide. Pour toute question, contactez l'équipe de développement.
 
 **Version:** 1.0
-**Date:** Janvier 2025
+**Date:** Février 2026
 **Auteur:** Équipe EcoRide
